@@ -16,6 +16,7 @@ public class CameraController : MonoBehaviour {
     void Update () {
 
         Vector3 pos = transform.position;
+        Vector3 rot = transform.localEulerAngles;
 
         if (Input.GetKey("w") || Input.GetKey("up") || Input.mousePosition.y >= Screen.height - panBorderThickness)
         {
@@ -45,9 +46,12 @@ public class CameraController : MonoBehaviour {
         pos.y = Mathf.Clamp(pos.y, cameraMin.y, cameraMax.y);
         pos.z = Mathf.Clamp(pos.z, cameraMin.z, cameraMax.z);
 
+        rot.x = 60 - ((cameraMax.y - pos.y) / cameraMax.y) * 40;
+
 
 
         transform.position = pos;
+        transform.localEulerAngles = rot;
 
     }
 }

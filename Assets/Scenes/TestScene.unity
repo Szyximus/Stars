@@ -477,7 +477,7 @@ MonoBehaviour:
   panSpeed: 10
   panBorderThickness: 10
   cameraMax: {x: 136, y: 60, z: 92}
-  cameraMin: {x: 28, y: 10, z: -10}
+  cameraMin: {x: 28, y: 15, z: -10}
   scrollSpeed: 20
 --- !u!114 &961092230
 MonoBehaviour:
