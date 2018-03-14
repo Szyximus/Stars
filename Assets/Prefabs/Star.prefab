@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33244104529133988}
   - component: {fileID: 23759244818237832}
   - component: {fileID: 114218560565512856}
+  - component: {fileID: 135611203874098800}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -226,11 +227,11 @@ Light:
     m_NearPlane: 0.1
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
-  m_Flare: {fileID: 0}
+  m_Flare: {fileID: 12100000, guid: 8541d94808d5849d8bfa480259334205, type: 2}
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4294967039
   m_Lightmapping: 4
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -250,6 +251,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
+--- !u!135 &135611203874098800
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1321796217503102}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 0
+  serializedVersion: 2
+  m_Radius: 4.000002
+  m_Center: {x: -0.0000019073486, y: 0, z: 0.0000039339066}
 --- !u!215 &215007253244321290
 ReflectionProbe:
   m_ObjectHideFlags: 1

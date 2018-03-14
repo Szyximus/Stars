@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 33192633238144362}
   - component: {fileID: 23743364303523110}
   - component: {fileID: 114074901007315626}
+  - component: {fileID: 135490091882673590}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Untagged
@@ -154,6 +155,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
+--- !u!135 &135490091882673590
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1048807890091964}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.0000001
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!215 &215116431653817376
 ReflectionProbe:
   m_ObjectHideFlags: 1
