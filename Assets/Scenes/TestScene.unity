@@ -20,9 +20,9 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.17999999, g: 0.18638296, b: 0.19999999, a: 1}
-  m_AmbientEquatorColor: {r: 0.2, g: 0.22894736, b: 0.25, a: 1}
-  m_AmbientGroundColor: {r: 0.05, g: 0.07103448, b: 0.1, a: 1}
+  m_AmbientSkyColor: {r: 0.27, g: 0.28470755, b: 0.3, a: 1}
+  m_AmbientEquatorColor: {r: 0.2, g: 0.22451255, b: 0.25, a: 1}
+  m_AmbientGroundColor: {r: 0.08000002, g: 0.08980504, b: 0.100000024, a: 1}
   m_AmbientIntensity: 0.75
   m_AmbientMode: 1
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.33249944, g: 0.37155667, b: 0.43112296, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -231,7 +231,7 @@ GameObject:
   - component: {fileID: 731159319}
   - component: {fileID: 731159321}
   - component: {fileID: 731159320}
-  m_Layer: 5
+  m_Layer: 1
   m_Name: Coordinates
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,7 +308,7 @@ GameObject:
   - component: {fileID: 799156621}
   - component: {fileID: 799156620}
   - component: {fileID: 799156619}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Hex Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -476,6 +476,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   panSpeed: 10
   panBorderThickness: 10
+  orbitSpeed: 10
+  smoothTime: 4
   cameraMax: {x: 136, y: 60, z: 92}
   cameraMin: {x: 28, y: 15, z: -10}
   scrollSpeed: 20
@@ -614,6 +616,21 @@ Prefab:
       propertyPath: m_RootOrder
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 108050019630227650, guid: 780ccef5cdb369649997edc2e2a29b72,
+        type: 2}
+      propertyPath: m_Flare
+      value: 
+      objectReference: {fileID: 12100000, guid: 6174f2fe01a3c418090a23ec2f36e684,
+        type: 2}
+    - target: {fileID: 135611203874098800, guid: 780ccef5cdb369649997edc2e2a29b72,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1321796217503102, guid: 780ccef5cdb369649997edc2e2a29b72, type: 2}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 780ccef5cdb369649997edc2e2a29b72, type: 2}
   m_IsPrefabParent: 0
@@ -751,7 +768,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2131032838}
   - component: {fileID: 2131032834}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: HexGrid
   m_TagString: Untagged
   m_Icon: {fileID: 0}

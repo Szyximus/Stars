@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23759244818237832}
   - component: {fileID: 114218560565512856}
   - component: {fileID: 135611203874098800}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39,7 +39,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4520223718520386}
   - component: {fileID: 215007253244321290}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Reflection Probe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -55,7 +55,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4933216422734326}
   - component: {fileID: 220265466802368190}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Light Probe Group
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -70,7 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4062818251039926}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Star
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4592584255428044}
   - component: {fileID: 108050019630227650}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Point light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,11 +227,11 @@ Light:
     m_NearPlane: 0.1
   m_Cookie: {fileID: 0}
   m_DrawHalo: 0
-  m_Flare: {fileID: 12100000, guid: 8541d94808d5849d8bfa480259334205, type: 2}
+  m_Flare: {fileID: 12100000, guid: 6174f2fe01a3c418090a23ec2f36e684, type: 2}
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 4294967037
   m_Lightmapping: 4
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -259,7 +259,7 @@ SphereCollider:
   m_GameObject: {fileID: 1321796217503102}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_Radius: 4.000002
   m_Center: {x: -0.0000019073486, y: 0, z: 0.0000039339066}
