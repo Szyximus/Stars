@@ -57,7 +57,7 @@ GameObject:
   - component: {fileID: 4054250677768706}
   - component: {fileID: 114801985115364212}
   m_Layer: 5
-  m_Name: CameraRigg
+  m_Name: CameraRig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
