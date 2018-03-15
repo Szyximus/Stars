@@ -6,7 +6,7 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: StarMaterial
+  m_Name: RedStarMaterial
   m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _EMISSION _NORMALMAP
   m_LightmapFlags: 0
@@ -103,10 +103,10 @@ Material:
     - _WaterLod1Alpha: 0.95
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 1, g: 0.47794116, b: 0.47794116, a: 1}
-    - _EmissionColor: {r: 1.1, g: 1.1, b: 1.1, a: 1}
+    - _Color: {r: 0.42647058, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 1.1, g: 0.33161765, b: 0.33161765, a: 1}
     - _Size: {r: 10, g: 10, b: 10, a: 10}
-    - _SpecColor: {r: 0.49019608, g: 0.40963456, b: 0, a: 0}
+    - _SpecColor: {r: 0.497, g: 0, b: 0, a: 0}
     - _SunColor: {r: 1, g: 1, b: 0, a: 1}
     - _SunDir: {r: 0, g: -2, b: 1, a: 0}
     - _SurfaceColor: {r: 1, g: 0, b: 0, a: 1}

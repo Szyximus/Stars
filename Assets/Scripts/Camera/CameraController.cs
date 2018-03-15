@@ -8,12 +8,14 @@ public class CameraController : MonoBehaviour {
     public float orbitSpeed = 10f;
     public float smoothTime = 4f;
 
-    public Vector3 cameraMax;
-    public Vector3 cameraMin;
+    public Vector3 boundMax;
+    public Vector3 boundMin;
 
-    public float scrollSpeed = 10f;
+    public float zoomSpeed = 10f;
 
     Vector3 vel = Vector3.zero;
+    float rotVel = 0f;
+    float zoomVel = 0f;
 
 
     // Update is called once per frame
@@ -21,48 +23,58 @@ public class CameraController : MonoBehaviour {
 
         Vector3 pos = transform.position;
         Vector3 rot = transform.localEulerAngles;
-        var distance = pos.y / Mathf.Sin(rot.x * Mathf.Deg2Rad);
+        Vector3 scale = transform.localScale;
+        var zoom = scale.z;
 
-        if (Input.GetKey("w") || Input.GetKey("up") || Input.mousePosition.y >= Screen.height - panBorderThickness)
+        if (Input.GetAxisRaw("Vertical") > 0 || ((Input.mousePosition.y >= Screen.height - panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
         {
-            vel.z += 0.1f * distance * Time.deltaTime;
+            vel.z += zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetKey("s") || Input.GetKey("down") || Input.mousePosition.y <= panBorderThickness)
+        if (Input.GetAxisRaw("Vertical") < 0 || ((Input.mousePosition.y <= panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
         {
-            vel.z -= 0.1f * distance * Time.deltaTime;
+            vel.z -= zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetKey("a") || Input.GetKey("left") || Input.mousePosition.x <= panBorderThickness)
+        if (Input.GetAxisRaw("Horizontal") < 0 || ((Input.mousePosition.x <= panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
         {
-            vel.x -= 0.1f * distance * Time.deltaTime;
+            vel.x -= zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetKey("d") || Input.GetKey("right") || Input.mousePosition.x >= Screen.width - panBorderThickness)
+        if (Input.GetAxisRaw("Horizontal") > 0 || ((Input.mousePosition.x >= Screen.width - panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
         {
-            vel.x += 0.1f * distance * Time.deltaTime;
+            vel.x += zoom * Time.deltaTime * 5;
         }
+
+        if (Input.GetButton("plus"))
+        {
+            zoomVel = -0.01f;
+        }
+
+        if (Input.GetButton("minus"))
+        {
+            zoomVel = 0.01f;
+        }
+
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        vel.y -= scroll * scrollSpeed * distance * 0.002f;
- 
-        if ((scroll< 0 && pos.y >= cameraMin.y)  && (scroll > 0 && pos.y <= cameraMax.y))
-        {
-        vel.z += scroll* scrollSpeed * distance * 0.001f; //tan(60deg) = 0.57735f
-        }
+        zoomVel -= scroll * zoomSpeed * zoom * 0.005f;
      
-
-        if (Input.GetMouseButton(2))
+    
+        if (Input.GetButton("mouseMiddle")
+           && (Input.GetButton("ctrl") == false)
+           && (Input.mousePosition.x >= panBorderThickness && Input.mousePosition.x <= Screen.width - panBorderThickness && Input.mousePosition.y >= panBorderThickness && Input.mousePosition.y <= Screen.height - panBorderThickness))
         {
-            vel.x -= panSpeed * Input.GetAxis("Mouse X") * distance * 0.0004f;
-            vel.z -= panSpeed * Input.GetAxis("Mouse Y") * distance * 0.0003f;
+            vel.x -= panSpeed * Input.GetAxis("Mouse X") * zoom * 0.02f;
+            vel.z -= panSpeed * Input.GetAxis("Mouse Y") * zoom * 0.02f;
         }
 
-        //rotationYAxis += velocityY;
-        //Quaternion fromRotation = Quaternion.Euler(transform.rotation.eulerAngles.x, transform.rotation.eulerAngles.y, 0);
-        //Quaternion toRotation = Quaternion.Euler(0, rotationYAxis, 0);
-        //Quaternion rotation = toRotation;
+        if (Input.GetButton("mouseMiddle") && Input.GetButton("ctrl") && Input.mousePosition.x >= panBorderThickness && Input.mousePosition.x <= Screen.width - panBorderThickness && Input.mousePosition.y >= panBorderThickness && Input.mousePosition.y <= Screen.height - panBorderThickness)
+        {
+            rotVel -= panSpeed * Input.GetAxis("Mouse X") * 0.05f;
+        }
+
         vel.x = Mathf.Clamp(vel.x, -panSpeed, panSpeed);
         vel.y = Mathf.Clamp(vel.y, -panSpeed, panSpeed);
         vel.z = Mathf.Clamp(vel.z, -panSpeed, panSpeed);
@@ -71,20 +83,38 @@ public class CameraController : MonoBehaviour {
         vel.y = Mathf.Lerp(vel.y, 0, Time.deltaTime * smoothTime);
         vel.z = Mathf.Lerp(vel.z, 0, Time.deltaTime * smoothTime);
 
-
-
         pos += vel;
 
-        pos.x = Mathf.Clamp(pos.x, cameraMin.x, cameraMax.x);
-        pos.y = Mathf.Clamp(pos.y, cameraMin.y, cameraMax.y);
-        pos.z = Mathf.Clamp(pos.z, cameraMin.z, cameraMax.z);
+        zoomVel = Mathf.Lerp(zoomVel, 0, Time.deltaTime * smoothTime);
 
-        rot.x = 60 - ((cameraMax.y - pos.y) / cameraMax.y) * 40;
+        scale.x += zoomVel;
+        scale.y += zoomVel;
+        scale.z += zoomVel;
+
+        rotVel = Mathf.Clamp(rotVel, -180, 180);
+
+        rotVel = Mathf.Lerp(rotVel, 0, Time.deltaTime * smoothTime);
+
+        rot.x = zoom * 40f + 20f;
+        rot.y += rotVel;
+
+        if (Input.GetButtonUp("ctrl"))
+        {
+            rot.y = 0;
+            rotVel = 0;
+        }
 
 
+        scale.x = Mathf.Clamp(scale.x, 0.25f, 1f);
+        scale.y = Mathf.Clamp(scale.y, 0.25f, 1f);
+        scale.z = Mathf.Clamp(scale.z, 0.25f, 1f);
+
+        pos.x = Mathf.Clamp(pos.x, boundMin.x, boundMax.x);
+        pos.y = Mathf.Clamp(pos.y, boundMin.y, boundMax.y);
+        pos.z = Mathf.Clamp(pos.z, boundMin.z, boundMax.z);
 
         transform.position = pos;
+        transform.localScale = scale;
         transform.localEulerAngles = rot;
-
     }
 }
