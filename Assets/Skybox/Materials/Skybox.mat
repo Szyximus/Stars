@@ -51,8 +51,8 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - _Exposure: 1
-    - _Rotation: 0.96082276
+    - _Exposure: 0.9
+    - _Rotation: 7.5296464
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _Tint: {r: 0.9882353, g: 0.9995132, b: 1, a: 0.5}
+    - _Tint: {r: 0.9607843, g: 0.9983774, b: 1, a: 0.5}

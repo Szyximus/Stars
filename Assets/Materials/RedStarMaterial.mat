@@ -104,7 +104,7 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 0.42647058, g: 0, b: 0, a: 1}
-    - _EmissionColor: {r: 1.1, g: 0.33161765, b: 0.33161765, a: 1}
+    - _EmissionColor: {r: 1.2, g: 0.36176464, b: 0.36176464, a: 1}
     - _Size: {r: 10, g: 10, b: 10, a: 10}
     - _SpecColor: {r: 0.497, g: 0, b: 0, a: 0}
     - _SunColor: {r: 1, g: 1, b: 0, a: 1}
