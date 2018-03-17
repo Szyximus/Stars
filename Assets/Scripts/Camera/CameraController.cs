@@ -26,32 +26,32 @@ public class CameraController : MonoBehaviour {
         Vector3 scale = transform.localScale;
         var zoom = scale.z;
 
-        if (Input.GetAxisRaw("Vertical") > 0 || ((Input.mousePosition.y >= Screen.height - panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
+        if (Input.GetAxisRaw("Vertical") > 0 || ((Input.mousePosition.y >= Screen.height - panBorderThickness) && Input.GetButton("MouseMiddle") && (Input.GetButton("Control") == false)))
         {
             vel.z += zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetAxisRaw("Vertical") < 0 || ((Input.mousePosition.y <= panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
+        if (Input.GetAxisRaw("Vertical") < 0 || ((Input.mousePosition.y <= panBorderThickness) && Input.GetButton("MouseMiddle") && (Input.GetButton("Control") == false)))
         {
             vel.z -= zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetAxisRaw("Horizontal") < 0 || ((Input.mousePosition.x <= panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
+        if (Input.GetAxisRaw("Horizontal") < 0 || ((Input.mousePosition.x <= panBorderThickness) && Input.GetButton("MouseMiddle") && (Input.GetButton("Control") == false)))
         {
             vel.x -= zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetAxisRaw("Horizontal") > 0 || ((Input.mousePosition.x >= Screen.width - panBorderThickness) && Input.GetButton("mouseMiddle") && (Input.GetButton("ctrl") == false)))
+        if (Input.GetAxisRaw("Horizontal") > 0 || ((Input.mousePosition.x >= Screen.width - panBorderThickness) && Input.GetButton("MouseMiddle") && (Input.GetButton("Control") == false)))
         {
             vel.x += zoom * Time.deltaTime * 5;
         }
 
-        if (Input.GetButton("plus"))
+        if (Input.GetButton("Plus"))
         {
             zoomVel = -0.01f;
         }
 
-        if (Input.GetButton("minus"))
+        if (Input.GetButton("Minus"))
         {
             zoomVel = 0.01f;
         }
@@ -62,15 +62,15 @@ public class CameraController : MonoBehaviour {
         zoomVel -= scroll * zoomSpeed * zoom * 0.005f;
      
     
-        if (Input.GetButton("mouseMiddle")
-           && (Input.GetButton("ctrl") == false)
+        if (Input.GetButton("MouseMiddle")
+           && (Input.GetButton("Control") == false)
            && (Input.mousePosition.x >= panBorderThickness && Input.mousePosition.x <= Screen.width - panBorderThickness && Input.mousePosition.y >= panBorderThickness && Input.mousePosition.y <= Screen.height - panBorderThickness))
         {
             vel.x -= panSpeed * Input.GetAxis("Mouse X") * zoom * 0.02f;
             vel.z -= panSpeed * Input.GetAxis("Mouse Y") * zoom * 0.02f;
         }
 
-        if (Input.GetButton("mouseMiddle") && Input.GetButton("ctrl") && Input.mousePosition.x >= panBorderThickness && Input.mousePosition.x <= Screen.width - panBorderThickness && Input.mousePosition.y >= panBorderThickness && Input.mousePosition.y <= Screen.height - panBorderThickness)
+        if (Input.GetButton("MouseMiddle") && Input.GetButton("Control") && Input.mousePosition.x >= panBorderThickness && Input.mousePosition.x <= Screen.width - panBorderThickness && Input.mousePosition.y >= panBorderThickness && Input.mousePosition.y <= Screen.height - panBorderThickness)
         {
             rotVel -= panSpeed * Input.GetAxis("Mouse X") * 0.05f;
         }
@@ -98,7 +98,7 @@ public class CameraController : MonoBehaviour {
         rot.x = zoom * 40f + 20f;
         rot.y += rotVel;
 
-        if (Input.GetButtonUp("ctrl"))
+        if (Input.GetButtonUp("Control"))
         {
             rot.y = 0;
             rotVel = 0;
