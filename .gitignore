@@ -2,6 +2,7 @@
 /[Tt]emp/
 /[Bb]uild/
 /[Bb]uilds/
+/Assets/Skybox/Materials/Skybox.mat
 
 
 # Visual Studio 2015 cache directory
