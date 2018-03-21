@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
+    public static CameraController main;
+
     public float panSpeed = 10f;
     public float panBorderThickness = 10f;
     public float orbitSpeed = 10f;
@@ -16,6 +18,11 @@ public class CameraController : MonoBehaviour {
     Vector3 vel = Vector3.zero;
     float rotVel = 0f;
     float zoomVel = 0f;
+
+    void Awake()
+    {
+        main = this;
+    }
 
 
     // Update is called once per frame
@@ -116,5 +123,14 @@ public class CameraController : MonoBehaviour {
         transform.position = pos;
         transform.localScale = scale;
         transform.localEulerAngles = rot;
+
+    }
+
+    public void LookAt (Vector2 Target)
+    {
+        Vector3 pos = transform.position;
+        pos.x = Mathf.Lerp(pos.x, Target.x, 0.5f);
+        pos.z = Mathf.Lerp(pos.z, Target.y, 0.5f);
+        transform.position =pos;
     }
 }

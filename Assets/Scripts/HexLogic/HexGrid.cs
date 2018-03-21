@@ -81,7 +81,7 @@ public class HexGrid : MonoBehaviour
     void TouchCell(Vector3 position)
     {
         position = transform.InverseTransformPoint(position);
-        Debug.Log("touched at " + position);
+        //Debug.Log("touched at " + position);
     }
 
 }
