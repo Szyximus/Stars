@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.07788383, g: 0.10131936, b: 0.13635772, a: 1}
+  m_IndirectSpecularColor: {r: 0.07707235, g: 0.10025547, b: 0.13493715, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -293,6 +293,11 @@ Prefab:
       propertyPath: m_Camera
       value: 
       objectReference: {fileID: 703855289}
+    - target: {fileID: 114900679956369652, guid: 03a2202d2a2b3b044a641fbcf2e3c85a,
+        type: 2}
+      propertyPath: LineMat
+      value: 
+      objectReference: {fileID: 2100000, guid: 2ba1d0b01b6c8e545b9989836bb5f7cd, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 03a2202d2a2b3b044a641fbcf2e3c85a, type: 2}
   m_IsPrefabParent: 0
@@ -844,7 +849,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 4974403771642252, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
       propertyPath: m_LocalPosition.x
-      value: 60
+      value: 80
       objectReference: {fileID: 0}
     - target: {fileID: 4974403771642252, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
       propertyPath: m_LocalPosition.y
@@ -852,7 +857,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4974403771642252, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 60
+      value: 75
       objectReference: {fileID: 0}
     - target: {fileID: 4974403771642252, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
       propertyPath: m_LocalRotation.x
@@ -873,6 +878,16 @@ Prefab:
     - target: {fileID: 4974403771642252, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
       propertyPath: m_RootOrder
       value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 20272425498840636, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b,
+        type: 2}
+      propertyPath: m_CullingMask.m_Bits
+      value: 259
+      objectReference: {fileID: 0}
+    - target: {fileID: 20272425498840636, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b,
+        type: 2}
+      propertyPath: orthographic size
+      value: 75
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a6b7d1c5c64c0b242a67cd875f9d9a1b, type: 2}
@@ -945,8 +960,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 933baf33e6dea01419a9c19142f66a54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 30
-  height: 30
+  width: 100
+  height: 100
   cellPrefab: {fileID: 114839237804450798, guid: 0295030920160064fba60c900fbb1700,
     type: 2}
   cellLabelPrefab: {fileID: 114839872751227074, guid: 0dacc68d26a036b47909f3c104a1f232,
@@ -958,7 +973,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2131032833}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -100, y: 0, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 731159319}
