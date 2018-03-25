@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4458253758987934}
   - component: {fileID: 23482505966468266}
-  m_Layer: 1
+  m_Layer: 9
   m_Name: Hex
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -37,7 +37,7 @@ GameObject:
   - component: {fileID: 4100760456801018}
   - component: {fileID: 33194884226013084}
   - component: {fileID: 23886037852225822}
-  m_Layer: 1
+  m_Layer: 9
   m_Name: default
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -54,7 +54,7 @@ GameObject:
   - component: {fileID: 4961800481289120}
   - component: {fileID: 33913765083666652}
   - component: {fileID: 114839237804450798}
-  m_Layer: 1
+  m_Layer: 9
   m_Name: Hex Cell
   m_TagString: Untagged
   m_Icon: {fileID: 0}
