@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -65,6 +68,7 @@ public class HexGrid : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             HandleInput();
+            Thread.Sleep(100);  //ugly way of not running command couple times during one click
         }
     }
 
@@ -80,8 +84,11 @@ public class HexGrid : MonoBehaviour
 
     void TouchCell(Vector3 position)
     {
-        position = transform.InverseTransformPoint(position);
-        //Debug.Log("touched at " + position);
+        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+        EventManager.selectionManager.GridCellSelection =
+            cells.Where(c => c.coordinates == coordinates).First(); //it's only one match, First() used to change type
+        //Debug.Log("touched at " + coordinates);
     }
 
 }
