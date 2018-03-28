@@ -26,6 +26,6 @@ public class Star : MonoBehaviour
 
     private void OnMouseDown()
     {
-        EventManager.selectionManager.SelectedObject = this;
+        EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 }

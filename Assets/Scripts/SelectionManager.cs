@@ -9,12 +9,12 @@ namespace Assets.Scripts
 {
     public class SelectionManager
     {
-        private object _selectedObject;
+        private GameObject _selectedObject;
         /// <summary>
         /// Storing reference to selected object
         /// if no object is selected will return null
         /// </summary>
-        public object SelectedObject
+        public GameObject SelectedObject
         {
             get
             {

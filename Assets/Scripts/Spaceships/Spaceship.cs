@@ -29,7 +29,7 @@ public class Spaceship : MonoBehaviour
 
     private void OnMouseDown()
     {
-        EventManager.selectionManager.SelectedObject = this;
+        EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     public void Move( EDirection direction )
