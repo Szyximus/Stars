@@ -3,12 +3,15 @@ using Assets.Scripts.HexLogic;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Spaceship : MonoBehaviour
 {
     public HexCoordinates coordinates { get; set; }
 
-    public int Speed { get; set; } 
+    public int Speed { get; set; }
+
+    int i = 0; //for the movement test, remove later
 
     // Use this for initialization
     void Start()
@@ -20,10 +23,23 @@ public class Spaceship : MonoBehaviour
     {
         coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
     }
-	
-	// Update is called once per frame
-	void Update()
+
+    // Update is called once per frame
+    void Update()
     {
+        if (Input.GetButton("MouseRight")) //Silly test of movement
+        {
+            if (EventManager.selectionManager.SelectedObject != null)
+            {
+                if (EventManager.selectionManager.SelectedObject.tag == "Unit")
+                {
+                    (EventManager.selectionManager.SelectedObject.GetComponent("Spaceship") as Spaceship).Move((EDirection)(i));
+                    i++;
+                    if (i > 5) i = 0;
+                    Thread.Sleep(100);  //ugly way of not running command couple times during one click
+                }
+            }
+        }
 
     }
 

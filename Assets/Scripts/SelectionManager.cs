@@ -28,7 +28,7 @@ namespace Assets.Scripts
                     _selectedObject = null;
 
                 Debug.Log(String.Format("Selected grid cell: {0}",
-                    _selectedObject != null ? _selectedObject.GetType().ToString() : "no object selected")
+                    _selectedObject != null ? _selectedObject.tag : "no object selected")
                     );
 
                 
