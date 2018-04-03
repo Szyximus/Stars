@@ -86,6 +86,19 @@ public class HexGrid : MonoBehaviour
     {
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
+        GameObject selectedObject;
+        if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
+            if (selectedObject.tag == "Unit" )
+            {
+                var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
+                if (coordinates != spaceship.Coordinates)
+                {
+                    spaceship.Destination = coordinates;
+                    //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
+                    spaceship.MoveTo(spaceship.Destination);
+                }
+            }
+
         EventManager.selectionManager.GridCellSelection =
             cells.Where(c => c.coordinates == coordinates).First(); //it's only one match, First() used to change type
         //Debug.Log("touched at " + coordinates);
