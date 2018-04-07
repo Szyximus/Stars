@@ -50,28 +50,43 @@ public class Spaceship : MonoBehaviour
         switch (direction)
         {
             case EDirection.TopRight:
-                transform.Translate(r, 0, r_sqrt3, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(r, 0, r_sqrt3))); // OLD: transform.Translate(r, 0, r_sqrt3, Space.Self)
                 break;
             case EDirection.Right:
-                transform.Translate(2*r, 0, 0, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(2 *r, 0, 0)));
                 break;
             case EDirection.BottomRight:
-                transform.Translate(r, 0, -r_sqrt3, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(r, 0, -r_sqrt3)));
                 break;
             case EDirection.BottomLeft:
-                transform.Translate(-r, 0, -r_sqrt3, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(-r, 0, -r_sqrt3)));
                 break;
             case EDirection.Left:
-                transform.Translate(-2*r, 0, 0, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(-2*r, 0, 0)));
                 break;
             case EDirection.TopLeft:
-                transform.Translate(-r, 0, r_sqrt3, Space.Self);
+                StartCoroutine(SmoothFly(new Vector3(-r, 0, r_sqrt3)));
                 break;
         }
 
         UpdateCoordinates();
     }
 
+    IEnumerator SmoothFly(Vector3 direction)
+    {
+        float startime = Time.time;
+        Vector3 start_pos = transform.position; //Starting position.
+        Vector3 end_pos = transform.position + direction; //Ending position.
+
+        for (int i = 50; i > 0; i--)
+        {
+
+            transform.position += direction * Time.deltaTime;
+
+            yield return null;
+        }
+        transform.position = end_pos;
+    }
     /*
      * TODO: Probably this function will be called from some round update 
      */

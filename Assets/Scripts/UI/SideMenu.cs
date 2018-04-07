@@ -19,16 +19,10 @@ public class SideMenu : MonoBehaviour
         {
             this.gameObject.SetActive(false);
         }
-        else if (EventManager.selectionManager.SelectedObject.tag == "Unit")
+        else
         {
             this.gameObject.SetActive(true);
            // this.gameObject.GetComponent("MoveButton").SetActive(true);
-        }
-        else if (EventManager.selectionManager.SelectedObject.tag == "Planet")
-        {
-            this.gameObject.SetActive(true);
-            //this.gameObject.GetComponent("MoveButton").SetActive(false);
-            //this.gameObject.GetComponent("TextMesh") = SelectedObject.tag;
         }
 
     }
