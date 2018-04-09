@@ -28,12 +28,7 @@ public class MiniMapController : MonoBehaviour
     RectTransform rectTransform; //Transform data of the minimap, it scales with the resolution
 
 
-    public GameObject hexCells;
 
-    public GameObject ship1, ship2;
-    public Material m1, m2, m3;
-
-    public int[] mark;
 
     void Awake()
     {
@@ -58,11 +53,9 @@ public class MiniMapController : MonoBehaviour
         line.positionCount = 5;
         line.material = LineMat;
         line.gameObject.layer = 8; // Set trapezoid layer to 8=minimap, so it doesn't show to the main camera
+        
 
-        mark = new int[hexCells.transform.childCount];
 
-        for (int i = 0; i < mark.Length; i++) mark[i] = -1;
-      
     }
 
     void Update()
@@ -109,50 +102,8 @@ public class MiniMapController : MonoBehaviour
         line.SetPosition(2, v3);
         line.SetPosition(3, v4);
         line.SetPosition(4, v1); //draw trapezoid
-
-        Vector3 positionShip1 = ship1.transform.position;
-        Vector3 positionShip2 = ship2.transform.position;
-        for (int i = 2; i < hexCells.transform.childCount; i++)
-        {
-            Vector3 actualPosition = hexCells.transform.GetChild(i).transform.TransformPoint(Vector3.zero);
-            float distance1 = Vector3.Distance(positionShip1, actualPosition);
-            float distance2 = Vector3.Distance(positionShip2, actualPosition);
-            if (distance1 < 10 || distance2 < 10)
-            {
-                mark[i] = 1;
-            }
-            else if (mark[i] == 1)
-            {
-                mark[i] = 0;
-            }
-        }
-
-        for (int i = 2; i < hexCells.transform.childCount; i++)
-            if (mark[i] == -1)
-            {
-                Material[] m123 = new Material[1] { m1 };
-                hexCells.transform.GetChild(i).GetChild(0).gameObject.GetComponent<MeshRenderer>().materials = m123;
-            }
-            else if (mark[i] == 0)
-            {
-                Material[] m123 = new Material[1] { m2 };
-                hexCells.transform.GetChild(i).GetChild(0).gameObject.GetComponent<MeshRenderer>().materials = m123;
-
-            }
-            else
-            {
-                Material[] m123 = new Material[1] { m3 };
-                hexCells.transform.GetChild(i).GetChild(0).gameObject.GetComponent<MeshRenderer>().materials = m123;
-
-            }
-
+        
     }
-
-    float LinearEquation(float x1, float y1, float x2, float y2, float x, float y)
-    {
-        return (x - x1) * (y - y2) - (x - x2) * (y - y1);
-    }
-
 
     public void OnPointerDown(PointerEventData eventData)
     {
