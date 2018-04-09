@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEditor;
 using System.Collections;
 
 public class MiniMapController : MonoBehaviour
