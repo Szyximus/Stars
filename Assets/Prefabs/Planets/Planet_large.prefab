@@ -55,7 +55,6 @@ GameObject:
   - component: {fileID: 33280611221969286}
   - component: {fileID: 23196485027029790}
   - component: {fileID: 114597122602952712}
-  - component: {fileID: 135622535113468682}
   m_Layer: 0
   m_Name: Mesh
   m_TagString: Planet
@@ -71,6 +70,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4786315379243342}
+  - component: {fileID: 135592747572671118}
   m_Layer: 0
   m_Name: Planet_large
   m_TagString: Planet
@@ -227,18 +227,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2
---- !u!135 &135622535113468682
+--- !u!135 &135592747572671118
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1592150191948822}
+  m_GameObject: {fileID: 1604717034093982}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4.000002
-  m_Center: {x: -0.0000019073486, y: 0, z: 0.0000039339066}
+  m_Radius: 3.2
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!215 &215847400631106420
 ReflectionProbe:
   m_ObjectHideFlags: 1

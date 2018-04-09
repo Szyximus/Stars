@@ -22,6 +22,8 @@ public class HexGrid : MonoBehaviour
 
     HexMesh hexMesh;
 
+    private MyUIHoverListener uiListener;
+
 
     void Awake()
     {
@@ -61,13 +63,14 @@ public class HexGrid : MonoBehaviour
     void Start()
     {
         hexMesh.Triangulate(cells);
+        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 
     void Update()
     {
         if (Input.GetMouseButton(0))
         {
-            HandleInput();
+            if (!uiListener.isUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
         }
     }
@@ -80,6 +83,30 @@ public class HexGrid : MonoBehaviour
         {
             TouchCell(hit.point);
         }
+    }
+
+    private void OnMouseDown()
+    {
+        //Vector3 position = eventData.pointerCurrentRaycast.worldPosition;
+        HexCoordinates coordinates = HexCoordinates.FromPosition(this.transform.position);
+
+        GameObject selectedObject;
+        if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
+            if (selectedObject.tag == "Unit")
+            {
+                var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
+                if (coordinates != spaceship.Coordinates)
+                {
+                    spaceship.Destination = coordinates;
+                    //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
+                    spaceship.MoveTo(spaceship.Destination);
+                }
+            }
+
+        EventManager.selectionManager.GridCellSelection =
+            cells.Where(c => c.coordinates == coordinates).First(); //it's only one match, First() used to change type
+        //Debug.Log("touched at " + coordinates);
+
     }
 
     void TouchCell(Vector3 position)

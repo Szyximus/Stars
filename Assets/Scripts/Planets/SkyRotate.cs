@@ -5,6 +5,11 @@ using UnityEngine;
 public class SkyRotate : MonoBehaviour {
     public float speedMultiplier;
 
+    void Awake()
+    {
+        Application.targetFrameRate = 60; //fpscap
+    }
+
     // Update is called once per frame
     void Update()
     {

@@ -6,11 +6,13 @@ using UnityEngine;
 public class Star : MonoBehaviour
 {
     public HexCoordinates coordinates { get; set; }
+    private MyUIHoverListener uiListener;
 
     // Use this for initialization
     void Start()
     {
         UpdateCoordinates();
+        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 
     void UpdateCoordinates()
@@ -26,6 +28,7 @@ public class Star : MonoBehaviour
 
     private void OnMouseDown()
     {
-        EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.isUIOverride)
+            EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 }

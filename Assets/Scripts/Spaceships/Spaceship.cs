@@ -13,6 +13,8 @@ public class Spaceship : MonoBehaviour
 
     public HexCoordinates Destination { get; set; }
 
+    private MyUIHoverListener uiListener;
+
     int i = 0; //for the movement test, remove later
 
     // Use this for initialization
@@ -22,6 +24,7 @@ public class Spaceship : MonoBehaviour
         Speed = 1;
 
         UpdateCoordinates();
+        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 
     void UpdateCoordinates()
@@ -38,7 +41,7 @@ public class Spaceship : MonoBehaviour
 
     private void OnMouseDown()
     {
-        EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     public void Move( EDirection direction )
@@ -77,14 +80,16 @@ public class Spaceship : MonoBehaviour
         float startime = Time.time;
         Vector3 start_pos = transform.position; //Starting position.
         Vector3 end_pos = transform.position + direction; //Ending position.
+        var model = GetComponentInChildren<Transform>().Find("Mesh"); //mesh component of a prefab
 
-        for (int i = 50; i > 0; i--)
+        while (Time.time - startime < 1) //the movement takes exactly 1 s. regardless of framerate
         {
 
             transform.position += direction * Time.deltaTime;
-
+            model.transform.forward = Vector3.Lerp(model.transform.forward, direction, Time.deltaTime);
             yield return null;
         }
+        model.transform.forward = direction;
         transform.position = end_pos;
     }
     /*
@@ -112,19 +117,15 @@ public class Spaceship : MonoBehaviour
 
     public void DoTestStuff()
     {
-        //if (Input.GetButton("MouseRight")) //Silly test of movement
-        {
-            if (EventManager.selectionManager.SelectedObject != null)
-            {
-                if (EventManager.selectionManager.SelectedObject.tag == "Unit")
-                {
-                    (EventManager.selectionManager.SelectedObject.GetComponent("Spaceship") as Spaceship).Move((EDirection)i);
-                    i++;
-                    if (i > 5) i = 0;
+           if (EventManager.selectionManager.SelectedObject.tag == "Unit")
+           {
+               (EventManager.selectionManager.SelectedObject.GetComponent("Spaceship") as Spaceship).Move((EDirection)i);
+               i++;
+               if (i > 5) i = 0;
 
-                    Debug.Log(string.Format("Destination: {0}", Destination) );
-                }
-            }
-        }
+               Debug.Log(string.Format("Destination: {0}", Destination) );
+           }
     }
 }
+
+

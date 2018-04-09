@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 33044710334108370}
   - component: {fileID: 23440743879638016}
   - component: {fileID: 114279335867784976}
-  - component: {fileID: 135084454789823640}
   m_Layer: 1
   m_Name: Mesh
   m_TagString: Untagged
@@ -71,6 +70,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4226040188650630}
+  - component: {fileID: 135086591956710076}
+  - component: {fileID: 114112324595029986}
   m_Layer: 1
   m_Name: Star
   m_TagString: Untagged
@@ -311,6 +312,17 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114112324595029986
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1672720354179880}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc6be2b96caa9b145984d16cb0c78b78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114279335867784976
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -323,18 +335,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 8
---- !u!135 &135084454789823640
+--- !u!135 &135086591956710076
 SphereCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1132128175817684}
+  m_GameObject: {fileID: 1672720354179880}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 4.000002
-  m_Center: {x: -0.0000019073486, y: 0, z: 0.0000039339066}
+  m_Radius: 4.01
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!215 &215827694267775240
 ReflectionProbe:
   m_ObjectHideFlags: 1
