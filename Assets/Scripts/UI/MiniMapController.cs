@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEditor;
 using System.Collections;
 
 public class MiniMapController : MonoBehaviour
@@ -8,12 +9,12 @@ public class MiniMapController : MonoBehaviour
 
     //Singleton
     public static MiniMapController main;
-    public CameraController controller; //Main camera Controller
+    CameraController controller; //Main camera Controller
 
 
-    public Camera MainCamera;
-    public Camera MiniMapCamera;
-    public Material LineMat; //Material of the camera trapezoid
+    Camera MainCamera;
+    Camera MiniMapCamera;
+    Material LineMat; //Material of the camera trapezoid
 
     Vector2 lastClicked;
 
@@ -37,6 +38,12 @@ public class MiniMapController : MonoBehaviour
 
     void Start()
     {
+        MainCamera = (GameObject.Find("CameraRig").GetComponentInChildren<Camera>());
+        MiniMapCamera = (GameObject.Find("MiniMapCamera").GetComponent<Camera>());
+        LineMat = (Material)AssetDatabase.LoadAssetAtPath("Assets/Materials/WhiteMinimap.mat", typeof(Material));
+
+        controller = (GameObject.Find("CameraRig").GetComponent("CameraController") as CameraController);
+
         // Add a Line Renderer to the GameObject
         line = this.gameObject.AddComponent<LineRenderer>();
         // Set the width of the Line Renderer
