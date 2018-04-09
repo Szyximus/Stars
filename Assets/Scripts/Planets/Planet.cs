@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Planet : MonoBehaviour
 { 
@@ -26,8 +27,10 @@ public class Planet : MonoBehaviour
         
     }
 
-    private void OnMouseDown()
+    private void OnMouseUpAsButton()
     {
         if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+
+        Thread.Sleep(100);  //ugly way of not running command couple times during one click
     }
 }

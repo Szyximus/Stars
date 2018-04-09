@@ -39,9 +39,12 @@ public class Spaceship : MonoBehaviour
 
     }
 
-    private void OnMouseDown()
+    private void OnMouseUpAsButton()
     {
         if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+
+        Thread.Sleep(100);  //ugly way of not running command couple times during one click
+ 
     }
 
     public void Move( EDirection direction )
@@ -123,7 +126,7 @@ public class Spaceship : MonoBehaviour
                i++;
                if (i > 5) i = 0;
 
-               Debug.Log(string.Format("Destination: {0}", Destination) );
+               Debug.Log(string.Format("Destination: {0}", Destination));
            }
     }
 }

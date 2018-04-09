@@ -68,7 +68,7 @@ public class HexGrid : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetMouseButton(0))
+        if (Input.GetButtonUp("MouseLeft"))
         {
             if (!uiListener.isUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
@@ -85,29 +85,12 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    private void OnMouseDown()
-    {
-        //Vector3 position = eventData.pointerCurrentRaycast.worldPosition;
-        HexCoordinates coordinates = HexCoordinates.FromPosition(this.transform.position);
+    //private void OnMouseUpAsButton()
+    //{
+    //    if (!uiListener.isUIOverride) HandleInput();
+    //        Thread.Sleep(100);  //ugly way of not running command couple times during one click
 
-        GameObject selectedObject;
-        if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
-            if (selectedObject.tag == "Unit")
-            {
-                var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
-                if (coordinates != spaceship.Coordinates)
-                {
-                    spaceship.Destination = coordinates;
-                    //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
-                    spaceship.MoveTo(spaceship.Destination);
-                }
-            }
-
-        EventManager.selectionManager.GridCellSelection =
-            cells.Where(c => c.coordinates == coordinates).First(); //it's only one match, First() used to change type
-        //Debug.Log("touched at " + coordinates);
-
-    }
+    //}
 
     void TouchCell(Vector3 position)
     {

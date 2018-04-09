@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading;
 
 public class Star : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class Star : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!uiListener.isUIOverride)
-            EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        Thread.Sleep(100);  //ugly way of not running command couple times during one click
     }
 }

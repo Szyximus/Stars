@@ -14,7 +14,7 @@ public class MiniMapController : MonoBehaviour
 
     Camera MainCamera;
     Camera MiniMapCamera;
-    Material LineMat; //Material of the camera trapezoid
+    public Material LineMat; //Material of the camera trapezoid
 
     Vector2 lastClicked;
 
@@ -40,7 +40,7 @@ public class MiniMapController : MonoBehaviour
     {
         MainCamera = (GameObject.Find("CameraRig").GetComponentInChildren<Camera>());
         MiniMapCamera = (GameObject.Find("MiniMapCamera").GetComponent<Camera>());
-        LineMat = (Material)AssetDatabase.LoadAssetAtPath("Assets/Materials/WhiteMinimap.mat", typeof(Material));
+        //LineMat = (Material)AssetDatabase.LoadAssetAtPath("Assets/Materials/WhiteMinimap.mat", typeof(Material));
 
         controller = (GameObject.Find("CameraRig").GetComponent("CameraController") as CameraController);
 
