@@ -56,6 +56,7 @@ public struct HexCoordinates
         return new HexCoordinates(iX, iZ);
     }
 
+
     public static bool operator == ( HexCoordinates left, HexCoordinates right )
     {
         return left.x == right.x && left.z == right.z;

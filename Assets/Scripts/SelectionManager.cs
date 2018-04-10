@@ -27,9 +27,9 @@ namespace Assets.Scripts
                 else
                     _selectedObject = null;
 
-                Debug.Log(String.Format("Selected grid cell: {0}",
-                    _selectedObject != null ? _selectedObject.tag : "no object selected")
-                    );
+                //Debug.Log(String.Format("Selected grid cell: {0}",
+                //    _selectedObject != null ? _selectedObject.tag : "no object selected")
+                //    );
 
                 
             }
@@ -53,9 +53,9 @@ namespace Assets.Scripts
                 else
                     _gridCellSelection = null;
 
-                Debug.Log( String.Format("Selected grid cell: {0}",
-                    _gridCellSelection != null ? _gridCellSelection.coordinates.ToString() : "no grid selected" )
-                    ); 
+                //Debug.Log( String.Format("Selected grid cell: {0}",
+                 //   _gridCellSelection != null ? _gridCellSelection.coordinates.ToString() : "no grid selected" )
+                 //   ); 
             }
         }
     }

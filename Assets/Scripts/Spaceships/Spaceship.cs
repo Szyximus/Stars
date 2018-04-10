@@ -7,6 +7,8 @@ using System.Threading;
 
 public class Spaceship : MonoBehaviour
 {
+
+    HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
     public int Speed { get; set; }
@@ -14,14 +16,20 @@ public class Spaceship : MonoBehaviour
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
+    public bool flying;
 
     int i = 0; //for the movement test, remove later
 
     // Use this for initialization
     void Start()
     {
+
+        flying = false;
         //DEBUG
-        Speed = 1;
+        Speed = 5;
+
+        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
+
 
         UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
@@ -30,6 +38,9 @@ public class Spaceship : MonoBehaviour
     void UpdateCoordinates()
     {
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
+        if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
+        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
+        //Debug.Log(grid.FromCoordinates(Coordinates).transform.localPosition.ToString() + '\n' + Coordinates.ToString());
     }
 
     // Update is called once per frame
@@ -49,7 +60,6 @@ public class Spaceship : MonoBehaviour
     {
         var r = HexMetrics.innerRadius;
         var r_sqrt3 = r * 1.7320508757f;
-
 
         switch (direction)
         {
@@ -73,12 +83,13 @@ public class Spaceship : MonoBehaviour
                 break;
         }
 
-        UpdateCoordinates();
     }
 
     IEnumerator SmoothFly(Vector3 direction)
     {
+        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).ClearObject();
         float startime = Time.time;
+        
         Vector3 start_pos = transform.position; //Starting position.
         Vector3 end_pos = transform.position + direction; //Ending position.
         var model = GetComponentInChildren<Transform>().Find("Mesh"); //mesh component of a prefab
@@ -91,16 +102,19 @@ public class Spaceship : MonoBehaviour
             yield return null;
         }
         model.transform.forward = direction;
-        transform.position = end_pos;
+        //transform.position = end_pos;
+        UpdateCoordinates();
+
     }
     /*
      * TODO: Probably this function will be called from some round update 
      */
-    public void MoveTo( HexCoordinates dest )
+    public IEnumerator MoveTo( HexCoordinates dest )
     {
+        flying = true;
         //while (Coordinates != dest)
-            for (int i = Speed; i > 0; i--)
-            {
+        for (int i = Speed; i > 0; i--)
+        {
                 if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                     Move(EDirection.TopRight);
                 else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
@@ -113,7 +127,11 @@ public class Spaceship : MonoBehaviour
                     Move(EDirection.Right);
                 else if (dest.X < Coordinates.X)
                     Move(EDirection.Left);
-            }
+            yield return new WaitForSeconds(1.05f);
+
+        }
+        flying = false;
+
     }
 
     public void DoTestStuff()

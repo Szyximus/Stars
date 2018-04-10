@@ -14,7 +14,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell cellPrefab;
 
-    HexCell[] cells;
+    public HexCell[] cells;
 
     public Text cellLabelPrefab;
 
@@ -23,6 +23,7 @@ public class HexGrid : MonoBehaviour
     HexMesh hexMesh;
 
     private MyUIHoverListener uiListener;
+
 
 
     void Awake()
@@ -73,6 +74,7 @@ public class HexGrid : MonoBehaviour
             if (!uiListener.isUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
         }
+        
     }
 
     void HandleInput()
@@ -83,6 +85,13 @@ public class HexGrid : MonoBehaviour
         {
             TouchCell(hit.point);
         }
+    }
+
+    public HexCell FromCoordinates(HexCoordinates coordinates)
+    {
+        var a = cells.Where(c => c.coordinates == coordinates);
+        if (a.Any()) return a.FirstOrDefault();
+        else return null;
     }
 
     //private void OnMouseUpAsButton()
@@ -101,16 +110,15 @@ public class HexGrid : MonoBehaviour
             if (selectedObject.tag == "Unit" )
             {
                 var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
-                if (coordinates != spaceship.Coordinates)
+                if (coordinates != spaceship.Coordinates && !spaceship.flying && FromCoordinates(coordinates).isEmpty())
                 {
                     spaceship.Destination = coordinates;
                     //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
-                    spaceship.MoveTo(spaceship.Destination);
+                    StartCoroutine(spaceship.MoveTo(spaceship.Destination));
                 }
             }
-
-        EventManager.selectionManager.GridCellSelection =
-            cells.Where(c => c.coordinates == coordinates).First(); //it's only one match, First() used to change type
+        if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
+            FromCoordinates(coordinates); //it's only one match, First() used to change type
         //Debug.Log("touched at " + coordinates);
     }
 

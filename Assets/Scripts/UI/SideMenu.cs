@@ -5,7 +5,7 @@ using Assets.Scripts;
 using UnityEngine.UI;
 public class SideMenu : MonoBehaviour
 {
-    bool shown = false;
+    bool shown, animating = false;
     RectTransform rectTransform;
     Text label;
     Button button;
@@ -26,12 +26,12 @@ public class SideMenu : MonoBehaviour
     void Update()
     {
 
-        if (EventManager.selectionManager.SelectedObject == null && shown == true )
+        if (EventManager.selectionManager.SelectedObject == null && shown && !animating )
         {
             StartCoroutine(Hide());
         }
 
-        if (EventManager.selectionManager.SelectedObject != null && shown == false)
+        if (EventManager.selectionManager.SelectedObject != null && !shown && !animating)
         {
             StartCoroutine(Show());
         }
@@ -41,8 +41,8 @@ public class SideMenu : MonoBehaviour
 
     IEnumerator Show() {
 
-        
-        shown = true;
+
+        animating = true;
         float startTime = Time.time;
         Vector3 direction = new Vector3(-170, 0, 0);
         var endPos = transform.position + direction;
@@ -54,12 +54,14 @@ public class SideMenu : MonoBehaviour
             yield return null;
         }
         transform.position = endPos;
+        shown = true;
+        animating = false;
     }
 
     IEnumerator Hide()
     {
 
-        shown = false;
+        animating = true;
         float startTime = Time.time;
         Vector3 direction = new Vector3(170, 0, 0);
         var endPos = transform.position + direction;
@@ -72,5 +74,7 @@ public class SideMenu : MonoBehaviour
         }
         transform.position = endPos;
         label.text = " ";
+        shown = false;
+        animating = false;
     }
 }
