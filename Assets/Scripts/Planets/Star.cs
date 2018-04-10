@@ -30,6 +30,5 @@ public class Star : MonoBehaviour
     private void OnMouseDown()
     {
         if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
-        Thread.Sleep(100);  //ugly way of not running command couple times during one click
     }
 }
