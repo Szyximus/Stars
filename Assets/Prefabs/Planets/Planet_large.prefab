@@ -71,6 +71,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4786315379243342}
   - component: {fileID: 135592747572671118}
+  - component: {fileID: 114455501161034144}
   m_Layer: 0
   m_Name: Planet_large
   m_TagString: Planet
@@ -215,6 +216,17 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1527848969721108}
   m_Mesh: {fileID: 4300000, guid: c4fa67ec439b3a84f9274abc54ac4a5c, type: 3}
+--- !u!114 &114455501161034144
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1604717034093982}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70f614f502096a944bd133686cd1e1c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114597122602952712
 MonoBehaviour:
   m_ObjectHideFlags: 1

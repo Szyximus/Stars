@@ -71,10 +71,10 @@ GameObject:
   m_Component:
   - component: {fileID: 4226040188650630}
   - component: {fileID: 135086591956710076}
-  - component: {fileID: 114112324595029986}
+  - component: {fileID: 114137693381609226}
   m_Layer: 1
   m_Name: Star
-  m_TagString: Untagged
+  m_TagString: Star
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -312,7 +312,7 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114112324595029986
+--- !u!114 &114137693381609226
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}

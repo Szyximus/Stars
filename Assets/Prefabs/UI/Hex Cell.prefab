@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23323863683288308}
   m_Layer: 9
   m_Name: Plane
-  m_TagString: Untagged
+  m_TagString: HexCell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,9 +38,10 @@ GameObject:
   - component: {fileID: 4855446057837024}
   - component: {fileID: 33709321397162062}
   - component: {fileID: 114881314277964070}
+  - component: {fileID: 135623762157707376}
   m_Layer: 9
   m_Name: Hex Cell
-  m_TagString: Untagged
+  m_TagString: HexCell
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -134,3 +135,20 @@ MonoBehaviour:
   coordinates:
     x: 0
     z: 0
+  Object: {fileID: 0}
+  VisibleMaterial: {fileID: 2100000, guid: 4687fe2ec860d4b419081ca619d01861, type: 2}
+  HiddenMaterial: {fileID: 2100000, guid: 1fee3e9b776e78f4e86807b82d1b26e0, type: 2}
+  UndiscoveredMaterial: {fileID: 2100000, guid: ab06c34779c57764aa10d7b7f4e34799,
+    type: 2}
+--- !u!135 &135623762157707376
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1384526560265358}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Center: {x: 0, y: -0.2, z: 0}

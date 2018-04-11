@@ -28,7 +28,7 @@ public struct HexCoordinates
         this.z = z;
     }
 
-    public static HexCoordinates FromPosition( Vector3 position )
+    public static HexCoordinates FromPosition(Vector3 position)
     {
         float x = position.x / (HexMetrics.innerRadius * 2f);
         float y = -x;
@@ -57,12 +57,12 @@ public struct HexCoordinates
     }
 
 
-    public static bool operator == ( HexCoordinates left, HexCoordinates right )
+    public static bool operator ==(HexCoordinates left, HexCoordinates right)
     {
         return left.x == right.x && left.z == right.z;
     }
 
-    public static bool operator !=  (HexCoordinates left, HexCoordinates right )
+    public static bool operator !=(HexCoordinates left, HexCoordinates right)
     {
         return !(left == right);
     }

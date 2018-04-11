@@ -215,8 +215,8 @@ MonoBehaviour:
   panBorderThickness: 50
   orbitSpeed: 10
   smoothTime: 4
-  boundMax: {x: 256, y: 10, z: 200}
-  boundMin: {x: -0, y: 0, z: 0}
+  boundMax: {x: 800, y: 0, z: 800}
+  boundMin: {x: 60, y: 0, z: 30}
   zoomSpeed: 10
 --- !u!124 &124995597452737964
 Behaviour:

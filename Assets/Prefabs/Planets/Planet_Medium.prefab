@@ -53,6 +53,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4904643740293466}
   - component: {fileID: 135955126677111454}
+  - component: {fileID: 114725756780413840}
   m_Layer: 0
   m_Name: Planet_Medium
   m_TagString: Planet
@@ -227,6 +228,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 4
+--- !u!114 &114725756780413840
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1583324355466894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70f614f502096a944bd133686cd1e1c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &135955126677111454
 SphereCollider:
   m_ObjectHideFlags: 1

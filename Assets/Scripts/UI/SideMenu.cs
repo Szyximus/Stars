@@ -26,7 +26,7 @@ public class SideMenu : MonoBehaviour
     void Update()
     {
 
-        if (EventManager.selectionManager.SelectedObject == null && shown && !animating )
+        if (EventManager.selectionManager.SelectedObject == null && shown && !animating)
         {
             StartCoroutine(Hide());
         }
@@ -35,11 +35,12 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if(shown) label.text = EventManager.selectionManager.SelectedObject.name;
+        if (shown) label.text = EventManager.selectionManager.SelectedObject.name;
         if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit") button.gameObject.SetActive(true); else button.gameObject.SetActive(false);
     }
 
-    IEnumerator Show() {
+    IEnumerator Show()
+    {
 
 
         animating = true;

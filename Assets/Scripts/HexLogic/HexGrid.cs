@@ -25,10 +25,9 @@ public class HexGrid : MonoBehaviour
     private MyUIHoverListener uiListener;
 
 
-
     void Awake()
     {
-    
+
         gridCanvas = GetComponentInChildren<Canvas>();
         hexMesh = GetComponentInChildren<HexMesh>();
         cells = new HexCell[height * width];
@@ -74,7 +73,7 @@ public class HexGrid : MonoBehaviour
             if (!uiListener.isUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
         }
-        
+
     }
 
     void HandleInput()
@@ -94,23 +93,16 @@ public class HexGrid : MonoBehaviour
         else return null;
     }
 
-    //private void OnMouseUpAsButton()
-    //{
-    //    if (!uiListener.isUIOverride) HandleInput();
-    //        Thread.Sleep(100);  //ugly way of not running command couple times during one click
-
-    //}
-
     void TouchCell(Vector3 position)
     {
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
         GameObject selectedObject;
         if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
-            if (selectedObject.tag == "Unit" )
+            if (selectedObject.tag == "Unit")
             {
                 var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
-                if (coordinates != spaceship.Coordinates && !spaceship.flying && FromCoordinates(coordinates).isEmpty())
+                if (coordinates != spaceship.Coordinates && !spaceship.flying && FromCoordinates(coordinates).IsEmpty())
                 {
                     spaceship.Destination = coordinates;
                     //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
