@@ -55,7 +55,8 @@ public class MiniMapController : MonoBehaviour
         line.material = LineMat;
         line.gameObject.layer = 8; // Set trapezoid layer to 8=minimap, so it doesn't show to the main camera
 
-
+        //TODO: this finds home planet by name, needs better method
+        controller.transform.position = (new Vector3((GameObject.Find("HomePlanet").transform.position.x), 0, (GameObject.Find("HomePlanet").transform.position.z)));
 
     }
 
@@ -81,16 +82,16 @@ public class MiniMapController : MonoBehaviour
 
         //Find world co-ordinates
         RaycastHit hit;
-        Physics.Raycast(ray1, out hit, 500, (1 << 9));
+        Physics.Raycast(ray1, out hit, 5000, (1 << 9));
         Vector3 v1 = hit.point;
 
-        Physics.Raycast(ray2, out hit, 500, (1 << 9));
+        Physics.Raycast(ray2, out hit, 5000, (1 << 9));
         Vector3 v2 = hit.point;
 
-        Physics.Raycast(ray3, out hit, 500, (1 << 9));
+        Physics.Raycast(ray3, out hit, 5000, (1 << 9));
         Vector3 v3 = hit.point;
 
-        Physics.Raycast(ray4, out hit, 500, (1 << 9));
+        Physics.Raycast(ray4, out hit, 5000, (1 << 9));
         Vector3 v4 = hit.point;
 
         a.Set(50, 0, 60);
@@ -162,8 +163,20 @@ public class MiniMapController : MonoBehaviour
             Vector3 corner3 = new Vector3(maxx, MiniMapCamera.transform.position.y, minz);
             Vector3 corner4 = new Vector3(maxx, MiniMapCamera.transform.position.y, maxz);
 
+            controller.boundMax = new Vector3(maxx, 0, maxz);
+            controller.boundMin = new Vector3(minx, 0, minz);
+
             MiniMapCamera.transform.position = Vector3.Lerp(Vector3.Lerp(corner1, corner2, 0.5f), Vector3.Lerp(corner3, corner4, 0.5f), 0.5f);
-            MiniMapCamera.GetComponent<Camera>().orthographicSize = Vector3.Distance(Vector3.Lerp(corner1, corner2, 0.5f), Vector3.Lerp(corner3, corner4, 0.5f)) / 2f + 2f;
+            MiniMapCamera.GetComponent<Camera>().orthographicSize = Mathf.Max(
+                Vector3.Distance(
+                    Vector3.Lerp(
+                        corner1, corner3, 0.5f),
+                    Vector3.Lerp(corner2, corner4, 0.5f)),
+                Vector3.Distance(
+                    Vector3.Lerp(
+                        corner1, corner2, 0.5f),
+                    Vector3.Lerp(corner3, corner4, 0.5f)))
+                    / 2f + 2f;
 
         }
 

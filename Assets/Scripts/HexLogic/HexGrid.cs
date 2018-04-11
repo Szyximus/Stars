@@ -9,8 +9,13 @@ using UnityEngine.UI;
 public class HexGrid : MonoBehaviour
 {
 
-    public int width = 6;
-    public int height = 6;
+    public int chunkCountX = 10, chunkCountZ = 10;
+
+    int cellCountX, cellCountZ;
+
+    public HexGridChunk chunkPrefab;
+
+    HexGridChunk[] chunks;
 
     public HexCell cellPrefab;
 
@@ -18,23 +23,26 @@ public class HexGrid : MonoBehaviour
 
     public Text cellLabelPrefab;
 
-    Canvas gridCanvas;
-
-    HexMesh hexMesh;
-
     private MyUIHoverListener uiListener;
 
 
     void Awake()
     {
 
-        gridCanvas = GetComponentInChildren<Canvas>();
-        hexMesh = GetComponentInChildren<HexMesh>();
-        cells = new HexCell[height * width];
+        cellCountX = chunkCountX * HexMetrics.chunkSizeX;
+        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
 
-        for (int z = 0, i = 0; z < height; z++)
+        CreateChunks();
+        CreateCells();
+    }
+
+    void CreateCells()
+    {
+        cells = new HexCell[cellCountZ * cellCountX];
+
+        for (int z = 0, i = 0; z < cellCountZ; z++)
         {
-            for (int x = 0; x < width; x++)
+            for (int x = 0; x < cellCountX; x++)
             {
                 CreateCell(x, z, i++);
             }
@@ -49,20 +57,49 @@ public class HexGrid : MonoBehaviour
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
         HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
-        cell.transform.SetParent(transform, false);
         cell.transform.localPosition = position;
         cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
-        Text label = Instantiate<Text>(cellLabelPrefab);
-        label.rectTransform.SetParent(gridCanvas.transform, false);
-        label.rectTransform.anchoredPosition =
-            new Vector2(position.x, position.z);
-        label.text = cell.coordinates.ToStringOnSeparateLines();
+        //Instantiate labels for debug:
+
+        //Text label = Instantiate<Text>(cellLabelPrefab);
+        ////label.rectTransform.SetParent(gridCanvas.transform, false);
+        //label.rectTransform.anchoredPosition =
+        //    new Vector2(position.x, position.z);
+        //label.text = cell.coordinates.ToStringOnSeparateLines();
+
+        AddCellToChunk(x, z, cell);
+
+    }
+
+    void AddCellToChunk(int x, int z, HexCell cell)
+    {
+        int chunkX = x / HexMetrics.chunkSizeX;
+        int chunkZ = z / HexMetrics.chunkSizeZ;
+        HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
+
+        int localX = x - chunkX * HexMetrics.chunkSizeX;
+        int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
+        chunk.AddCell(localX + localZ * HexMetrics.chunkSizeX, cell);
+    }
+
+    void CreateChunks()
+    {
+        chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+
+        for (int z = 0, i = 0; z < chunkCountZ; z++)
+        {
+            for (int x = 0; x < chunkCountX; x++)
+            {
+                HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
+                chunk.transform.SetParent(transform);
+            }
+        }
     }
 
     void Start()
     {
-        hexMesh.Triangulate(cells);
+
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 

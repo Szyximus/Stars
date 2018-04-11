@@ -105,6 +105,12 @@ public class HexCell : MonoBehaviour
         State = EHexState.Undiscovered;
         if (!IsEmpty() && Object.tag != "Star") Object.SetActive(false);
         gameObject.GetComponentInChildren<MeshRenderer>().material = UndiscoveredMaterial;
+
+        if (!IsEmpty() && Object.tag == "Star")
+        {
+            gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
+        }
+
     }
 
 
