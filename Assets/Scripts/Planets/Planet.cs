@@ -2,12 +2,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Threading;
 
 public class Planet : MonoBehaviour
-{ 
+{
     private MyUIHoverListener uiListener;
-
+    private bool colonized = false;
+    public int temperature;
+    public int radiation;
+    public int resources;
+    public int oxygen;
+    public string ownerName;
     HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
@@ -19,6 +25,8 @@ public class Planet : MonoBehaviour
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
+
+        temperature = Random.Range(1, 100);
     }
 
     void UpdateCoordinates()
@@ -32,11 +40,21 @@ public class Planet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnMouseUpAsButton()
     {
         if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+    }
+
+    /**
+     * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
+     */
+    public void ColonizePlanet(string owner)
+    {
+        colonized = true;
+        ownerName = owner;
+        //   Destroy(gameObject);
     }
 }

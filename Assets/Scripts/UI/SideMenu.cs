@@ -8,7 +8,9 @@ public class SideMenu : MonoBehaviour
     bool shown, animating = false;
     RectTransform rectTransform;
     Text label;
+    public Text ownerName;
     Button button;
+    Button colonizeButton;
 
     // Use this for initialization
     void Start()
@@ -16,8 +18,10 @@ public class SideMenu : MonoBehaviour
         //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
 
         transform.position += new Vector3(170, 0, 0);
-        label = GetComponentInChildren<Text>();
-        button = GetComponentInChildren<Button>();
+        label = GameObject.Find("Name").GetComponent<Text>();
+        button = GameObject.Find("MoveButton").GetComponent<Button>();
+        colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
+        ownerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
     }
@@ -36,7 +40,35 @@ public class SideMenu : MonoBehaviour
             StartCoroutine(Show());
         }
         if (shown) label.text = EventManager.selectionManager.SelectedObject.name;
-        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit") button.gameObject.SetActive(true); else button.gameObject.SetActive(false);
+
+        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Planet")
+        {
+            ownerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).ownerName;
+            ownerName.gameObject.SetActive(true);
+            Debug.Log((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).ownerName);
+        }
+        else
+        {
+            ownerName.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit")
+        {
+            colonizeButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            colonizeButton.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit")
+        {
+            button.gameObject.SetActive(true);
+        }
+        else
+        {
+            button.gameObject.SetActive(false);
+        }
     }
 
     IEnumerator Show()
