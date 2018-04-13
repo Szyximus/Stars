@@ -15,6 +15,8 @@ public class Colonizer : Spaceship
     public Planet planetToColonize;
     public Text Test;
 
+    private Player owner;
+
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
@@ -32,12 +34,12 @@ public class Colonizer : Spaceship
         planetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         //if (CheckCanBeColonizate(planetToColonize))
         //  {
-        planetToColonize.ColonizePlanet("player");
+        planetToColonize.ColonizePlanet(owner);
         // }
 
     }
     private bool CheckCanBeColonizate(Planet planet)
     {
-        return planet.oxygen + planet.radiation + planet.resources + planet.temperature < 100 ? true : false;
+        return planet.characteristics.oxygen + planet.characteristics.radiation  + planet.characteristics.temperature < 100 ? true : false;
     }
 }
