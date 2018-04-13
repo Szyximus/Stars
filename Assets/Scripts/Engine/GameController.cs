@@ -17,11 +17,11 @@ public class GameController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        initPlayers();
-        initMap();
+        InitPlayers();
+        InitMap();
     }
 
-    void initPlayers()
+    void InitPlayers()
     {
         // Create players from prefab.
         // todo: should be done after main menu
@@ -40,7 +40,7 @@ public class GameController : MonoBehaviour
         currentPlayerIndex = 0;
     }
 
-    void initMap()
+    void InitMap()
     {
         // Create map from file / random.
         // todo: in main menu we should decide if map is from file or random and set parameters
@@ -49,11 +49,11 @@ public class GameController : MonoBehaviour
         // todo: w jsonach nie moze byc utf8
 
         JObject o = JObject.Parse(Resources.Load("map1").ToString());
-        initPlanets((JArray)o["planets"]);
-        initStars((JArray)o["stars"]);
+        InitPlanets((JArray)o["planets"]);
+        InitStars((JArray)o["stars"]);
     }
 
-    void initPlanets(JArray jPlanetsCollection)
+    void InitPlanets(JArray jPlanetsCollection)
     {
         int playersWithHomePLanet = 0;
         foreach (JObject jPlanetSerialized in jPlanetsCollection)
@@ -80,7 +80,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void initStars(JArray jStarsCollection)
+    void InitStars(JArray jStarsCollection)
     {
         foreach (JObject jStarSerialized in jStarsCollection)
         {
