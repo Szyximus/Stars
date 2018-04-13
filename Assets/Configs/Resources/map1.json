@@ -2,6 +2,7 @@
    "planets":[  
       {  
          "name":"Korriban",
+		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
                "temperature":54,
@@ -24,6 +25,7 @@
       },
       {  
          "name":"planet X",
+		 "mayBeHome": false,
          "planetMain":{  
             "characteristics":{  
                "temperature":69,
@@ -46,6 +48,7 @@
       },
       {  
          "name":"Mlkeko",
+		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
                "temperature":47,
@@ -68,6 +71,7 @@
       },
       {  
          "name":"Kij",
+		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
                "temperature":35,
@@ -88,5 +92,37 @@
             300
          ]
       }
+   ],
+   "stars":[
+   	   {  
+         "name":"Sun Star",
+         "radius":40,
+         "texture":true,
+         "position":[  
+            282.73,
+            0,
+            295.7
+         ]
+      },
+		{  
+			"name":"Super Star",
+			"radius":40,
+			"texture":true,
+			"position":[  
+			444.5,
+			0,
+			397.45
+			]
+		},
+	  {  
+			"name":"Red Star",
+			"radius":40,
+			"texture":true,
+			"position":[  
+			382.32,
+			0,
+			303.37
+			]
+		},
    ]
 }

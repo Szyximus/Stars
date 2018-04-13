@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Newtonsoft.Json;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using System;
 
 public class GameController : MonoBehaviour
 {
@@ -9,7 +13,6 @@ public class GameController : MonoBehaviour
 
     public Planet planetPrefab;
     public Star startPrefab;
-    private Star[] stars;
 
     // Use this for initialization
     void Start()
@@ -41,17 +44,51 @@ public class GameController : MonoBehaviour
     {
         // Create map from file / random.
         // todo: in main menu we should decide if map is from file or random and set parameters
+        // todo: move json deserialization to Planet's fromJson method
         // serializacje w unity ssie, trzeba bedzie doprawcowac (potrzebne bedzie do save/load i pewnie networkingu...)
         // todo: w jsonach nie moze byc utf8
 
-        PlanetsCollection planetsCollection = JsonUtility.FromJson<PlanetsCollection>(Resources.Load("map1").ToString()) as PlanetsCollection;
-        foreach (PlanetsCollection.PlanetSerialized planetSerialized in planetsCollection.planets)
+        JObject o = JObject.Parse(Resources.Load("map1").ToString());
+        initPlanets((JArray)o["planets"]);
+        initStars((JArray)o["stars"]);
+    }
+
+    void initPlanets(JArray jPlanetsCollection)
+    {
+        int playersWithHomePLanet = 0;
+        foreach (JObject jPlanetSerialized in jPlanetsCollection)
         {
-            Planet planet = Instantiate(original: planetPrefab, position: new Vector3(planetSerialized.position[0], planetSerialized.position[1], planetSerialized.position[2]),
-                rotation: Quaternion.identity);
-            JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(planetSerialized.planetMain), planet);
-            planet.name = planetSerialized.name;
-            planet.GetComponent<SphereCollider>().radius = planetSerialized.radius;
+            Debug.Log(jPlanetSerialized);
+            Planet planet = Instantiate(original: planetPrefab, position: new Vector3(
+                (float)jPlanetSerialized["position"][0], (float)jPlanetSerialized["position"][1], (float)jPlanetSerialized["position"][2]), rotation: Quaternion.identity
+            );
+            JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet);
+            planet.name = jPlanetSerialized["name"].ToString();
+            planet.GetComponent<SphereCollider>().radius = (float)jPlanetSerialized["radius"];
+            
+            if((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Length)
+            {
+                planet.Owner = players[playersWithHomePLanet];
+                planet.Colonized = true;
+                playersWithHomePLanet++;
+            }
+        }
+
+        if (playersWithHomePLanet < players.Length)
+        {
+            throw new Exception("Not enough planets for players");
+        }
+    }
+
+    void initStars(JArray jStarsCollection)
+    {
+        foreach (JObject jStarSerialized in jStarsCollection)
+        {
+            Planet planet = Instantiate(original: planetPrefab, position: new Vector3(
+                (float)jStarSerialized["position"][0], (float)jStarSerialized["position"][1], (float)jStarSerialized["position"][2]), rotation: Quaternion.identity
+            );
+            planet.name = jStarSerialized["name"].ToString();
+            planet.GetComponent<SphereCollider>().radius = (float)jStarSerialized["radius"];
         }
     }
 

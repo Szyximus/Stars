@@ -28,8 +28,8 @@ public class Planet : MonoBehaviour
 
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
-    public bool colonized { get; set; }
-    public Player owner { get; set; }
+    public bool Colonized { get; set; }
+    public Player Owner { get; set; }
 
     private MyUIHoverListener uiListener;
     HexGrid grid;
@@ -38,8 +38,8 @@ public class Planet : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        colonized = false;
-        owner = null;
+        Colonized = false;
+        Owner = null;
 
         grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
 
@@ -120,8 +120,8 @@ public class Planet : MonoBehaviour
      */
     public void ColonizePlanet(Player newOwner)
     {
-        colonized = true;
-        owner = newOwner;
+        Colonized = true;
+        Owner = newOwner;
         //   Destroy(gameObject);
     }
 }
