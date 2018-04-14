@@ -17,7 +17,7 @@ public class Spaceship : Ownable
 
     public bool Flying;
     public int MaxActionPoints = 5;
-    public int ActionPoints;
+    private int actionPoints;
 
     int i = 0; //for the movement test, remove later
 
@@ -35,7 +35,7 @@ public class Spaceship : Ownable
     override
     public void SetupNewTurn()
     {
-        ActionPoints = MaxActionPoints;
+        actionPoints = MaxActionPoints;
     }
 
     void UpdateCoordinates()
@@ -118,9 +118,9 @@ public class Spaceship : Ownable
     {
         Flying = true;
         //while (Coordinates != dest)
-        while (ActionPoints > 0)
+        while (actionPoints > 0)
         {
-            ActionPoints--;
+            actionPoints--;
             if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                 Move(EDirection.TopRight);
             else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
@@ -137,7 +137,7 @@ public class Spaceship : Ownable
 
         }
         Flying = false;
-        Debug.Log("Flying done, ActionPoints: " + ActionPoints);
+        Debug.Log("Flying done, ActionPoints: " + actionPoints);
     }
 
     IEnumerator DelayedUpdate()

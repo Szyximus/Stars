@@ -57,11 +57,9 @@ public class GameController : MonoBehaviour
     {
         foreach(GameObject player in players)
         {
-            Debug.Log("Init spaceship for player " + player.name);
             Planet homePlanet = player.GetComponent<Player>().GetPlanets().Cast<Planet>().First();
             Spaceship spaceship = SpaceshipFromPref(ScoutPrefab, homePlanet);
             spaceship.Owned(player.GetComponent<Player>());
-            Debug.Log("spaceship: " + spaceship.Coordinates);
         }
     }
 
