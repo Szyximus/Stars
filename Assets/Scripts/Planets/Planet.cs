@@ -106,6 +106,12 @@ public class Planet : Ownable
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
+    override
+    public void SetupNewTurn()
+    {
+        
+    }
+
     /**
      * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
      */

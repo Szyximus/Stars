@@ -16,7 +16,8 @@ public class Spaceship : Ownable
     private MyUIHoverListener uiListener;
 
     public bool Flying;
-    public int Speed = 5;
+    public int MaxActionPoints = 5;
+    public int ActionPoints;
 
     int i = 0; //for the movement test, remove later
 
@@ -29,6 +30,12 @@ public class Spaceship : Ownable
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+    }
+
+    override
+    public void SetupNewTurn()
+    {
+        ActionPoints = MaxActionPoints;
     }
 
     void UpdateCoordinates()
@@ -111,8 +118,9 @@ public class Spaceship : Ownable
     {
         Flying = true;
         //while (Coordinates != dest)
-        for (int i = Speed; i > 0; i--)
+        while (ActionPoints > 0)
         {
+            ActionPoints--;
             if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                 Move(EDirection.TopRight);
             else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
@@ -129,6 +137,7 @@ public class Spaceship : Ownable
 
         }
         Flying = false;
+        Debug.Log("Flying done, ActionPoints: " + ActionPoints);
     }
 
     IEnumerator DelayedUpdate()

@@ -165,24 +165,19 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    HexCell[] CellsInRange(Vector3 position, float radarRange)
+    {
+        return Physics.OverlapSphere(position, radarRange /*Radius*/)
+            .Except(new[] { GetComponent<Collider>() })
+            .Where(o => o.tag == "HexCell")
+            .Select(c => c.gameObject.GetComponent<HexCell>())
+            .ToArray();
+    }
+
     public void UpdateInRadarRange(Ownable owned, Vector3 oldPosition)
     {
-        Debug.Log("Hide at " + oldPosition);
-        Debug.Log("Show at " + owned.transform.position);
-
-        var cellsInOldRadar =
-            Physics.OverlapSphere(oldPosition, owned.RadarRange /*Radius*/)
-            .Except(new[] { GetComponent<Collider>() })
-            .Where(o => o.tag == "HexCell")
-            .Select(c => c.gameObject.GetComponent<HexCell>())
-            .ToArray();
-
-        var cellsInRadar =
-            Physics.OverlapSphere(owned.transform.position, owned.RadarRange /*Radius*/)
-            .Except(new[] { GetComponent<Collider>() })
-            .Where(o => o.tag == "HexCell")
-            .Select(c => c.gameObject.GetComponent<HexCell>())
-            .ToArray();
+        var cellsInOldRadar = CellsInRange(oldPosition, owned.RadarRange);
+        var cellsInRadar = CellsInRange(owned.transform.position, owned.RadarRange);
 
         foreach (HexCell cell in cellsInOldRadar.Except(cellsInRadar))
         {
@@ -197,17 +192,11 @@ public class HexGrid : MonoBehaviour
 
     public void ShowAllInRadarRange(Ownable owned)
     {
-        Debug.Log("Show at " + owned.transform.position);
-        var gameObjectsInRadar =
-            Physics.OverlapSphere(owned.transform.position, owned.RadarRange /*Radius*/)
-            .Except(new[] { GetComponent<Collider>() })
-            .Select(c => c.gameObject)
-            .ToArray();
 
-        var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
-        foreach (GameObject c in cells)
+        var cells = CellsInRange(owned.transform.position, owned.RadarRange);
+        foreach (HexCell cell in cells)
         {
-            (c.GetComponent<HexCell>() as HexCell).Discover(owned);
+            cell.Discover(owned);
         }
     }
 

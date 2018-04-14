@@ -163,6 +163,11 @@ public class GameController : MonoBehaviour
             Debug.Log("New year: " + year);
         }
 
+        foreach (Ownable owned in GetCurrentPlayer().GetOwned())
+        {
+            owned.SetupNewTurn();
+        }
+
         EventManager.selectionManager.SelectedObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());

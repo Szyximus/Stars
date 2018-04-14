@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Ownable : MonoBehaviour
+public abstract class Ownable : MonoBehaviour
 {
     protected Player owner;
     public float RadarRange;
@@ -32,4 +32,6 @@ public class Ownable : MonoBehaviour
             return "";
         return this.owner.name;
     }
+
+    abstract public void SetupNewTurn();
 }
