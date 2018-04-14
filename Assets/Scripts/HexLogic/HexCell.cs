@@ -8,18 +8,19 @@ public class HexCell : MonoBehaviour
 {
     public HexCoordinates Coordinates;
     public GameObject ObjectInCell;
+    private ArrayList isVisibleByList;
     public EHexState State { get; set; }
     public Material VisibleMaterial, HiddenMaterial, UndiscoveredMaterial;
 
     private void Awake()
     {
         ObjectInCell = null;
+        isVisibleByList = new ArrayList();
     }
 
     private void Start()
     {
         UnDiscover();
-        UpdateState();
     }
 
     public void AssignObject(GameObject objectInCell)
@@ -38,65 +39,32 @@ public class HexCell : MonoBehaviour
         return false;
     }
 
-    public void UpdateState()
+    public void Discover(Ownable owned)
     {
-        if (!IsEmpty() && ObjectInCell.tag == "Unit")
-        {
-            var spaceships = FindObjectsOfType<Spaceship>();
-
-            foreach (Spaceship spaceship in spaceships) // Hide hexes in large proximity, I could iterate over the whole array but this might be faster
-            {
-                var gameObjectsInProximity =
-                Physics.OverlapSphere(spaceship.transform.position, 100 /*Radius*/)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-                var cells = gameObjectsInProximity.Where(o => o.tag == "HexCell");
-                foreach (GameObject c in cells)
-                {
-                    if ((c.GetComponent<HexCell>() as HexCell).State == EHexState.Visible)
-                    {
-                        (c.GetComponent<HexCell>() as HexCell).Hide();
-                    }
-
-                }
-            }
-            foreach (Spaceship spaceship in spaceships) // UnhideHide hexes in radar proximity
-            {
-
-                var gameObjectsInRadar =
-                Physics.OverlapSphere(spaceship.transform.position, spaceship.GetComponent<Spaceship>().RadarRange /*Radius*/)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-                var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
-                foreach (GameObject c in cells)
-                {
-                    (c.GetComponent<HexCell>() as HexCell).Discover();
-                }
-            }
-
-        }
-
-    }
-
-    public void Discover()
-    {
+        isVisibleByList.Add(owned);
         State = EHexState.Visible;
         if (!IsEmpty()) ObjectInCell.SetActive(true);
         gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
 
     }
 
+    public void Hide(Ownable owned)
+    {
+        isVisibleByList.Remove(owned);
+        if (isVisibleByList.ToArray().Length == 0)
+        {
+            State = EHexState.Hidden;
+            if (!IsEmpty()) ObjectInCell.SetActive(false);
+            gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
+        }
+    }
+
     public void Hide()
     {
+        isVisibleByList.Clear();
         State = EHexState.Hidden;
         if (!IsEmpty()) ObjectInCell.SetActive(false);
         gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
-
-
     }
 
     public void UnDiscover()

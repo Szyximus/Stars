@@ -165,21 +165,57 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    public void UpdateInRadarRange(Ownable owned, Vector3 oldPosition)
+    {
+        Debug.Log("Hide at " + oldPosition);
+        Debug.Log("Show at " + owned.transform.position);
+
+        var cellsInOldRadar =
+            Physics.OverlapSphere(oldPosition, owned.RadarRange /*Radius*/)
+            .Except(new[] { GetComponent<Collider>() })
+            .Where(o => o.tag == "HexCell")
+            .Select(c => c.gameObject.GetComponent<HexCell>())
+            .ToArray();
+
+        var cellsInRadar =
+            Physics.OverlapSphere(owned.transform.position, owned.RadarRange /*Radius*/)
+            .Except(new[] { GetComponent<Collider>() })
+            .Where(o => o.tag == "HexCell")
+            .Select(c => c.gameObject.GetComponent<HexCell>())
+            .ToArray();
+
+        foreach (HexCell cell in cellsInOldRadar.Except(cellsInRadar))
+        {
+            cell.Hide(owned);
+        }
+
+        foreach (HexCell cell in cellsInRadar.Except(cellsInOldRadar))
+        {
+            cell.Discover(owned);
+        }
+    }
+
+    public void ShowAllInRadarRange(Ownable owned)
+    {
+        Debug.Log("Show at " + owned.transform.position);
+        var gameObjectsInRadar =
+            Physics.OverlapSphere(owned.transform.position, owned.RadarRange /*Radius*/)
+            .Except(new[] { GetComponent<Collider>() })
+            .Select(c => c.gameObject)
+            .ToArray();
+
+        var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
+        foreach (GameObject c in cells)
+        {
+            (c.GetComponent<HexCell>() as HexCell).Discover(owned);
+        }
+    }
+
     void ShowAllInRadarRange(Player player)
     { 
         foreach (Ownable owned in player.GetOwned())
         {
-            var gameObjectsInRadar =
-                Physics.OverlapSphere(owned.transform.position, owned.RadarRange /*Radius*/)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-            var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
-            foreach (GameObject c in cells)
-            {
-                (c.GetComponent<HexCell>() as HexCell).Discover();
-            }
+            ShowAllInRadarRange(owned);
         }
     }
 }

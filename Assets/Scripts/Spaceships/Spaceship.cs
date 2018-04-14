@@ -10,6 +10,7 @@ public class Spaceship : Ownable
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
+    private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
@@ -35,9 +36,7 @@ public class Spaceship : Ownable
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
-        // raczej nie. Jakis cell moze byc "widziany" nie tylko przez statek który sie przemieszcza
-        //if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).UpdateState();
-
+        grid.UpdateInRadarRange(this, oldPosition);
     }
 
     // Update is called once per frame
@@ -84,6 +83,8 @@ public class Spaceship : Ownable
 
     IEnumerator SmoothFly(Vector3 direction)
     {
+        oldPosition = this.transform.position;
+
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).ClearObject();
         float startime = Time.time;
 
@@ -128,7 +129,6 @@ public class Spaceship : Ownable
 
         }
         Flying = false;
-        GameObject.Find("HexGrid").GetComponent<HexGrid>().SetupNewTurn(owner);
     }
 
     IEnumerator DelayedUpdate()

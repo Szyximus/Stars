@@ -31,7 +31,6 @@ public class GameController : MonoBehaviour
         InitMap();
         InitSpaceships();
         year = 0;
-        currentPlayerIndex--;
         NextTurn();
     }
 
