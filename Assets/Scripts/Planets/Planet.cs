@@ -29,7 +29,7 @@ public class Planet : MonoBehaviour
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
     public bool Colonized { get; set; }
-    public Player Owner { get; set; }
+    public GameObject Owner;
 
     private MyUIHoverListener uiListener;
     HexGrid grid;
@@ -39,7 +39,6 @@ public class Planet : MonoBehaviour
     void Start()
     {
         Colonized = false;
-        Owner = null;
 
         grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
 
@@ -49,7 +48,12 @@ public class Planet : MonoBehaviour
 
         characteristics.temperature = Random.Range(1, 100);
 
-        Debug.Log("Start planet" + name + ": " + this.ToJson());
+        Debug.Log("Start planet" + name + ": " +Owner.name);
+    }
+
+    public void SetOwner(GameObject newOwner)
+    {
+        this.Owner = newOwner;
     }
 
     string ToJson()
@@ -80,7 +84,7 @@ public class Planet : MonoBehaviour
         return sb.ToString();
     }
 
-    void fromJson(string json)
+    void FromJson(string json)
     {
         //JsonTextReader reader = new JsonTextReader(new StringReader(json));
         //while (reader.Read())
@@ -121,7 +125,7 @@ public class Planet : MonoBehaviour
     public void ColonizePlanet(Player newOwner)
     {
         Colonized = true;
-        Owner = newOwner;
+        Owner = newOwner.gameObject;
         //   Destroy(gameObject);
     }
 }

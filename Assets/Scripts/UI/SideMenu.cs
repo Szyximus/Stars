@@ -39,13 +39,12 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if (shown) label.text = EventManager.selectionManager.SelectedObject.name;
+        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name;
 
         if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Planet")
         {
             ownerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).Owner.name;
             ownerName.gameObject.SetActive(true);
-            Debug.Log((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).Owner.name);
         }
         else
         {

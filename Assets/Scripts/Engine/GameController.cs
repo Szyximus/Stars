@@ -7,12 +7,12 @@ using System;
 
 public class GameController : MonoBehaviour
 {
-    private Player[] players;
-    public Player playerPrefab;
+    private GameObject[] players;
+    public GameObject playerPrefab;
     private int currentPlayerIndex;
 
-    public Planet planetPrefab;
-    public Star startPrefab;
+    public GameObject planetPrefab;
+    public GameObject startPrefab;
 
     // Use this for initialization
     void Start()
@@ -25,15 +25,15 @@ public class GameController : MonoBehaviour
     {
         // Create players from prefab.
         // todo: should be done after main menu
-        players = new Player[3];
+        players = new GameObject[3];
         players[0] = Instantiate(playerPrefab);
-        players[0].human = true;
+        players[0].GetComponent<Player>().human = true;
         players[0].name = "Main Player";
 
-        for (int i = 0; i < 2; i++)
+        for (int i = 1; i < 3; i++)
         {
             players[i] = Instantiate(playerPrefab);
-            players[i].human = false;
+            players[i].GetComponent<Player>().human = false;
             players[i].name = "AI-" + i;
         }
 
@@ -44,7 +44,7 @@ public class GameController : MonoBehaviour
     {
         // Create map from file / random.
         // todo: in main menu we should decide if map is from file or random and set parameters
-        // todo: move json deserialization to Planet's fromJson method
+        // todo: move json deserialization to Planet's FromJson method
         // serializacje w unity ssie, trzeba bedzie doprawcowac (potrzebne bedzie do save/load i pewnie networkingu...)
         // todo: w jsonach nie moze byc utf8
 
@@ -58,21 +58,20 @@ public class GameController : MonoBehaviour
         int playersWithHomePLanet = 0;
         foreach (JObject jPlanetSerialized in jPlanetsCollection)
         {
-            Debug.Log(jPlanetSerialized);
-            Planet planet = Instantiate(original: planetPrefab, position: new Vector3(
+            GameObject planet = Instantiate(original: planetPrefab, position: new Vector3(
                 (float)jPlanetSerialized["position"][0], (float)jPlanetSerialized["position"][1], (float)jPlanetSerialized["position"][2]), rotation: Quaternion.identity
             );
-            JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet);
+            JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet.GetComponent<Planet>());
             planet.name = jPlanetSerialized["name"].ToString();
             planet.GetComponent<SphereCollider>().radius = (float)jPlanetSerialized["radius"];
             
             if((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Length)
             {
-                planet.Owner = players[playersWithHomePLanet];
-                planet.Colonized = true;
+                planet.GetComponent<Planet>().Owner = players[playersWithHomePLanet];
+                planet.GetComponent<Planet>().Colonized = true;
                 playersWithHomePLanet++;
             }
-        }
+        } 
 
         if (playersWithHomePLanet < players.Length)
         {
@@ -84,22 +83,22 @@ public class GameController : MonoBehaviour
     {
         foreach (JObject jStarSerialized in jStarsCollection)
         {
-            Planet planet = Instantiate(original: planetPrefab, position: new Vector3(
+            GameObject star = Instantiate(original: startPrefab, position: new Vector3(
                 (float)jStarSerialized["position"][0], (float)jStarSerialized["position"][1], (float)jStarSerialized["position"][2]), rotation: Quaternion.identity
             );
-            planet.name = jStarSerialized["name"].ToString();
-            planet.GetComponent<SphereCollider>().radius = (float)jStarSerialized["radius"];
+            star.name = jStarSerialized["name"].ToString();
+            star.GetComponent<SphereCollider>().radius = (float)jStarSerialized["radius"];
         }
     }
 
-    void nextTurn()
+    void NextTurn()
     {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
     }
 
     Player getCurrentPlayer()
     {
-        return players[currentPlayerIndex];
+        return players[currentPlayerIndex].GetComponent<Player>();
     }
 
     // Update is called once per frame

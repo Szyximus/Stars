@@ -15,7 +15,7 @@
                "population":0
             }
          },
-         "radius":20,
+         "radius":1,
          "texture":true,
          "position":[  
             307.4,
@@ -96,7 +96,7 @@
    "stars":[
    	   {  
          "name":"Sun Star",
-         "radius":40,
+         "radius":2,
          "texture":true,
          "position":[  
             282.73,
@@ -106,7 +106,7 @@
       },
 		{  
 			"name":"Super Star",
-			"radius":40,
+			"radius":2,
 			"texture":true,
 			"position":[  
 			444.5,
@@ -116,7 +116,7 @@
 		},
 	  {  
 			"name":"Red Star",
-			"radius":40,
+			"radius":2,
 			"texture":true,
 			"position":[  
 			382.32,
