@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1488736, g: 0.17942075, b: 0.23550045, a: 1}
+  m_IndirectSpecularColor: {r: 0.15078667, g: 0.18174234, b: 0.23856907, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -764,15 +764,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cbb073042c6b80d4d92e0b9a68c22407, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 1513614362586978, guid: dd6dd88c1a2c22f42b91efba75d7763b,
+  PlayerPrefab: {fileID: 1513614362586978, guid: dd6dd88c1a2c22f42b91efba75d7763b,
     type: 2}
-  planetPrefab: {fileID: 1622567210660544, guid: 369741fba7c5a4144bc007b966b8fcd6,
+  PlanetPrefab: {fileID: 1622567210660544, guid: 369741fba7c5a4144bc007b966b8fcd6,
     type: 2}
-  startPrefab: {fileID: 1672720354179880, guid: a2570eb8f60004743aea0e2be5f3e31f,
+  StartPrefab: {fileID: 1672720354179880, guid: a2570eb8f60004743aea0e2be5f3e31f,
     type: 2}
-  scoutPrefab: {fileID: 1660584651190402, guid: 3810b9e8805d13949a898579129c3153,
+  ScoutPrefab: {fileID: 1660584651190402, guid: 3810b9e8805d13949a898579129c3153,
     type: 2}
-  colonizerPrefab: {fileID: 1394429750356622, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
+  ColonizerPrefab: {fileID: 1394429750356622, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
     type: 2}
 --- !u!4 &951704593
 Transform:
@@ -1037,7 +1037,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6283c26a87d2b0469edf403ccbe80a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speedMultiplier: 0.1
+  SpeedMultiplier: 0
 --- !u!4 &2065717257
 Transform:
   m_ObjectHideFlags: 0
@@ -1078,15 +1078,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 933baf33e6dea01419a9c19142f66a54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chunkCountX: 10
-  chunkCountZ: 10
-  chunkPrefab: {fileID: 114342940043084780, guid: fa37d4386a080c04b9510e3d7d0bfbe0,
+  ChunkCountX: 10
+  ChunkCountZ: 10
+  ChunkPrefab: {fileID: 114342940043084780, guid: fa37d4386a080c04b9510e3d7d0bfbe0,
     type: 2}
-  cellPrefab: {fileID: 114881314277964070, guid: 4385aff7b8d3a9644b00911d5c355afd,
+  CellPrefab: {fileID: 114881314277964070, guid: 4385aff7b8d3a9644b00911d5c355afd,
     type: 2}
   cells: []
-  cellLabelPrefab: {fileID: 114839872751227074, guid: 0dacc68d26a036b47909f3c104a1f232,
-    type: 2}
+  cellLabelPrefab: {fileID: 0}
 --- !u!4 &2131032838
 Transform:
   m_ObjectHideFlags: 0

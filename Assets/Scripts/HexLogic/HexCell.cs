@@ -6,14 +6,14 @@ using System.Linq;
 
 public class HexCell : MonoBehaviour
 {
-    public HexCoordinates coordinates;
-    public GameObject Object;
+    public HexCoordinates Coordinates;
+    public GameObject ObjectInCell;
     public EHexState State { get; set; }
     public Material VisibleMaterial, HiddenMaterial, UndiscoveredMaterial;
 
     private void Awake()
     {
-        Object = null;
+        ObjectInCell = null;
     }
 
     private void Start()
@@ -22,25 +22,25 @@ public class HexCell : MonoBehaviour
         UpdateState();
     }
 
-    public void AssignObject(GameObject _Object)
+    public void AssignObject(GameObject objectInCell)
     {
-        Object = _Object;
+        this.ObjectInCell = objectInCell;
     }
 
     public void ClearObject()
     {
-        Object = null;
+        ObjectInCell = null;
     }
 
     public bool IsEmpty()
     {
-        if (Object == null) return true;
+        if (ObjectInCell == null) return true;
         return false;
     }
 
     public void UpdateState()
     {
-        if (!IsEmpty() && Object.tag == "Unit")
+        if (!IsEmpty() && ObjectInCell.tag == "Unit")
         {
             var spaceships = FindObjectsOfType<Spaceship>();
 
@@ -66,11 +66,10 @@ public class HexCell : MonoBehaviour
             {
 
                 var gameObjectsInRadar =
-                Physics.OverlapSphere(spaceship.transform.position, spaceship.GetComponent<Spaceship>().radarRange /*Radius*/)
+                Physics.OverlapSphere(spaceship.transform.position, spaceship.GetComponent<Spaceship>().RadarRange /*Radius*/)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
-
 
                 var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
                 foreach (GameObject c in cells)
@@ -86,7 +85,7 @@ public class HexCell : MonoBehaviour
     public void Discover()
     {
         State = EHexState.Visible;
-        if (!IsEmpty()) Object.SetActive(true);
+        if (!IsEmpty()) ObjectInCell.SetActive(true);
         gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
 
     }
@@ -94,7 +93,7 @@ public class HexCell : MonoBehaviour
     public void Hide()
     {
         State = EHexState.Hidden;
-        if (!IsEmpty()) Object.SetActive(false);
+        if (!IsEmpty()) ObjectInCell.SetActive(false);
         gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
 
 
@@ -103,10 +102,10 @@ public class HexCell : MonoBehaviour
     public void UnDiscover()
     {
         State = EHexState.Undiscovered;
-        if (!IsEmpty() && Object.tag != "Star") Object.SetActive(false);
+        if (!IsEmpty() && ObjectInCell.tag != "Star") ObjectInCell.SetActive(false);
         gameObject.GetComponentInChildren<MeshRenderer>().material = UndiscoveredMaterial;
 
-        if (!IsEmpty() && Object.tag == "Star")
+        if (!IsEmpty() && ObjectInCell.tag == "Star")
         {
             gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
         }

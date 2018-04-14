@@ -4,7 +4,7 @@ using System.Collections;
 public class Ownable : MonoBehaviour
 {
     protected Player owner;
-    public float radarRange;
+    public float RadarRange;
 
     // Use this for initialization
     void Start()

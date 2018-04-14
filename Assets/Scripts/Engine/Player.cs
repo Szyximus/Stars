@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    public bool human;
+    public bool Human;
     private ArrayList spaceships;
     private ArrayList planets;
 

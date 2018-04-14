@@ -11,7 +11,7 @@ using System.Linq;
  */
 public class Colonizer : Spaceship
 {
-    public Planet planetToColonize;
+    public Planet PlanetToColonize;
     public Text Test;
 
     /**
@@ -28,15 +28,15 @@ public class Colonizer : Spaceship
 
         var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
 
-        planetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
+        PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         //if (CheckCanBeColonizate(planetToColonize))
         //  {
-        planetToColonize.Colonize();
+        PlanetToColonize.Colonize();
         // }
 
     }
     private bool CheckCanBeColonizate(Planet planet)
     {
-        return planet.characteristics.oxygen + planet.characteristics.radiation  + planet.characteristics.temperature < 100 ? true : false;
+        return planet.Characteristics.Oxygen + planet.Characteristics.Radiation  + planet.Characteristics.Temperature < 100 ? true : false;
     }
 }

@@ -7,14 +7,14 @@ public class MiniMapController : MonoBehaviour
 {
 
     //Singleton
-    public static MiniMapController main;
+    public static MiniMapController Main;
     CameraController controller; //Main camera Controller
 
     HexGrid grid;
 
 
-    Camera MainCamera;
-    Camera MiniMapCamera;
+    Camera mainCamera;
+    Camera miniMapCamera;
     public Material LineMat; //Material of the camera trapezoid
 
     Vector2 lastClicked;
@@ -28,22 +28,19 @@ public class MiniMapController : MonoBehaviour
 
     RectTransform rectTransform; //Transform data of the minimap, it scales with the resolution
 
-
-
-
     void Awake()
     {
-        main = this;
+        Main = this;
 
     }
 
     void Start()
     {
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-        MainCamera = (GameObject.Find("CameraRig").GetComponentInChildren<Camera>());
-        MiniMapCamera = (GameObject.Find("MiniMapCamera").GetComponent<Camera>());
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
+        mainCamera = (GameObject.Find("CameraRig").GetComponentInChildren<Camera>());
+        miniMapCamera = (GameObject.Find("MiniMapCamera").GetComponent<Camera>());
 
-        controller = (GameObject.Find("CameraRig").GetComponent("CameraController") as CameraController);
+        controller = (GameObject.Find("CameraRig").GetComponent<CameraController>());
 
         // Add a Line Renderer to the GameObject
         line = this.gameObject.AddComponent<LineRenderer>();
@@ -71,16 +68,16 @@ public class MiniMapController : MonoBehaviour
             controller.LookAt(lastClicked);
         }
         //Bottom left corner
-        Ray ray1 = MainCamera.ScreenPointToRay(new Vector3(1, 1, 0));
+        Ray ray1 = mainCamera.ScreenPointToRay(new Vector3(1, 1, 0));
 
         //Bottom right
-        Ray ray2 = MainCamera.ScreenPointToRay(new Vector3(Screen.width - 1, 1, 0));
+        Ray ray2 = mainCamera.ScreenPointToRay(new Vector3(Screen.width - 1, 1, 0));
 
         //Top right
-        Ray ray3 = MainCamera.ScreenPointToRay(new Vector3(Screen.width - 1, Screen.height - 62, 0));
+        Ray ray3 = mainCamera.ScreenPointToRay(new Vector3(Screen.width - 1, Screen.height - 62, 0));
 
         //Top Left
-        Ray ray4 = MainCamera.ScreenPointToRay(new Vector3(1, Screen.height - 62, 0));
+        Ray ray4 = mainCamera.ScreenPointToRay(new Vector3(1, Screen.height - 62, 0));
 
         //Find world co-ordinates
         RaycastHit hit;
@@ -120,8 +117,8 @@ public class MiniMapController : MonoBehaviour
         Target.y = eventData.position.y - 8;
 
         // calculate camera position from minimap click:
-        Target.x = MiniMapCamera.transform.position.x + (Target.x - rectTransform.rect.width / 2f) / (rectTransform.rect.height / 2) * MiniMapCamera.orthographicSize;
-        Target.y = MiniMapCamera.transform.position.z + (Target.y - rectTransform.rect.height / 2f) / (rectTransform.rect.height / 2) * MiniMapCamera.orthographicSize;
+        Target.x = miniMapCamera.transform.position.x + (Target.x - rectTransform.rect.width / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize;
+        Target.y = miniMapCamera.transform.position.z + (Target.y - rectTransform.rect.height / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize;
         lastClicked = Target;
     }
 
@@ -160,16 +157,16 @@ public class MiniMapController : MonoBehaviour
                 }
             }
 
-            Vector3 corner1 = new Vector3(minx, MiniMapCamera.transform.position.y, minz);
-            Vector3 corner2 = new Vector3(minx, MiniMapCamera.transform.position.y, maxz);
-            Vector3 corner3 = new Vector3(maxx, MiniMapCamera.transform.position.y, minz);
-            Vector3 corner4 = new Vector3(maxx, MiniMapCamera.transform.position.y, maxz);
+            Vector3 corner1 = new Vector3(minx, miniMapCamera.transform.position.y, minz);
+            Vector3 corner2 = new Vector3(minx, miniMapCamera.transform.position.y, maxz);
+            Vector3 corner3 = new Vector3(maxx, miniMapCamera.transform.position.y, minz);
+            Vector3 corner4 = new Vector3(maxx, miniMapCamera.transform.position.y, maxz);
 
             controller.boundMax = new Vector3(maxx, 0, maxz);
             controller.boundMin = new Vector3(minx, 0, minz);
 
-            MiniMapCamera.transform.position = Vector3.Lerp(Vector3.Lerp(corner1, corner2, 0.5f), Vector3.Lerp(corner3, corner4, 0.5f), 0.5f);
-            MiniMapCamera.GetComponent<Camera>().orthographicSize = Mathf.Max(
+            miniMapCamera.transform.position = Vector3.Lerp(Vector3.Lerp(corner1, corner2, 0.5f), Vector3.Lerp(corner3, corner4, 0.5f), 0.5f);
+            miniMapCamera.GetComponent<Camera>().orthographicSize = Mathf.Max(
                 Vector3.Distance(
                     Vector3.Lerp(
                         corner1, corner3, 0.5f),

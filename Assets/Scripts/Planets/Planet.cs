@@ -13,31 +13,31 @@ public class Planet : Ownable
     [System.Serializable]
     public struct PlanetCharacteristics
     {
-        public int temperature;
-        public int radiation;
-        public int oxygen;
+        public int Temperature;
+        public int Radiation;
+        public int Oxygen;
     }
 
     [System.Serializable]
     public struct PlanetResources
     {
-        public int minerals;
-        public int energy;
-        public int population;
+        public int Minerals;
+        public int Energy;
+        public int Population;
     }
 
-    public PlanetCharacteristics characteristics;
-    public PlanetResources resources;
+    public PlanetCharacteristics Characteristics;
+    public PlanetResources Resources;
 
     private MyUIHoverListener uiListener;
-    HexGrid grid;
+    private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
     void Start()
     {
-        radarRange = 40f;
+        RadarRange = 40f;
 
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
@@ -103,7 +103,7 @@ public class Planet : Ownable
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     /**
