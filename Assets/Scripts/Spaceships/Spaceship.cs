@@ -128,7 +128,7 @@ public class Spaceship : Ownable
 
         }
         flying = false;
-        GameObject.Find("HexGrd").GetComponent<HexGrid>().SetupNewTurn(owner);
+        GameObject.Find("HexGrid").GetComponent<HexGrid>().SetupNewTurn(owner);
     }
 
     IEnumerator DelayedUpdate()
