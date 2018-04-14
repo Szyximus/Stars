@@ -35,25 +35,14 @@ public class Planet : MonoBehaviour
     HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    // Use this for initialization
     void Start()
     {
         Colonized = false;
 
         grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
-
-        characteristics.temperature = Random.Range(1, 100);
-
-        Debug.Log("Start planet" + name + ": " +Owner.name);
-    }
-
-    public void SetOwner(GameObject newOwner)
-    {
-        this.Owner = newOwner;
     }
 
     string ToJson()

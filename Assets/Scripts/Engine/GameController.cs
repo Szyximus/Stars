@@ -14,11 +14,14 @@ public class GameController : MonoBehaviour
     public GameObject planetPrefab;
     public GameObject startPrefab;
 
+    private int Year;
+
     // Use this for initialization
     void Start()
     {
         InitPlayers();
         InitMap();
+        Year = 0;
     }
 
     void InitPlayers()
@@ -56,6 +59,7 @@ public class GameController : MonoBehaviour
     void InitPlanets(JArray jPlanetsCollection)
     {
         int playersWithHomePLanet = 0;
+
         foreach (JObject jPlanetSerialized in jPlanetsCollection)
         {
             GameObject planet = Instantiate(original: planetPrefab, position: new Vector3(
@@ -94,9 +98,13 @@ public class GameController : MonoBehaviour
     void NextTurn()
     {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
+        if(currentPlayerIndex == 0)
+        {
+            Year++;
+        }
     }
 
-    Player getCurrentPlayer()
+    Player GetCurrentPlayer()
     {
         return players[currentPlayerIndex].GetComponent<Player>();
     }
