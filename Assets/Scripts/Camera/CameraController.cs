@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 public class CameraController : MonoBehaviour {
 
@@ -23,7 +22,6 @@ public class CameraController : MonoBehaviour {
     {
         main = this;
     }
-
 
     // Update is called once per frame
     void Update() {

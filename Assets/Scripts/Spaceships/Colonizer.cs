@@ -11,11 +11,8 @@ using System.Linq;
  */
 public class Colonizer : Spaceship
 {
-    GameObject Object;
     public Planet planetToColonize;
     public Text Test;
-
-    private Player owner;
 
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
@@ -34,7 +31,7 @@ public class Colonizer : Spaceship
         planetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         //if (CheckCanBeColonizate(planetToColonize))
         //  {
-        planetToColonize.ColonizePlanet(owner);
+        planetToColonize.Colonize();
         // }
 
     }

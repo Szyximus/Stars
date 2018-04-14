@@ -43,7 +43,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Planet")
         {
-            ownerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).Owner.name;
+            ownerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwnerName();
             ownerName.gameObject.SetActive(true);
         }
         else

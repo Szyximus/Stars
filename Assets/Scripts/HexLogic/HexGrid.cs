@@ -151,4 +151,35 @@ public class HexGrid : MonoBehaviour
         //Debug.Log("touched at " + coordinates);
     }
 
+    public void SetupNewTurn(Player currentPlayer)
+    {
+        HideAll();
+        ShowAllInRadarRange(currentPlayer);
+    }
+
+    void HideAll()
+    {
+        foreach (HexCell cell in cells)
+        {
+            cell.Hide();
+        }
+    }
+
+    void ShowAllInRadarRange(Player player)
+    { 
+        foreach (Ownable owned in player.GetOwned())
+        {
+            var gameObjectsInRadar =
+                Physics.OverlapSphere(owned.transform.position, owned.radarRange /*Radius*/)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+            var cells = gameObjectsInRadar.Where(o => o.tag == "HexCell");
+            foreach (GameObject c in cells)
+            {
+                (c.GetComponent<HexCell>() as HexCell).Discover();
+            }
+        }
+    }
 }

@@ -66,7 +66,7 @@ public class HexCell : MonoBehaviour
             {
 
                 var gameObjectsInRadar =
-                Physics.OverlapSphere(spaceship.transform.position, spaceship.GetComponent<Spaceship>().RadarRange /*Radius*/)
+                Physics.OverlapSphere(spaceship.transform.position, spaceship.GetComponent<Spaceship>().radarRange /*Radius*/)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
@@ -94,7 +94,7 @@ public class HexCell : MonoBehaviour
     public void Hide()
     {
         State = EHexState.Hidden;
-        if (!IsEmpty() && Object.tag == "EnemyUnit") Object.SetActive(false); //Enemy unit does not exist yet
+        if (!IsEmpty()) Object.SetActive(false);
         gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
 
 

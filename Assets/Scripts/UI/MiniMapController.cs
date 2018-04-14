@@ -55,9 +55,11 @@ public class MiniMapController : MonoBehaviour
         line.material = LineMat;
         line.gameObject.layer = 8; // Set trapezoid layer to 8=minimap, so it doesn't show to the main camera
 
-        //TODO: this finds home planet by name, needs better method
-        controller.transform.position = (new Vector3((GameObject.Find("HomePlanet").transform.position.x), 0, (GameObject.Find("HomePlanet").transform.position.z)));
+    }
 
+    public void SetupNewTurn(Player currentPlayer)
+    {
+        controller.transform.position = currentPlayer.GetPlanets().Cast<Planet>().First().transform.position;
     }
 
     void Update()

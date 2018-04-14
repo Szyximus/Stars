@@ -5,33 +5,28 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
-public class Spaceship : MonoBehaviour
+public class Spaceship : Ownable
 {
 
     HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
-
-    public int Speed = 5;
-
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
+
     public bool flying;
-    public float RadarRange = 20f;
+    public int Speed = 5;
 
     int i = 0; //for the movement test, remove later
 
     // Use this for initialization
     void Start()
     {
-
         flying = false;
-
+        radarRange = 20f;
 
         grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
         StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
-
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 
@@ -40,8 +35,8 @@ public class Spaceship : MonoBehaviour
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
-
-        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).UpdateState();
+        // raczej nie. Jakis cell moze byc "widziany" nie tylko przez statek który sie przemieszcza
+        //if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).UpdateState();
 
     }
 
@@ -54,7 +49,7 @@ public class Spaceship : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.isUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
 
     }
 
@@ -133,7 +128,7 @@ public class Spaceship : MonoBehaviour
 
         }
         flying = false;
-
+        GameObject.Find("HexGrd").GetComponent<HexGrid>().SetupNewTurn(owner);
     }
 
     IEnumerator DelayedUpdate()

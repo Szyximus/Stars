@@ -8,7 +8,7 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 
-public class Planet : MonoBehaviour
+public class Planet : Ownable
 {
     [System.Serializable]
     public struct PlanetCharacteristics
@@ -28,8 +28,6 @@ public class Planet : MonoBehaviour
 
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
-    public bool Colonized { get; set; }
-    public GameObject Owner;
 
     private MyUIHoverListener uiListener;
     HexGrid grid;
@@ -37,7 +35,7 @@ public class Planet : MonoBehaviour
 
     void Start()
     {
-        Colonized = false;
+        radarRange = 40f;
 
         grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
@@ -105,16 +103,21 @@ public class Planet : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.isUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     /**
      * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
      */
-    public void ColonizePlanet(Player newOwner)
+    public void Colonize()
     {
-        Colonized = true;
-        Owner = newOwner.gameObject;
+        this.Colonize(GameController.GetCurrentPlayer());
+        //   Destroy(gameObject);
+    }
+
+    public void Colonize(Player newOnwer)
+    {
+        this.Owned(newOnwer);
         //   Destroy(gameObject);
     }
 }

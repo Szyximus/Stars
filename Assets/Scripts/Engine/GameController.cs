@@ -7,14 +7,14 @@ using System;
 
 public class GameController : MonoBehaviour
 {
-    private GameObject[] players;
+    private static GameObject[] players;
     public GameObject playerPrefab;
-    private int currentPlayerIndex;
+    private static int currentPlayerIndex;
 
     public GameObject planetPrefab;
     public GameObject startPrefab;
 
-    private int Year;
+    private static int Year;
 
     // Use this for initialization
     void Start()
@@ -22,6 +22,8 @@ public class GameController : MonoBehaviour
         InitPlayers();
         InitMap();
         Year = 0;
+        currentPlayerIndex--;
+        NextTurn();
     }
 
     void InitPlayers()
@@ -67,12 +69,14 @@ public class GameController : MonoBehaviour
             );
             JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet.GetComponent<Planet>());
             planet.name = jPlanetSerialized["name"].ToString();
-            planet.GetComponent<SphereCollider>().radius = (float)jPlanetSerialized["radius"];
-            
-            if((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Length)
+
+            float radius = (float)jPlanetSerialized["radius"];
+            planet.GetComponent<SphereCollider>().radius = radius;
+            planet.transform.localScale = new Vector3(radius, radius, radius);
+
+            if ((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Length)
             {
-                planet.GetComponent<Planet>().Owner = players[playersWithHomePLanet];
-                planet.GetComponent<Planet>().Colonized = true;
+                planet.GetComponent<Planet>().Colonize(players[playersWithHomePLanet].GetComponent<Player>());
                 playersWithHomePLanet++;
             }
         } 
@@ -91,20 +95,29 @@ public class GameController : MonoBehaviour
                 (float)jStarSerialized["position"][0], (float)jStarSerialized["position"][1], (float)jStarSerialized["position"][2]), rotation: Quaternion.identity
             );
             star.name = jStarSerialized["name"].ToString();
-            star.GetComponent<SphereCollider>().radius = (float)jStarSerialized["radius"];
+
+            float radius = (float)jStarSerialized["radius"];
+            star.GetComponent<SphereCollider>().radius = radius;
+            star.transform.localScale = new Vector3(radius, radius, radius);
         }
     }
 
-    void NextTurn()
+    public void NextTurn()
     {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
         if(currentPlayerIndex == 0)
         {
             Year++;
+            Debug.Log("New year: " + Year);
         }
+
+        GameObject.Find("HexGrid").GetComponent<HexGrid>().SetupNewTurn(GetCurrentPlayer());
+        GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
+
+        Debug.Log("Next turn, player: " + GetCurrentPlayer().name);
     }
 
-    Player GetCurrentPlayer()
+    public static Player GetCurrentPlayer()
     {
         return players[currentPlayerIndex].GetComponent<Player>();
     }
