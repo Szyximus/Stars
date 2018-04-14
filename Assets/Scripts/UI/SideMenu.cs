@@ -8,7 +8,7 @@ public class SideMenu : MonoBehaviour
     bool shown, animating = false;
     RectTransform rectTransform;
     Text label;
-    public Text ownerName;
+    public Text OwnerName;
     Button button;
     Button colonizeButton;
 
@@ -21,7 +21,7 @@ public class SideMenu : MonoBehaviour
         label = GameObject.Find("Name").GetComponent<Text>();
         button = GameObject.Find("MoveButton").GetComponent<Button>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
-        ownerName = GameObject.Find("OwnerName").GetComponent<Text>();
+        OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
     }
@@ -39,17 +39,16 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if (shown) label.text = EventManager.selectionManager.SelectedObject.name;
+        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name;
 
-        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Planet")
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null)
         {
-            ownerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).Owner.name;
-            ownerName.gameObject.SetActive(true);
-            Debug.Log((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).Owner.name);
+            OwnerName.text = "Owner: " + (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable).GetOwnerName();
+            OwnerName.gameObject.SetActive(true);
         }
         else
         {
-            ownerName.gameObject.SetActive(false);
+            OwnerName.gameObject.SetActive(false);
         }
 
         if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit")

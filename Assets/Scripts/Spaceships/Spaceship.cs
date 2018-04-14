@@ -5,34 +5,37 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
-public class Spaceship : MonoBehaviour
+public class Spaceship : Ownable
 {
 
-    HexGrid grid;
+    private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
-
-    public int Speed = 5;
-
+    private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
-    public bool flying;
-    public float RadarRange = 20f;
+
+    public bool Flying;
+    public int MaxActionPoints = 5;
+    private int actionPoints;
 
     int i = 0; //for the movement test, remove later
 
     // Use this for initialization
     void Start()
     {
+        Flying = false;
+        RadarRange = 20f;
 
-        flying = false;
-
-
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
-
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+    }
+
+    override
+    public void SetupNewTurn()
+    {
+        actionPoints = MaxActionPoints;
     }
 
     void UpdateCoordinates()
@@ -40,9 +43,7 @@ public class Spaceship : MonoBehaviour
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
-
-        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).UpdateState();
-
+        grid.UpdateInRadarRange(this, oldPosition);
     }
 
     // Update is called once per frame
@@ -54,7 +55,7 @@ public class Spaceship : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
 
     }
 
@@ -89,6 +90,8 @@ public class Spaceship : MonoBehaviour
 
     IEnumerator SmoothFly(Vector3 direction)
     {
+        oldPosition = this.transform.position;
+
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).ClearObject();
         float startime = Time.time;
 
@@ -113,10 +116,11 @@ public class Spaceship : MonoBehaviour
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        flying = true;
+        Flying = true;
         //while (Coordinates != dest)
-        for (int i = Speed; i > 0; i--)
+        while (actionPoints > 0)
         {
+            actionPoints--;
             if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                 Move(EDirection.TopRight);
             else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
@@ -132,8 +136,8 @@ public class Spaceship : MonoBehaviour
             yield return new WaitForSeconds(1.05f);
 
         }
-        flying = false;
-
+        Flying = false;
+        Debug.Log("Flying done, ActionPoints: " + actionPoints);
     }
 
     IEnumerator DelayedUpdate()
@@ -146,7 +150,7 @@ public class Spaceship : MonoBehaviour
     {
         if (EventManager.selectionManager.SelectedObject.tag == "Unit")
         {
-            (EventManager.selectionManager.SelectedObject.GetComponent("Spaceship") as Spaceship).Move((EDirection)i);
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Move((EDirection)i);
             i++;
             if (i > 5) i = 0;
 

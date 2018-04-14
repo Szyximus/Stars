@@ -9,7 +9,7 @@ namespace Assets.Scripts
 {
     public class SelectionManager
     {
-        private GameObject _selectedObject;
+        private GameObject selectedObject;
         /// <summary>
         /// Storing reference to selected object
         /// if no object is selected will return null
@@ -18,14 +18,14 @@ namespace Assets.Scripts
         {
             get
             {
-                return _selectedObject;
+                return selectedObject;
             }
             set
             {
-                if (_selectedObject != value)   //clicking second time disables selection
-                    _selectedObject = value;
+                if (selectedObject != value)   //clicking second time disables selection
+                    selectedObject = value;
                 else
-                    _selectedObject = null;
+                    selectedObject = null;
 
                 //Debug.Log(String.Format("Selected grid cell: {0}",
                 //    _selectedObject != null ? _selectedObject.tag : "no object selected")
@@ -39,19 +39,19 @@ namespace Assets.Scripts
         /// Storing reference to selected grid cell
         /// if no cell is selected will return null
         /// </summary>
-        private HexCell _gridCellSelection;
+        private HexCell gridCellSelection;
         public HexCell GridCellSelection
         {
             get
             {
-                return _gridCellSelection;
+                return gridCellSelection;
             }
             set
             {
-                if (_gridCellSelection != value)   //clicking second time disables selection
-                    _gridCellSelection = value;
+                if (gridCellSelection != value)   //clicking second time disables selection
+                    gridCellSelection = value;
                 else
-                    _gridCellSelection = null;
+                    gridCellSelection = null;
 
                 //Debug.Log( String.Format("Selected grid cell: {0}",
                 //   _gridCellSelection != null ? _gridCellSelection.coordinates.ToString() : "no grid selected" )

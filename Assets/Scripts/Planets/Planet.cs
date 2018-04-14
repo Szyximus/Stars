@@ -8,48 +8,39 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 
-public class Planet : MonoBehaviour
+public class Planet : Ownable
 {
     [System.Serializable]
     public struct PlanetCharacteristics
     {
-        public int temperature;
-        public int radiation;
-        public int oxygen;
+        public int Temperature;
+        public int Radiation;
+        public int Oxygen;
     }
 
     [System.Serializable]
     public struct PlanetResources
     {
-        public int minerals;
-        public int energy;
-        public int population;
+        public int Minerals;
+        public int Energy;
+        public int Population;
     }
 
-    public PlanetCharacteristics characteristics;
-    public PlanetResources resources;
-    public bool Colonized { get; set; }
-    public Player Owner { get; set; }
+    public PlanetCharacteristics Characteristics;
+    public PlanetResources Resources;
 
     private MyUIHoverListener uiListener;
-    HexGrid grid;
+    private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    // Use this for initialization
     void Start()
     {
-        Colonized = false;
-        Owner = null;
+        RadarRange = 40f;
 
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
-
-        characteristics.temperature = Random.Range(1, 100);
-
-        Debug.Log("Start planet" + name + ": " + this.ToJson());
     }
 
     string ToJson()
@@ -80,7 +71,7 @@ public class Planet : MonoBehaviour
         return sb.ToString();
     }
 
-    void fromJson(string json)
+    void FromJson(string json)
     {
         //JsonTextReader reader = new JsonTextReader(new StringReader(json));
         //while (reader.Read())
@@ -112,16 +103,27 @@ public class Planet : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
+    }
+
+    override
+    public void SetupNewTurn()
+    {
+        
     }
 
     /**
      * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
      */
-    public void ColonizePlanet(Player newOwner)
+    public void Colonize()
     {
-        Colonized = true;
-        Owner = newOwner;
+        this.Colonize(GameController.GetCurrentPlayer());
+        //   Destroy(gameObject);
+    }
+
+    public void Colonize(Player newOnwer)
+    {
+        this.Owned(newOnwer);
         //   Destroy(gameObject);
     }
 }

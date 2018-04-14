@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SkyRotate : MonoBehaviour {
-    public float speedMultiplier;
+    public float SpeedMultiplier;
 
     void Awake()
     {
@@ -14,6 +14,6 @@ public class SkyRotate : MonoBehaviour {
     void Update()
     {
         //Sets the float value of "_Rotation", adjust it by Time.time and a multiplier.
-        RenderSettings.skybox.SetFloat("_Rotation", Time.time * speedMultiplier);
+        RenderSettings.skybox.SetFloat("_Rotation", Time.time * SpeedMultiplier);
     }
 }
