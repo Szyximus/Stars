@@ -45,6 +45,7 @@ public class Planet : Ownable
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
+        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);
     }
 
     string ToJson()

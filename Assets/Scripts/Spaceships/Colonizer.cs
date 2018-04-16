@@ -14,6 +14,11 @@ public class Colonizer : Spaceship
     public Planet PlanetToColonize;
     public Text Test;
 
+    private void Awake()
+    {
+        MaxActionPoints = 4;
+    }
+
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
