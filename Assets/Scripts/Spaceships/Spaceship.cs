@@ -16,17 +16,19 @@ public class Spaceship : Ownable
     private MyUIHoverListener uiListener;
 
     public bool Flying;
-    public int MaxActionPoints = 5;
+    public int MaxActionPoints = 30;
     private int actionPoints;
 
     int i = 0; //for the movement test, remove later
 
-    // Use this for initialization
-    void Start()
+    private void Awake()
     {
         Flying = false;
         RadarRange = 20f;
+    }
 
+    void Start()
+    {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
@@ -117,9 +119,9 @@ public class Spaceship : Ownable
     public IEnumerator MoveTo(HexCoordinates dest)
     {
         Flying = true;
-        //while (Coordinates != dest)
-        while (actionPoints > 0)
+        while (Coordinates != dest && actionPoints > 0)
         {
+            Debug.Log("moving " + actionPoints);
             actionPoints--;
             if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                 Move(EDirection.TopRight);

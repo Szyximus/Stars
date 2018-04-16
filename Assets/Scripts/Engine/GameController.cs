@@ -6,10 +6,11 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Linq;
 using Assets.Scripts;
+using System.Collections.Generic;
 
 public class GameController : MonoBehaviour
 {
-    private static GameObject[] players;
+    private static List<GameObject> players;
     public GameObject PlayerPrefab;
     private static int currentPlayerIndex;
 
@@ -30,25 +31,27 @@ public class GameController : MonoBehaviour
         InitPlayers();
         InitMap();
         InitSpaceships();
-        year = 0;
-        NextTurn();
+
+        StartCoroutine(StartGame());
     }
 
     void InitPlayers()
     {
         // Create players from prefab.
         // todo: should be done after main menu
-        players = new GameObject[3];
-        players[0] = Instantiate(PlayerPrefab);
+        players = new List<GameObject>();
+        players.Add(Instantiate(PlayerPrefab));
         players[0].GetComponent<Player>().Human = true;
         players[0].name = "Main Player";
 
-        for (int i = 1; i < 3; i++)
+        
+        for (int i = 1; i < 2; i++)
         {
-            players[i] = Instantiate(PlayerPrefab);
+            players.Add(Instantiate(PlayerPrefab));
             players[i].GetComponent<Player>().Human = false;
             players[i].name = "AI-" + i;
         }
+        
 
         currentPlayerIndex = 0;
     }
@@ -124,14 +127,14 @@ public class GameController : MonoBehaviour
             planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
 
-            if ((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Length)
+            if ((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Count())
             {
                 planet.GetComponent<Planet>().Colonize(players[playersWithHomePLanet].GetComponent<Player>());
                 playersWithHomePLanet++;
             }
         } 
 
-        if (playersWithHomePLanet < players.Length)
+        if (playersWithHomePLanet < players.Count())
         {
             throw new Exception("Not enough planets for players");
         }
@@ -152,9 +155,18 @@ public class GameController : MonoBehaviour
         }
     }
 
+    private IEnumerator StartGame()
+    {
+        Debug.Log("Starting game");
+        yield return new WaitForSeconds(1.0f);  // wait till rest objects are setted up
+        currentPlayerIndex = players.Count() - 1; // NextTurn will wrap index to zero at the beginning
+        year = -1;  // NextTurn will increment Year at the beginning
+        NextTurn();
+    }
+
     public void NextTurn()
     {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
+        currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
         if(currentPlayerIndex == 0)
         {
             year++;

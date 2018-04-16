@@ -153,20 +153,28 @@ public class HexGrid : MonoBehaviour
 
     public void SetupNewTurn(Player currentPlayer)
     {
-        HideAll();
+        UnDiscoverAll(currentPlayer);
         ShowAllInRadarRange(currentPlayer);
     }
 
-    void HideAll()
+    void UnDiscoverAll(Player currentPlayer)
     {
         foreach (HexCell cell in cells)
         {
-            cell.Hide();
+            if(cell.IsDiscoveredBy(currentPlayer))
+            {
+                cell.Hide();
+            } else
+            {
+                cell.UnDiscover();
+            }
         }
     }
 
     HexCell[] CellsInRange(Vector3 position, float radarRange)
     {
+        if (radarRange == 0)
+            return new HexCell[0];
         return Physics.OverlapSphere(position, radarRange /*Radius*/)
             .Except(new[] { GetComponent<Collider>() })
             .Where(o => o.tag == "HexCell")
@@ -193,8 +201,8 @@ public class HexGrid : MonoBehaviour
     public void ShowAllInRadarRange(Ownable owned)
     {
 
-        var cells = CellsInRange(owned.transform.position, owned.RadarRange);
-        foreach (HexCell cell in cells)
+        var cellsInRange = CellsInRange(owned.transform.position, owned.RadarRange);
+        foreach (HexCell cell in cellsInRange)
         {
             cell.Discover(owned);
         }

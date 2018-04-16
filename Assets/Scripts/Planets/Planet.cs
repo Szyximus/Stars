@@ -33,10 +33,13 @@ public class Planet : Ownable
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    void Start()
+    private void Awake()
     {
         RadarRange = 40f;
+    }
 
+    void Start()
+    {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
