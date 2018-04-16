@@ -153,11 +153,11 @@ public class HexGrid : MonoBehaviour
 
     public void SetupNewTurn(Player currentPlayer)
     {
-        UnDiscoverAll(currentPlayer);
+        HideOrUnDiscoverAll(currentPlayer);
         ShowAllInRadarRange(currentPlayer);
     }
 
-    void UnDiscoverAll(Player currentPlayer)
+    void HideOrUnDiscoverAll(Player currentPlayer)
     {
         foreach (HexCell cell in cells)
         {

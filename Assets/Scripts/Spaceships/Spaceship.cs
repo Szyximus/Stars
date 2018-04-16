@@ -16,21 +16,31 @@ public class Spaceship : Ownable
     private MyUIHoverListener uiListener;
 
     public bool Flying;
-    public int MaxActionPoints = 30;
+    public int MaxActionPoints;
     private int actionPoints;
 
     int i = 0; //for the movement test, remove later
+    private bool initialized = false;
 
     private void Awake()
     {
         Flying = false;
         RadarRange = 20f;
+        MaxActionPoints = 7;
     }
 
     void Start()
     {
+        if(!initialized)
+            Init();
+    }
+
+    public void Init()
+    {
+        initialized = true;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
-        StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
+        // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
+        UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
 
@@ -44,7 +54,10 @@ public class Spaceship : Ownable
     {
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
-        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
+        if (grid.FromCoordinates(Coordinates) != null)
+        {
+            grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
+        }
         grid.UpdateInRadarRange(this, oldPosition);
     }
 
@@ -58,7 +71,6 @@ public class Spaceship : Ownable
     private void OnMouseUpAsButton()
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
-
     }
 
     public void Move(EDirection direction)

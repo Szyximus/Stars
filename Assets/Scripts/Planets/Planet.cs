@@ -7,6 +7,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
+using Assets.Scripts.HexLogic;
 
 public class Planet : Ownable
 {
@@ -44,6 +45,7 @@ public class Planet : Ownable
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
+        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);
     }
 
     string ToJson()
@@ -61,8 +63,8 @@ public class Planet : Ownable
             writer.WritePropertyName("radius");
             writer.WriteValue(this.GetComponent<SphereCollider>().radius);
 
-            writer.WritePropertyName("texture");
-            writer.WriteValue(this.GetComponent<SphereCollider>().material);
+            writer.WritePropertyName("material");
+            writer.WriteValue(this.GetComponentsInChildren<MeshRenderer>()[0].material);
 
             writer.WritePropertyName("position");
             writer.WriteStartArray();
@@ -106,7 +108,7 @@ public class Planet : Ownable
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     override

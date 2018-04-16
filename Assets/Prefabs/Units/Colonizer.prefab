@@ -37,7 +37,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4278940328359690}
   - component: {fileID: 136649604184410776}
-  - component: {fileID: 114896795470307214}
   - component: {fileID: 114256358546837116}
   m_Layer: 0
   m_Name: Colonizer
@@ -197,25 +196,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c58d05c7ba0cedd40a827cd6ad179ca2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 5
-  flying: 0
   RadarRange: 20
-  planetToColonize: {fileID: 0}
+  Flying: 0
+  MaxActionPoints: 30
+  PlanetToColonize: {fileID: 0}
   Test: {fileID: 0}
---- !u!114 &114896795470307214
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1394429750356622}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afe58c33810727d4e8b7f94e7e8109e8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 5
-  flying: 0
-  RadarRange: 20
 --- !u!136 &136649604184410776
 CapsuleCollider:
   m_ObjectHideFlags: 1
