@@ -66,31 +66,45 @@ public class HexCell : MonoBehaviour
         visibleByList.Remove(owned);
         if (visibleByList.Count == 0)
         {
-            HideOrUnDiscoverExceptStar(EHexState.Hidden, HiddenMaterial);
+            State = EHexState.Hidden;
+            gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
+
+            if (!IsEmpty())
+            {
+                if(ObjectInCell.tag != "Star" && ObjectInCell.tag != "Planet")
+                    ObjectInCell.SetActive(false);
+                if(ObjectInCell.tag == "Star")
+                    gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
+            }
         }
     }
 
     public void Hide()
     {
         visibleByList.Clear();
-        HideOrUnDiscoverExceptStar(EHexState.Hidden, HiddenMaterial);
+        State = EHexState.Hidden;
+        gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
+
+        if (!IsEmpty())
+        {
+            if (ObjectInCell.tag != "Star" && ObjectInCell.tag != "Planet")
+                ObjectInCell.SetActive(false);
+            if (ObjectInCell.tag == "Star")
+                gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
+        }
     }
 
     public void UnDiscover()
     {
         visibleByList.Clear();
-        HideOrUnDiscoverExceptStar(EHexState.Undiscovered, UndiscoveredMaterial);
-    }
+        State = EHexState.Undiscovered;
 
-    private void HideOrUnDiscoverExceptStar(EHexState newState, Material newMaterial)
-    {
-        State = newState;
         if (!IsEmpty() && ObjectInCell.tag != "Star")
         {
             ObjectInCell.SetActive(false);
         }
 
-        gameObject.GetComponentInChildren<MeshRenderer>().material = newMaterial;
+        gameObject.GetComponentInChildren<MeshRenderer>().material = UndiscoveredMaterial;
         if (!IsEmpty() && ObjectInCell.tag == "Star")
         {
             gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;

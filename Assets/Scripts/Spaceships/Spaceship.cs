@@ -16,7 +16,7 @@ public class Spaceship : Ownable
     private MyUIHoverListener uiListener;
 
     public bool Flying;
-    public int MaxActionPoints = 30;
+    public int MaxActionPoints = 7;
     private int actionPoints;
 
     int i = 0; //for the movement test, remove later

@@ -7,6 +7,7 @@ using System.Threading;
 using System.Text;
 using System.IO;
 using Newtonsoft.Json;
+using Assets.Scripts.HexLogic;
 
 public class Planet : Ownable
 {
@@ -106,7 +107,7 @@ public class Planet : Ownable
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     override
