@@ -63,8 +63,8 @@ public class Planet : Ownable
             writer.WritePropertyName("radius");
             writer.WriteValue(this.GetComponent<SphereCollider>().radius);
 
-            writer.WritePropertyName("texture");
-            writer.WriteValue(this.GetComponent<SphereCollider>().material);
+            writer.WritePropertyName("material");
+            writer.WriteValue(this.GetComponentsInChildren<MeshRenderer>()[0].material);
 
             writer.WritePropertyName("position");
             writer.WriteStartArray();

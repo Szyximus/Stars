@@ -51,7 +51,7 @@ public class GameController : MonoBehaviour
         players[0].GetComponent<Player>().Human = true;
         players[0].name = "Main Player";
 
-        for (int i = 1; i < 3; i++)
+        for (int i = 1; i < 1; i++)
         {
             players.Add(Instantiate(PlayerPrefab));
             players[i].GetComponent<Player>().Human = false;
@@ -64,7 +64,6 @@ public class GameController : MonoBehaviour
     void InitSpaceships()
     {
         Spaceship spaceship;
-        Debug.Log("Init spaceships");
         foreach (GameObject player in players)
         {
             Planet homePlanet = player.GetComponent<Player>().GetPlanets().Cast<Planet>().First();
@@ -152,6 +151,14 @@ public class GameController : MonoBehaviour
             planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
 
+            string materialString = (string)jPlanetSerialized["material"];
+            if (materialString != null)
+            {
+                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                if (materialString != null)
+                    planet.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+            }
+
             if ((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Count())
             {
                 planet.GetComponent<Planet>().Colonize(players[playersWithHomePLanet].GetComponent<Player>());
@@ -177,6 +184,13 @@ public class GameController : MonoBehaviour
             float radius = (float)jStarSerialized["radius"];
             star.GetComponent<SphereCollider>().radius = radius;
             star.transform.localScale = new Vector3(radius, radius, radius);
+
+            string materialString = (string)jStarSerialized["material"];
+            if (materialString != null) {
+                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                if(materialString != null)
+                    star.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+            }
         }
     }
 

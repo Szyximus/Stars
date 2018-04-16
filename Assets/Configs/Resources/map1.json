@@ -16,7 +16,6 @@
             }
          },
          "radius":1,
-         "texture":true,
          "position":[  
             307.4,
             0,
@@ -39,7 +38,6 @@
             }
          },
          "radius":2,
-         "texture":true,
          "position":[  
             394,
             0,
@@ -62,7 +60,6 @@
             }
          },
          "radius":3.2,
-         "texture":true,
          "position":[  
             268.5,
             0,
@@ -85,7 +82,7 @@
             }
          },
          "radius":1,
-         "texture":true,
+         "material": "Planet3Material",
          "position":[  
             311.8,
             0,
@@ -97,7 +94,6 @@
    	   {  
          "name":"Sun Star",
          "radius":2,
-         "texture":true,
          "position":[  
             282.73,
             0,
@@ -107,7 +103,6 @@
 		{  
 			"name":"Super Star",
 			"radius":2,
-			"texture":true,
 			"position":[  
 			444.5,
 			0,
@@ -117,12 +112,12 @@
 	  {  
 			"name":"Red Star",
 			"radius":2,
-			"texture":true,
 			"position":[  
 			382.32,
 			0,
 			303.37
-			]
+			],
+			"material": "RedStarMaterial"
 		},
    ]
 }

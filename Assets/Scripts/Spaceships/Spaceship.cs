@@ -42,7 +42,6 @@ public class Spaceship : Ownable
         // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
-        Debug.Log("nit" + name);
     }
 
     override
@@ -57,7 +56,6 @@ public class Spaceship : Ownable
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
         if (grid.FromCoordinates(Coordinates) != null)
         {
-            Debug.Log("update coord: " + name);
             grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
         }
         grid.UpdateInRadarRange(this, oldPosition);
@@ -72,7 +70,6 @@ public class Spaceship : Ownable
 
     private void OnMouseUpAsButton()
     {
-        Debug.Log("click " + name);
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
