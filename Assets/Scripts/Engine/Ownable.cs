@@ -33,5 +33,10 @@ public abstract class Ownable : MonoBehaviour
         return this.owner.name;
     }
 
+    public Player GetOwner()
+    {
+        return this.owner;
+    }
+
     abstract public void SetupNewTurn();
 }

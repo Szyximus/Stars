@@ -8,14 +8,16 @@ public class HexCell : MonoBehaviour
 {
     public HexCoordinates Coordinates;
     public GameObject ObjectInCell;
-    private ArrayList isVisibleByList;
+    private ArrayList visibleByList;
+    private HashSet<Player> discoveredBy;
     public EHexState State { get; set; }
     public Material VisibleMaterial, HiddenMaterial, UndiscoveredMaterial;
 
     private void Awake()
     {
         ObjectInCell = null;
-        isVisibleByList = new ArrayList();
+        visibleByList = new ArrayList();
+        discoveredBy = new HashSet<Player>();
     }
 
     private void Start()
@@ -39,9 +41,20 @@ public class HexCell : MonoBehaviour
         return false;
     }
 
+    public bool IsDiscoveredBy(Player player)
+    {
+        if (discoveredBy.Contains(player))
+        {
+            return true;
+        }
+        return false;
+    }
+
     public void Discover(Ownable owned)
     {
-        isVisibleByList.Add(owned);
+        visibleByList.Add(owned);
+        discoveredBy.Add(owned.GetOwner());
+
         State = EHexState.Visible;
         if (!IsEmpty()) ObjectInCell.SetActive(true);
         gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
@@ -50,35 +63,37 @@ public class HexCell : MonoBehaviour
 
     public void Hide(Ownable owned)
     {
-        isVisibleByList.Remove(owned);
-        if (isVisibleByList.ToArray().Length == 0)
+        visibleByList.Remove(owned);
+        if (visibleByList.Count == 0)
         {
-            State = EHexState.Hidden;
-            if (!IsEmpty()) ObjectInCell.SetActive(false);
-            gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
+            HideOrUnDiscoverExceptStar(EHexState.Hidden, HiddenMaterial);
         }
     }
 
     public void Hide()
     {
-        isVisibleByList.Clear();
-        State = EHexState.Hidden;
-        if (!IsEmpty()) ObjectInCell.SetActive(false);
-        gameObject.GetComponentInChildren<MeshRenderer>().material = HiddenMaterial;
+        visibleByList.Clear();
+        HideOrUnDiscoverExceptStar(EHexState.Hidden, HiddenMaterial);
     }
 
     public void UnDiscover()
     {
-        State = EHexState.Undiscovered;
-        if (!IsEmpty() && ObjectInCell.tag != "Star") ObjectInCell.SetActive(false);
-        gameObject.GetComponentInChildren<MeshRenderer>().material = UndiscoveredMaterial;
+        visibleByList.Clear();
+        HideOrUnDiscoverExceptStar(EHexState.Undiscovered, UndiscoveredMaterial);
+    }
 
+    private void HideOrUnDiscoverExceptStar(EHexState newState, Material newMaterial)
+    {
+        State = newState;
+        if (!IsEmpty() && ObjectInCell.tag != "Star")
+        {
+            ObjectInCell.SetActive(false);
+        }
+
+        gameObject.GetComponentInChildren<MeshRenderer>().material = newMaterial;
         if (!IsEmpty() && ObjectInCell.tag == "Star")
         {
             gameObject.GetComponentInChildren<MeshRenderer>().material = VisibleMaterial;
         }
-
     }
-
-
 }
