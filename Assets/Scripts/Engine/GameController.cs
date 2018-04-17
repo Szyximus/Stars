@@ -79,7 +79,7 @@ public class GameController : MonoBehaviour
             // 2x colonizer
             for (int i = 0; i < 2; i++)
             {
-                spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet) ;
+                spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet);
                 spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
@@ -90,14 +90,14 @@ public class GameController : MonoBehaviour
     {
         // serch for empty hexCell
         HexCell cell;
-        for (int X = -1; X <= 1; X+=2)
+        for (int X = -1; X <= 1; X += 2)
         {
             HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + X, startCooridantes.Z);
             cell = grid.FromCoordinates(newCoordinates);
             if (cell != null && cell.IsEmpty())
                 return cell;
         }
-        for (int Z = -1; Z <= 1; Z+=2)
+        for (int Z = -1; Z <= 1; Z += 2)
         {
             HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X, startCooridantes.Z + Z);
             cell = grid.FromCoordinates(newCoordinates);
@@ -116,7 +116,9 @@ public class GameController : MonoBehaviour
         if (spaceshipGrid != null)
         {
             return Instantiate(spaceshipPrefab, spaceshipGrid.transform.position, Quaternion.identity);//.GetComponent<Spaceship>();
-        } else {
+        }
+        else
+        {
             Debug.Log("Can't find empty cell for spaceship " + spaceshipPrefab.name + " for planet " + startPlanet.name);
         }
         return null;
@@ -164,7 +166,7 @@ public class GameController : MonoBehaviour
                 planet.GetComponent<Planet>().Colonize(players[playersWithHomePLanet].GetComponent<Player>());
                 playersWithHomePLanet++;
             }
-        } 
+        }
 
         if (playersWithHomePLanet < players.Count())
         {
@@ -186,9 +188,10 @@ public class GameController : MonoBehaviour
             star.transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)jStarSerialized["material"];
-            if (materialString != null) {
+            if (materialString != null)
+            {
                 Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
-                if(materialString != null)
+                if (materialString != null)
                     star.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
             }
         }
@@ -205,7 +208,7 @@ public class GameController : MonoBehaviour
     public void NextTurn()
     {
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
-        if(currentPlayerIndex == 0)
+        if (currentPlayerIndex == 0)
         {
             year++;
             Debug.Log("New year: " + year);
@@ -241,7 +244,20 @@ public class GameController : MonoBehaviour
             if (colonizer.ColonizePlanet())
                 Destroy(colonizer.gameObject);
         }
-        
+
+    }
+    public void BuildSpaceship(GameObject spaceshipPrefab)
+    {
+        var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
+        if (planet != null)
+        {
+            if (planet.IsPossibleBuildSpaceship())
+            {
+                GameObject spaceship = planet.BuildSpaceship(spaceshipPrefab);
+                spaceship.GetComponent<Spaceship>().Owned(GetCurrentPlayer());
+                spaceship.GetComponent<Spaceship>().Init();
+            }
+        }
     }
 
     // Update is called once per frame

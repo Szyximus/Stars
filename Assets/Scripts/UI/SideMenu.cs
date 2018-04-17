@@ -11,6 +11,7 @@ public class SideMenu : MonoBehaviour
     public Text OwnerName;
     Button button;
     Button colonizeButton;
+    Button buildColonizerButton;
 
     // Use this for initialization
     void Start()
@@ -20,6 +21,7 @@ public class SideMenu : MonoBehaviour
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
+        buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
         OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
@@ -50,13 +52,22 @@ public class SideMenu : MonoBehaviour
             OwnerName.gameObject.SetActive(false);
         }
 
-        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit")
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
         {
             colonizeButton.gameObject.SetActive(true);
         }
         else
         {
             colonizeButton.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null)
+        {
+            buildColonizerButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            buildColonizerButton.gameObject.SetActive(false);
         }
 
     }

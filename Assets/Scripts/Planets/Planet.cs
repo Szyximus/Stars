@@ -59,7 +59,7 @@ public class Planet : Ownable
 
             writer.WritePropertyName("planetMain");
             writer.WriteRawValue(JsonUtility.ToJson(this));
-            
+
             writer.WritePropertyName("radius");
             writer.WriteValue(this.GetComponent<SphereCollider>().radius);
 
@@ -68,7 +68,7 @@ public class Planet : Ownable
 
             writer.WritePropertyName("position");
             writer.WriteStartArray();
-            writer.WriteRawValue(this.transform.position.ToString().Substring(1, this.transform.position.ToString().Length-2));
+            writer.WriteRawValue(this.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
             writer.WriteEndArray();
 
             writer.WriteEndObject();
@@ -114,7 +114,7 @@ public class Planet : Ownable
     override
     public void SetupNewTurn()
     {
-        
+
     }
 
     /**
@@ -131,5 +131,66 @@ public class Planet : Ownable
     {
         this.Owned(newOnwer);
         //   Destroy(gameObject);
+    }
+    public GameObject BuildSpaceship(GameObject spaceshipPrefab)
+    {
+        HexCoordinates homePlanetCoordinates = HexCoordinates.FromPosition(gameObject.transform.position);
+        HexCell spaceshipGrid = EmptyCell(homePlanetCoordinates);
+
+        if (spaceshipGrid != null)
+        {
+            return Instantiate(spaceshipPrefab, spaceshipGrid.transform.position, Quaternion.identity);//.GetComponent<Spaceship>();
+        }
+        else
+        {
+            Debug.Log("Can't find empty cell for spaceship " + spaceshipPrefab.name + " for planet " + gameObject.name);
+        }
+        return null;
+    }
+    HexCell EmptyCell(HexCoordinates startCooridantes)
+    {
+        // serch for empty hexCell
+        HexCell cell;
+        for (int X = -1; X <= 1; X += 2)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + X, startCooridantes.Z);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        //TODO to refactor. has been did only for demo
+        if (true)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X - 1, startCooridantes.Z + 1);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        if (true)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + 1, startCooridantes.Z - 1);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        //
+
+        for (int Z = -1; Z <= 1; Z += 2)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X, startCooridantes.Z + Z);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        return null;
+    }
+    public bool IsPossibleBuildSpaceship()
+    {
+        /* if(Resources.Minerals>1000)
+        {
+        return true;
+        }
+        */
+        return true;
     }
 }
