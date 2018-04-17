@@ -26,4 +26,10 @@ public class LeveLoader : MonoBehaviour {
             yield return null;
         }
     }
+
+    public void Quit()
+    {
+        Application.Quit();
+        Debug.Log("Game is exiting");
+    }
 }
