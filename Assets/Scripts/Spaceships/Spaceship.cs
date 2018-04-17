@@ -16,6 +16,7 @@ public class Spaceship : Ownable
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
+    private AudioSource engineSound;
 
     public bool Flying;
     public int MaxActionPoints;
@@ -27,7 +28,7 @@ public class Spaceship : Ownable
     private void Awake()
     {
         Flying = false;
-        RadarRange = 20f;
+        RadarRange = 26f;
         MaxActionPoints = 7;
     }
 
@@ -46,6 +47,7 @@ public class Spaceship : Ownable
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
         burster = gameObject.GetComponentInChildren<ParticleSystem>();
         bursterLight = gameObject.GetComponentInChildren<Light>();
+        engineSound = gameObject.GetComponent<AudioSource>();
 
         TurnEnginesOff();
     }
@@ -181,7 +183,7 @@ public class Spaceship : Ownable
 
     private void TurnEnginesOff()
     {
-        if (burster != null)
+        if (burster != null )
         {
             bursterLight.enabled = false;
             burster.enableEmission = false;
@@ -191,10 +193,15 @@ public class Spaceship : Ownable
 
     private void TurnEnginesOn()
     {
-        if (burster != null)
+        if (burster != null && actionPoints != 0)
         {
             bursterLight.enabled = true;
             burster.enableEmission = true;
+        }
+
+        if (engineSound != null && actionPoints != 0)
+        {
+            engineSound.Play();
         }
     }
 }

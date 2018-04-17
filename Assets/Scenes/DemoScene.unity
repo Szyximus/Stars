@@ -326,7 +326,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 131951314}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 951704594}
+        m_MethodName: LoadLevel
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: DemoMenu
+          m_BoolArgument: 0
+        m_CallState: 1
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &131951314
@@ -1805,6 +1816,7 @@ GameObject:
   m_Component:
   - component: {fileID: 951704593}
   - component: {fileID: 951704592}
+  - component: {fileID: 951704594}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -1829,7 +1841,7 @@ MonoBehaviour:
     type: 2}
   StartPrefab: {fileID: 1533931309970648, guid: a2570eb8f60004743aea0e2be5f3e31f,
     type: 2}
-  ScoutPrefab: {fileID: 1004353204809924, guid: 3810b9e8805d13949a898579129c3153,
+  ScoutPrefab: {fileID: 1661768486814866, guid: 3810b9e8805d13949a898579129c3153,
     type: 2}
   ColonizerPrefab: {fileID: 1394429750356622, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
     type: 2}
@@ -1846,6 +1858,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &951704594
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 951704591}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78bfc9857ff952249bf95616bb142695, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  slider: {fileID: 0}
 --- !u!1 &1016963910
 GameObject:
   m_ObjectHideFlags: 0

@@ -19,7 +19,6 @@ public class SideMenu : MonoBehaviour
 
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
-        button = GameObject.Find("MoveButton").GetComponent<Button>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
@@ -60,14 +59,6 @@ public class SideMenu : MonoBehaviour
             colonizeButton.gameObject.SetActive(false);
         }
 
-        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit")
-        {
-            button.gameObject.SetActive(true);
-        }
-        else
-        {
-            button.gameObject.SetActive(false);
-        }
     }
 
     IEnumerator Show()

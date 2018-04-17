@@ -17,16 +17,16 @@ public class Colonizer : Spaceship
     private void Awake()
     {
         MaxActionPoints = 4;
+        RadarRange = 20;
     }
 
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
-    public void ColonizePlanet()
+    public bool ColonizePlanet()
     {
-        var colonizer = FindObjectOfType<Colonizer>();
         var gameObjectsInProximity =
-                Physics.OverlapSphere(colonizer.transform.position, 10)
+                Physics.OverlapSphere(transform.position, 10)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
@@ -34,10 +34,10 @@ public class Colonizer : Spaceship
         var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
 
         PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        //if (CheckCanBeColonizate(planetToColonize))
-        //  {
-        PlanetToColonize.Colonize();
-        // }
+        if (PlanetToColonize == null) return false;
+        else
+        if (PlanetToColonize.Colonize()) return true;
+        return true;
 
     }
     private bool CheckCanBeColonizate(Planet planet)

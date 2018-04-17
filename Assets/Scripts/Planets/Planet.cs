@@ -120,9 +120,10 @@ public class Planet : Ownable
     /**
      * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
      */
-    public void Colonize()
+    public bool Colonize()
     {
         this.Colonize(GameController.GetCurrentPlayer());
+        return true;
         //   Destroy(gameObject);
     }
 

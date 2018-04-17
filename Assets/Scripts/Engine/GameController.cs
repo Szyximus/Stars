@@ -38,7 +38,7 @@ public class GameController : MonoBehaviour
         yield return new WaitForSeconds(0.1f);  // spaceships after hex grid
         InitSpaceships();
 
-        yield return new WaitForSeconds(0.5f); // start after all the rest
+        yield return new WaitForSeconds(0.25f); // start after all the rest
         StartGame();
     }
 
@@ -63,25 +63,25 @@ public class GameController : MonoBehaviour
 
     void InitSpaceships()
     {
-        Spaceship spaceship;
+        GameObject spaceship;
         foreach (GameObject player in players)
         {
             Planet homePlanet = player.GetComponent<Player>().GetPlanets().Cast<Planet>().First();
 
-            // 2x scout
-            for (int i = 0; i < 2; i++)
-            {
-                spaceship = SpaceshipFromPref(ScoutPrefab, homePlanet);
-                spaceship.Init();
-                spaceship.Owned(player.GetComponent<Player>());
-            }
-
-            // 1x colonizer
+            // 1x scout
             for (int i = 0; i < 1; i++)
             {
-                spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet);
-                spaceship.Init();
-                spaceship.Owned(player.GetComponent<Player>());
+                spaceship = SpaceshipFromPref(ScoutPrefab, homePlanet);
+                spaceship.GetComponent<Spaceship>().Init();
+                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+            }
+
+            // 2x colonizer
+            for (int i = 0; i < 2; i++)
+            {
+                spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet) ;
+                spaceship.GetComponent<Spaceship>().Init();
+                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
         }
     }
@@ -107,7 +107,7 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    Spaceship SpaceshipFromPref(GameObject spaceshipPrefab, Planet startPlanet)
+    GameObject SpaceshipFromPref(GameObject spaceshipPrefab, Planet startPlanet)
     {
 
         HexCoordinates homePlanetCoordinates = HexCoordinates.FromPosition(startPlanet.transform.position);
@@ -115,7 +115,7 @@ public class GameController : MonoBehaviour
 
         if (spaceshipGrid != null)
         {
-            return Instantiate(spaceshipPrefab, spaceshipGrid.transform.position, Quaternion.identity).GetComponent<Spaceship>();
+            return Instantiate(spaceshipPrefab, spaceshipGrid.transform.position, Quaternion.identity);//.GetComponent<Spaceship>();
         } else {
             Debug.Log("Can't find empty cell for spaceship " + spaceshipPrefab.name + " for planet " + startPlanet.name);
         }
@@ -231,6 +231,17 @@ public class GameController : MonoBehaviour
     public static int GetYear()
     {
         return year;
+    }
+
+    public void Colonize()
+    {
+        var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
+        if (colonizer != null)
+        {
+            if (colonizer.ColonizePlanet())
+                Destroy(colonizer.gameObject);
+        }
+        
     }
 
     // Update is called once per frame
