@@ -9,6 +9,8 @@ public class Spaceship : Ownable
 {
 
     private HexGrid grid;
+    private ParticleSystem burster;
+    private Light bursterLight;
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
@@ -42,6 +44,10 @@ public class Spaceship : Ownable
         // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        burster = gameObject.GetComponentInChildren<ParticleSystem>();
+        bursterLight = gameObject.GetComponentInChildren<Light>();
+
+        TurnEnginesOff();
     }
 
     override
@@ -110,14 +116,13 @@ public class Spaceship : Ownable
         float startime = Time.time;
 
         Vector3 start_pos = transform.position; //Starting position.
-        Vector3 end_pos = transform.position + direction; //Ending position.
         var model = GetComponentInChildren<Transform>().Find("Mesh"); //mesh component of a prefab
 
         while (Time.time - startime < 1) //the movement takes exactly 1 s. regardless of framerate
         {
 
             transform.position += direction * Time.deltaTime;
-            model.transform.forward = Vector3.Lerp(model.transform.forward, direction, Time.deltaTime);
+            model.transform.forward = Vector3.Lerp(model.transform.forward, direction, Time.deltaTime * 0.5f);
             yield return null;
         }
         model.transform.forward = direction;
@@ -131,6 +136,7 @@ public class Spaceship : Ownable
     public IEnumerator MoveTo(HexCoordinates dest)
     {
         Flying = true;
+        TurnEnginesOn();
         while (Coordinates != dest && actionPoints > 0)
         {
             Debug.Log("moving " + actionPoints);
@@ -151,6 +157,7 @@ public class Spaceship : Ownable
 
         }
         Flying = false;
+        TurnEnginesOff();
         Debug.Log("Flying done, ActionPoints: " + actionPoints);
     }
 
@@ -169,6 +176,25 @@ public class Spaceship : Ownable
             if (i > 5) i = 0;
 
             Debug.Log(string.Format("Destination: {0}", Destination));
+        }
+    }
+
+    private void TurnEnginesOff()
+    {
+        if (burster != null)
+        {
+            bursterLight.enabled = false;
+            burster.enableEmission = false;
+        }
+
+    }
+
+    private void TurnEnginesOn()
+    {
+        if (burster != null)
+        {
+            bursterLight.enabled = true;
+            burster.enableEmission = true;
         }
     }
 }
