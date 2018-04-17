@@ -227,7 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c912a32390b7f408686c70ec7f5254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 4
+  Speed: 5
 --- !u!114 &114725756780413840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -239,6 +239,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f614f502096a944bd133686cd1e1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RadarRange: 0
+  Characteristics:
+    Temperature: 0
+    Radiation: 0
+    Oxygen: 0
+  Resources:
+    Minerals: 0
+    Energy: 0
+    Population: 0
 --- !u!135 &135955126677111454
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -265,7 +274,7 @@ ReflectionProbe:
   m_TimeSlicingMode: 0
   m_Resolution: 128
   m_UpdateFrequency: 0
-  m_BoxSize: {x: 20, y: 20, z: 20}
+  m_BoxSize: {x: 30, y: 30, z: 30}
   m_BoxOffset: {x: 0, y: 0, z: 0}
   m_NearClip: 0.3
   m_FarClip: 1000

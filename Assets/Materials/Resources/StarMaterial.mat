@@ -7,8 +7,8 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: StarMaterial
-  m_Shader: {fileID: 45, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _EMISSION _NORMALMAP
+  m_Shader: {fileID: 200, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION _NORMALMAP
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -86,13 +86,14 @@ Material:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 10
     - _FoamFactor: 0
     - _GlossMapScale: 1
     - _Glossiness: 0.75
     - _GlossyReflections: 1
+    - _InvFade: 1
     - _Metallic: 0.006
-    - _Mode: 0
+    - _Mode: 3
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
@@ -101,9 +102,9 @@ Material:
     - _SrcBlend: 1
     - _UVSec: 0
     - _WaterLod1Alpha: 0.95
-    - _ZWrite: 1
+    - _ZWrite: 0
     m_Colors:
-    - _Color: {r: 1, g: 0.47794116, b: 0.47794116, a: 1}
+    - _Color: {r: 1, g: 0.4779411, b: 0.4779411, a: 0.8627451}
     - _EmissionColor: {r: 1.2, g: 1.2, b: 1.2, a: 1}
     - _Size: {r: 10, g: 10, b: 10, a: 10}
     - _SpecColor: {r: 0.49019608, g: 0.40963456, b: 0, a: 0}
@@ -111,6 +112,7 @@ Material:
     - _SunDir: {r: 0, g: -2, b: 1, a: 0}
     - _SurfaceColor: {r: 1, g: 0, b: 0, a: 1}
     - _SurfaceColorLod1: {r: 1, g: 1, b: 1, a: 0.5}
+    - _TintColor: {r: 0.49411762, g: 0.49411762, b: 0.49411762, a: 0.8627451}
     - _WaterColor: {r: 1, g: 0.72413796, b: 0, a: 1}
     - _WaterColorLod1: {r: 1, g: 1, b: 1, a: 0.5}
     - _WaveOffset: {r: 5, g: 5, b: -5, a: 5}

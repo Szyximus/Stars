@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.15078667, g: 0.18174234, b: 0.23856907, a: 1}
+  m_IndirectSpecularColor: {r: 0.15109111, g: 0.1820202, b: 0.23899662, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -293,6 +293,10 @@ Prefab:
       propertyPath: owner
       value: 
       objectReference: {fileID: 1344951335}
+    - target: {fileID: 1301208243240684, guid: 3139302ca0404514eb623a2274091309, type: 2}
+      propertyPath: m_Name
+      value: TextYear
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3139302ca0404514eb623a2274091309, type: 2}
   m_IsPrefabParent: 0
@@ -429,6 +433,22 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: af4c81403a26c7644925290ad58a8d89, type: 2}
   m_IsPrefabParent: 0
+--- !u!1 &670559248 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 1301208243240684, guid: 3139302ca0404514eb623a2274091309,
+    type: 2}
+  m_PrefabInternal: {fileID: 308943870}
+--- !u!114 &670559252
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 670559248}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c63f57091094534f973d575d103b8e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &731159318
 GameObject:
   m_ObjectHideFlags: 0
@@ -766,11 +786,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlayerPrefab: {fileID: 1513614362586978, guid: dd6dd88c1a2c22f42b91efba75d7763b,
     type: 2}
-  PlanetPrefab: {fileID: 1622567210660544, guid: 369741fba7c5a4144bc007b966b8fcd6,
+  PlanetPrefab: {fileID: 1583324355466894, guid: 39e340af0bac1d542804a82df705647b,
     type: 2}
-  StartPrefab: {fileID: 1672720354179880, guid: a2570eb8f60004743aea0e2be5f3e31f,
+  StartPrefab: {fileID: 1533931309970648, guid: a2570eb8f60004743aea0e2be5f3e31f,
     type: 2}
-  ScoutPrefab: {fileID: 1660584651190402, guid: 3810b9e8805d13949a898579129c3153,
+  ScoutPrefab: {fileID: 1004353204809924, guid: 3810b9e8805d13949a898579129c3153,
     type: 2}
   ColonizerPrefab: {fileID: 1394429750356622, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
     type: 2}

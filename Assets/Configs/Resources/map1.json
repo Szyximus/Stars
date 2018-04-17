@@ -22,30 +22,31 @@
             292.5
          ]
       },
-      {  
-         "name":"planet X",
-		 "mayBeHome": false,
-         "planetMain":{  
-            "characteristics":{  
-               "temperature":69,
-               "radiation":0,
-               "oxygen":0
+    {
+        "name": "planet X",
+        "mayBeHome": false,
+        "planetMain": {
+            "characteristics": {
+                "temperature": 69,
+                "radiation": 0,
+                "oxygen": 0
             },
-            "resources":{  
-               "minerals":0,
-               "energy":0,
-               "population":0
+            "resources": {
+                "minerals": 0,
+                "energy": 0,
+                "population": 0
             }
-         },
-         "radius":2,
-         "position":[  
-            394,
+        },
+        "radius": 1.8,
+        "material": "Planet3Material",
+        "position": [
+            405,
             0,
-            292.5
-         ]
-      },
+            280
+        ]
+    },
       {  
-         "name":"HomePlanet",
+         "name":"Nova",
 		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
@@ -59,15 +60,15 @@
                "population":0
             }
          },
-         "radius":3.2,
+         "radius":1.2,
          "position":[  
-            268.5,
+            364.5,
             0,
-            330
+            316
          ]
       },
       {  
-         "name":"Kij",
+         "name":"Moon",
 		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
@@ -81,8 +82,8 @@
                "population":0
             }
          },
-         "radius":1,
-         "material": "Planet3Material",
+         "radius":0.5,
+         "material": "Planet2Material",
          "position":[  
             311.8,
             0,
@@ -92,17 +93,17 @@
    ],
    "stars":[
    	   {  
-         "name":"Sun Star",
-         "radius":2,
+         "name":"Sun",
+         "radius":1,
          "position":[  
-            282.73,
+            287.73,
             0,
             295.7
          ]
       },
 		{  
 			"name":"Super Star",
-			"radius":2,
+			"radius":1.1,
 			"position":[  
 			444.5,
 			0,
@@ -111,7 +112,7 @@
 		},
 	  {  
 			"name":"Red Star",
-			"radius":2,
+			"radius":1,
 			"position":[  
 			382.32,
 			0,

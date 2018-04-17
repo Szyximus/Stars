@@ -148,7 +148,7 @@ public class GameController : MonoBehaviour
             planet.name = jPlanetSerialized["name"].ToString();
 
             float radius = (float)jPlanetSerialized["radius"];
-            planet.GetComponent<SphereCollider>().radius = radius;
+            //planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)jPlanetSerialized["material"];
@@ -226,6 +226,11 @@ public class GameController : MonoBehaviour
     public static Player GetCurrentPlayer()
     {
         return players[currentPlayerIndex].GetComponent<Player>();
+    }
+
+    public static int GetYear()
+    {
+        return year;
     }
 
     // Update is called once per frame
