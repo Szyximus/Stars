@@ -2,23 +2,94 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System.Threading;
+using System.Text;
+using System.IO;
+using Newtonsoft.Json;
+using Assets.Scripts.HexLogic;
 
-public class Planet : MonoBehaviour
-{ 
+public class Planet : Ownable
+{
+    [System.Serializable]
+    public struct PlanetCharacteristics
+    {
+        public int Temperature;
+        public int Radiation;
+        public int Oxygen;
+    }
+
+    [System.Serializable]
+    public struct PlanetResources
+    {
+        public int Minerals;
+        public int Energy;
+        public int Population;
+    }
+
+    public PlanetCharacteristics Characteristics;
+    public PlanetResources Resources;
+
     private MyUIHoverListener uiListener;
-
-    HexGrid grid;
+    private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    // Use this for initialization
+    private void Awake()
+    {
+        RadarRange = 40f;
+    }
+
     void Start()
     {
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
 
         UpdateCoordinates();
+        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);
+    }
+
+    string ToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("planetMain");
+            writer.WriteRawValue(JsonUtility.ToJson(this));
+
+            writer.WritePropertyName("radius");
+            writer.WriteValue(this.GetComponent<SphereCollider>().radius);
+
+            writer.WritePropertyName("material");
+            writer.WriteValue(this.GetComponentsInChildren<MeshRenderer>()[0].material);
+
+            writer.WritePropertyName("position");
+            writer.WriteStartArray();
+            writer.WriteRawValue(this.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+            writer.WriteEndArray();
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+
+    void FromJson(string json)
+    {
+        //JsonTextReader reader = new JsonTextReader(new StringReader(json));
+        //while (reader.Read())
+        //{
+        //    if (reader.Value != null)
+        //    {
+        //        switch reader.
+        //    }
+        //    else
+        //    {
+        //        Console.WriteLine("Token: {0}", reader.TokenType);
+        //    }
+        //}
     }
 
     void UpdateCoordinates()
@@ -32,11 +103,96 @@ public class Planet : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
+    }
+
+    override
+    public void SetupNewTurn()
+    {
+
+    }
+
+    /**
+     * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
+     */
+    public bool Colonize()
+    {
+        this.Colonize(GameController.GetCurrentPlayer());
+        return true;
+        //   Destroy(gameObject);
+    }
+
+    public void Colonize(Player newOnwer)
+    {
+        this.Owned(newOnwer);
+        //   Destroy(gameObject);
+    }
+    public GameObject BuildSpaceship(GameObject spaceshipPrefab)
+    {
+        HexCoordinates homePlanetCoordinates = HexCoordinates.FromPosition(gameObject.transform.position);
+        HexCell spaceshipGrid = EmptyCell(homePlanetCoordinates);
+
+        if (spaceshipGrid != null)
+        {
+            return Instantiate(spaceshipPrefab, spaceshipGrid.transform.position, Quaternion.identity);//.GetComponent<Spaceship>();
+        }
+        else
+        {
+            Debug.Log("Can't find empty cell for spaceship " + spaceshipPrefab.name + " for planet " + gameObject.name);
+        }
+        return null;
+    }
+    HexCell EmptyCell(HexCoordinates startCooridantes)
+    {
+        // serch for empty hexCell
+        HexCell cell;
+        for (int X = -1; X <= 1; X += 2)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + X, startCooridantes.Z);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        //TODO to refactor. has been did only for demo
+        if (true)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X - 1, startCooridantes.Z + 1);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        if (true)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + 1, startCooridantes.Z - 1);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        //
+
+        for (int Z = -1; Z <= 1; Z += 2)
+        {
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X, startCooridantes.Z + Z);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
+        }
+        return null;
+    }
+    public bool IsPossibleBuildSpaceship()
+    {
+        /* if(Resources.Minerals>1000)
+        {
+        return true;
+        }
+        */
+        if (owner == GameController.GetCurrentPlayer())
+        return true;
+        return false;
     }
 }

@@ -7,14 +7,14 @@ using System.Threading;
 public class Star : MonoBehaviour
 {
 
-    HexGrid grid;
+    private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
     private MyUIHoverListener uiListener;
 
     // Use this for initialization
     void Start()
     {
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
     }
@@ -35,6 +35,6 @@ public class Star : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 }

@@ -4,11 +4,11 @@ using System.Collections;
 
 public class MyUIHoverListener : MonoBehaviour
 {
-    public bool isUIOverride { get; private set; }
+    public bool IsUIOverride { get; private set; }
 
     void Update()
     {
         // It will turn true if hovering any UI Elements
-        isUIOverride = EventSystem.current.IsPointerOverGameObject();
+        IsUIOverride = EventSystem.current.IsPointerOverGameObject();
     }
 }

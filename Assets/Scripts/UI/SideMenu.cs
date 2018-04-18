@@ -8,7 +8,12 @@ public class SideMenu : MonoBehaviour
     bool shown, animating = false;
     RectTransform rectTransform;
     Text label;
+    Text energy;
+    public Text OwnerName;
     Button button;
+    Button colonizeButton;
+    Button buildColonizerButton;
+    Button buildScoutButton;
 
     // Use this for initialization
     void Start()
@@ -16,8 +21,12 @@ public class SideMenu : MonoBehaviour
         //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
 
         transform.position += new Vector3(170, 0, 0);
-        label = GetComponentInChildren<Text>();
-        button = GetComponentInChildren<Button>();
+        label = GameObject.Find("Name").GetComponent<Text>();
+        energy = GameObject.Find("Energy").GetComponent<Text>();
+        colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
+        buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
+        buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
+        OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
     }
@@ -35,8 +44,53 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if (shown) label.text = EventManager.selectionManager.SelectedObject.name;
-        if (EventManager.selectionManager.SelectedObject != null && EventManager.selectionManager.SelectedObject.tag == "Unit") button.gameObject.SetActive(true); else button.gameObject.SetActive(false);
+        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)","");
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null)
+        {
+            string _owner = (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable).GetOwnerName();
+
+            if (_owner == "")
+                OwnerName.text = "No Owner";
+            else
+                OwnerName.text = "Owner: " + _owner;
+            OwnerName.gameObject.SetActive(true);
+        }
+        else
+        {
+            OwnerName.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
+        {
+            colonizeButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            colonizeButton.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
+        {
+            energy.gameObject.SetActive(true);
+            energy.text ="Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+        }
+        else
+        {
+            energy.gameObject.SetActive(false);
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer())
+        {
+            buildColonizerButton.gameObject.SetActive(true);
+            buildScoutButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            buildColonizerButton.gameObject.SetActive(false);
+            buildScoutButton.gameObject.SetActive(false);
+        }
+
     }
 
     IEnumerator Show()

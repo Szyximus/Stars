@@ -5,44 +5,68 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
-public class Spaceship : MonoBehaviour
+public class Spaceship : Ownable
 {
 
-    HexGrid grid;
+    private HexGrid grid;
+    private ParticleSystem burster;
+    private Light bursterLight;
     public HexCoordinates Coordinates { get; set; }
-
-    public int Speed = 5;
-
+    private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
 
     private MyUIHoverListener uiListener;
-    public bool flying;
-    public float RadarRange = 20f;
+    private AudioSource engineSound;
+
+    public bool Flying;
+    public int MaxActionPoints;
+    private int actionPoints;
 
     int i = 0; //for the movement test, remove later
+    private bool initialized = false;
 
-    // Use this for initialization
+    private void Awake()
+    {
+        Flying = false;
+        RadarRange = 26f;
+        MaxActionPoints = 7;
+    }
+
     void Start()
     {
+        if(!initialized)
+            Init();
+    }
 
-        flying = false;
-
-
-        grid = (GameObject.Find("HexGrid").GetComponent("HexGrid") as HexGrid);
-
-        StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
-
+    public void Init()
+    {
+        initialized = true;
+        grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
+        // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
+        UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        burster = gameObject.GetComponentInChildren<ParticleSystem>();
+        bursterLight = gameObject.GetComponentInChildren<Light>();
+        engineSound = gameObject.GetComponent<AudioSource>();
+
+        TurnEnginesOff();
+    }
+
+    override
+    public void SetupNewTurn()
+    {
+        actionPoints = MaxActionPoints;
     }
 
     void UpdateCoordinates()
     {
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
         if (grid.FromCoordinates(Coordinates) != null) transform.position = grid.FromCoordinates(Coordinates).transform.localPosition; //Snap object to hex
-        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
-
-        if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).UpdateState();
-
+        if (grid.FromCoordinates(Coordinates) != null)
+        {
+            grid.FromCoordinates(Coordinates).AssignObject(this.gameObject);
+        }
+        grid.UpdateInRadarRange(this, oldPosition);
     }
 
     // Update is called once per frame
@@ -54,8 +78,7 @@ public class Spaceship : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.isUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
-
+        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
     public void Move(EDirection direction)
@@ -89,18 +112,19 @@ public class Spaceship : MonoBehaviour
 
     IEnumerator SmoothFly(Vector3 direction)
     {
+        oldPosition = this.transform.position;
+
         if (grid.FromCoordinates(Coordinates) != null) grid.FromCoordinates(Coordinates).ClearObject();
         float startime = Time.time;
 
         Vector3 start_pos = transform.position; //Starting position.
-        Vector3 end_pos = transform.position + direction; //Ending position.
         var model = GetComponentInChildren<Transform>().Find("Mesh"); //mesh component of a prefab
 
         while (Time.time - startime < 1) //the movement takes exactly 1 s. regardless of framerate
         {
 
             transform.position += direction * Time.deltaTime;
-            model.transform.forward = Vector3.Lerp(model.transform.forward, direction, Time.deltaTime);
+            model.transform.forward = Vector3.Lerp(model.transform.forward, direction, Time.deltaTime * 0.5f);
             yield return null;
         }
         model.transform.forward = direction;
@@ -113,10 +137,12 @@ public class Spaceship : MonoBehaviour
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        flying = true;
-        //while (Coordinates != dest)
-        for (int i = Speed; i > 0; i--)
+        Flying = true;
+        TurnEnginesOn();
+        while (Coordinates != dest && actionPoints > 0)
         {
+            Debug.Log("moving " + actionPoints);
+            actionPoints--;
             if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
                 Move(EDirection.TopRight);
             else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
@@ -132,8 +158,9 @@ public class Spaceship : MonoBehaviour
             yield return new WaitForSeconds(1.05f);
 
         }
-        flying = false;
-
+        Flying = false;
+        TurnEnginesOff();
+        Debug.Log("Flying done, ActionPoints: " + actionPoints);
     }
 
     IEnumerator DelayedUpdate()
@@ -146,11 +173,40 @@ public class Spaceship : MonoBehaviour
     {
         if (EventManager.selectionManager.SelectedObject.tag == "Unit")
         {
-            (EventManager.selectionManager.SelectedObject.GetComponent("Spaceship") as Spaceship).Move((EDirection)i);
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Move((EDirection)i);
             i++;
             if (i > 5) i = 0;
 
             Debug.Log(string.Format("Destination: {0}", Destination));
+        }
+    }
+
+    public int GetActionPoints()
+    {
+        return actionPoints;
+    }
+
+    private void TurnEnginesOff()
+    {
+        if (burster != null )
+        {
+            bursterLight.enabled = false;
+            burster.enableEmission = false;
+        }
+
+    }
+
+    private void TurnEnginesOn()
+    {
+        if (burster != null && actionPoints != 0)
+        {
+            bursterLight.enabled = true;
+            burster.enableEmission = true;
+        }
+
+        if (engineSound != null && actionPoints != 0)
+        {
+            engineSound.Play();
         }
     }
 }

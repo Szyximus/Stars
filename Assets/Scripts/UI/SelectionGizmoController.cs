@@ -8,12 +8,14 @@ using Assets.Scripts;
 public class SelectionGizmoController : MonoBehaviour
 {
     SelectionGizmoController main;
-    Vector3 offset = new Vector3(0, 0.1f, 0);
+    Vector3 offset = new Vector3(0, 0.01f, 0);
+    private AudioSource sound;
 
     // Use this for initialization
     void Start()
     {
         transform.position = new Vector3(-1000, -1000, -1000);
+        sound = gameObject.GetComponent<AudioSource>();
 
     }
 
@@ -27,7 +29,15 @@ public class SelectionGizmoController : MonoBehaviour
         }
         else transform.position = new Vector3(-1000, -1000, -1000);
 
+        if (transform.hasChanged)
+        {
+            sound.Play();
+            transform.hasChanged = false;
+            Debug.Log("click");
+        }
+
         transform.Rotate(Vector3.up * 20 * Time.deltaTime);
+        transform.hasChanged = false;
 
     }
     void Awake()

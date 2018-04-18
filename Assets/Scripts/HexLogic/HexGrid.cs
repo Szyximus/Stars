@@ -9,15 +9,15 @@ using UnityEngine.UI;
 public class HexGrid : MonoBehaviour
 {
 
-    public int chunkCountX = 10, chunkCountZ = 10;
+    public int ChunkCountX = 10, ChunkCountZ = 10;
 
     int cellCountX, cellCountZ;
 
-    public HexGridChunk chunkPrefab;
+    public HexGridChunk ChunkPrefab;
 
     HexGridChunk[] chunks;
 
-    public HexCell cellPrefab;
+    public HexCell CellPrefab;
 
     public HexCell[] cells;
 
@@ -29,8 +29,8 @@ public class HexGrid : MonoBehaviour
     void Awake()
     {
 
-        cellCountX = chunkCountX * HexMetrics.chunkSizeX;
-        cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
+        cellCountX = ChunkCountX * HexMetrics.chunkSizeX;
+        cellCountZ = ChunkCountZ * HexMetrics.chunkSizeZ;
 
         CreateChunks();
         CreateCells();
@@ -56,9 +56,9 @@ public class HexGrid : MonoBehaviour
         position.y = 0f;
         position.z = z * (HexMetrics.outerRadius * 1.5f);
 
-        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        HexCell cell = cells[i] = Instantiate<HexCell>(CellPrefab);
         cell.transform.localPosition = position;
-        cell.coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
+        cell.Coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
 
         //Instantiate labels for debug:
 
@@ -76,7 +76,7 @@ public class HexGrid : MonoBehaviour
     {
         int chunkX = x / HexMetrics.chunkSizeX;
         int chunkZ = z / HexMetrics.chunkSizeZ;
-        HexGridChunk chunk = chunks[chunkX + chunkZ * chunkCountX];
+        HexGridChunk chunk = chunks[chunkX + chunkZ * ChunkCountX];
 
         int localX = x - chunkX * HexMetrics.chunkSizeX;
         int localZ = z - chunkZ * HexMetrics.chunkSizeZ;
@@ -85,13 +85,13 @@ public class HexGrid : MonoBehaviour
 
     void CreateChunks()
     {
-        chunks = new HexGridChunk[chunkCountX * chunkCountZ];
+        chunks = new HexGridChunk[ChunkCountX * ChunkCountZ];
 
-        for (int z = 0, i = 0; z < chunkCountZ; z++)
+        for (int z = 0, i = 0; z < ChunkCountZ; z++)
         {
-            for (int x = 0; x < chunkCountX; x++)
+            for (int x = 0; x < ChunkCountX; x++)
             {
-                HexGridChunk chunk = chunks[i++] = Instantiate(chunkPrefab);
+                HexGridChunk chunk = chunks[i++] = Instantiate(ChunkPrefab);
                 chunk.transform.SetParent(transform);
             }
         }
@@ -107,7 +107,7 @@ public class HexGrid : MonoBehaviour
     {
         if (Input.GetButtonUp("MouseLeft"))
         {
-            if (!uiListener.isUIOverride) HandleInput();
+            if (!uiListener.IsUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
         }
 
@@ -125,7 +125,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell FromCoordinates(HexCoordinates coordinates)
     {
-        var a = cells.Where(c => c.coordinates == coordinates);
+        var a = cells.Where(c => c.Coordinates == coordinates);
         if (a.Any()) return a.FirstOrDefault();
         else return null;
     }
@@ -138,8 +138,8 @@ public class HexGrid : MonoBehaviour
         if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
             if (selectedObject.tag == "Unit")
             {
-                var spaceship = selectedObject.GetComponent("Spaceship") as Spaceship;
-                if (coordinates != spaceship.Coordinates && !spaceship.flying && FromCoordinates(coordinates).IsEmpty())
+                var spaceship = selectedObject.GetComponent<Spaceship>();
+                if (coordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(coordinates).IsEmpty())
                 {
                     spaceship.Destination = coordinates;
                     //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
@@ -151,4 +151,68 @@ public class HexGrid : MonoBehaviour
         //Debug.Log("touched at " + coordinates);
     }
 
+    public void SetupNewTurn(Player currentPlayer)
+    {
+        HideOrUnDiscoverAll(currentPlayer);
+        ShowAllInRadarRange(currentPlayer);
+    }
+
+    void HideOrUnDiscoverAll(Player currentPlayer)
+    {
+        foreach (HexCell cell in cells)
+        {
+            if(cell.IsDiscoveredBy(currentPlayer))
+            {
+                cell.Hide();
+            } else
+            {
+                cell.UnDiscover();
+            }
+        }
+    }
+
+    HexCell[] CellsInRange(Vector3 position, float radarRange)
+    {
+        if (radarRange == 0)
+            return new HexCell[0];
+        return Physics.OverlapSphere(position, radarRange /*Radius*/)
+            .Except(new[] { GetComponent<Collider>() })
+            .Where(o => o.tag == "HexCell")
+            .Select(c => c.gameObject.GetComponent<HexCell>())
+            .ToArray();
+    }
+
+    public void UpdateInRadarRange(Ownable owned, Vector3 oldPosition)
+    {
+        var cellsInOldRadar = CellsInRange(oldPosition, owned.RadarRange);
+        var cellsInRadar = CellsInRange(owned.transform.position, owned.RadarRange);
+
+        foreach (HexCell cell in cellsInOldRadar.Except(cellsInRadar))
+        {
+            cell.Hide(owned);
+        }
+
+        foreach (HexCell cell in cellsInRadar.Except(cellsInOldRadar))
+        {
+            cell.Discover(owned);
+        }
+    }
+
+    public void ShowAllInRadarRange(Ownable owned)
+    {
+
+        var cellsInRange = CellsInRange(owned.transform.position, owned.RadarRange);
+        foreach (HexCell cell in cellsInRange)
+        {
+            cell.Discover(owned);
+        }
+    }
+
+    void ShowAllInRadarRange(Player player)
+    { 
+        foreach (Ownable owned in player.GetOwned())
+        {
+            ShowAllInRadarRange(owned);
+        }
+    }
 }
