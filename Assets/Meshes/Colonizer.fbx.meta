@@ -9,17 +9,37 @@ ModelImporter:
     100002: //RootNode
     100004: Turns_Low
     100006: Lamp.001
+    100008: Base
+    100010: Turns1
+    100012: Turns2
+    100014: Turns3
     400000: Base_Low
     400002: //RootNode
     400004: Turns_Low
     400006: Lamp.001
+    400008: Base
+    400010: Turns1
+    400012: Turns2
+    400014: Turns3
     2100000: No Name
     2300000: Base_Low
     2300002: Turns_Low
+    2300004: Base
+    2300006: Turns1
+    2300008: Turns2
+    2300010: Turns3
     3300000: Base_Low
     3300002: Turns_Low
+    3300004: Base
+    3300006: Turns1
+    3300008: Turns2
+    3300010: Turns3
     4300000: Turns_Low
     4300002: Base_Low
+    4300004: Turns1
+    4300006: Turns2
+    4300008: Turns3
+    4300010: Base
     10800000: Lamp.001
   externalObjects: {}
   materials:

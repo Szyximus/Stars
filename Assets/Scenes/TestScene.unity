@@ -479,7 +479,7 @@ MonoBehaviour:
     type: 2}
   ScoutPrefab: {fileID: 1661768486814866, guid: 3810b9e8805d13949a898579129c3153,
     type: 2}
-  ColonizerPrefab: {fileID: 1924204603379950, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
+  ColonizerPrefab: {fileID: 1108593213390482, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
     type: 2}
 --- !u!4 &951704593
 Transform:
@@ -643,6 +643,12 @@ Prefab:
       propertyPath: m_SizeDelta.x
       value: 132
       objectReference: {fileID: 0}
+    - target: {fileID: 114001257628937792, guid: 3139302ca0404514eb623a2274091309,
+        type: 2}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgument
+      value: 
+      objectReference: {fileID: 1108593213390482, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
+        type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3139302ca0404514eb623a2274091309, type: 2}
   m_IsPrefabParent: 0
