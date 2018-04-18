@@ -243,6 +243,7 @@ public class GameController : MonoBehaviour
             if (colonizer.ColonizePlanet())
             {
                 grid.FromCoordinates(colonizer.Coordinates).ClearObject();
+                GetCurrentPlayer().Lose(colonizer);
                 
                 Destroy(colonizer.gameObject);
 
