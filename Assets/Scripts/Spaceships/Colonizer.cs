@@ -34,7 +34,7 @@ public class Colonizer : Spaceship
         var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
 
         PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        if (PlanetToColonize == null) return false;
+        if (PlanetToColonize == null || PlanetToColonize.GetOwner() == GameController.GetCurrentPlayer()) return false;
         else
         if (PlanetToColonize.Colonize()) return true;
         return true;

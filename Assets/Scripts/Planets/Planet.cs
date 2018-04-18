@@ -191,6 +191,8 @@ public class Planet : Ownable
         return true;
         }
         */
+        if (owner == GameController.GetCurrentPlayer())
         return true;
+        return false;
     }
 }

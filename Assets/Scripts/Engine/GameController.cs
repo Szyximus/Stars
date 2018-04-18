@@ -45,11 +45,10 @@ public class GameController : MonoBehaviour
     void InitPlayers()
     {
         // Create players from prefab.
-        // todo: should be done after main menu
         players = new List<GameObject>();
         players.Add(Instantiate(PlayerPrefab));
         players[0].GetComponent<Player>().Human = true;
-        players[0].name = "Main Player";
+        players[0].name = "Player";
 
         for (int i = 1; i < 1; i++)
         {
@@ -76,8 +75,8 @@ public class GameController : MonoBehaviour
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
 
-            // 2x colonizer
-            for (int i = 0; i < 2; i++)
+            // 0x colonizer
+            for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet);
                 spaceship.GetComponent<Spaceship>().Init();
@@ -242,7 +241,12 @@ public class GameController : MonoBehaviour
         if (colonizer != null)
         {
             if (colonizer.ColonizePlanet())
+            {
+                grid.FromCoordinates(colonizer.Coordinates).ClearObject();
+                
                 Destroy(colonizer.gameObject);
+
+            }
         }
 
     }
@@ -256,6 +260,10 @@ public class GameController : MonoBehaviour
                 GameObject spaceship = planet.BuildSpaceship(spaceshipPrefab);
                 spaceship.GetComponent<Spaceship>().Owned(GetCurrentPlayer());
                 spaceship.GetComponent<Spaceship>().Init();
+
+                EventManager.selectionManager.SelectedObject = null;
+                grid.SetupNewTurn(GetCurrentPlayer());
+                GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
             }
         }
     }

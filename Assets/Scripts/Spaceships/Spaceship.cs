@@ -181,6 +181,11 @@ public class Spaceship : Ownable
         }
     }
 
+    public int GetActionPoints()
+    {
+        return actionPoints;
+    }
+
     private void TurnEnginesOff()
     {
         if (burster != null )
