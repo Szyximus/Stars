@@ -50,7 +50,7 @@ public class GameController : MonoBehaviour
         players[0].GetComponent<Player>().Human = true;
         players[0].name = "Player";
 
-        for (int i = 1; i < 1; i++)
+        for (int i = 1; i < 2; i++)
         {
             players.Add(Instantiate(PlayerPrefab));
             players[i].GetComponent<Player>().Human = false;

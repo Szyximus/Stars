@@ -100,7 +100,7 @@ public class CameraController : MonoBehaviour {
 
         rotVel = Mathf.Lerp(rotVel, 0, Time.deltaTime * smoothTime);
 
-        rot.x = zoom * 50f + 20f;
+        rot.x = zoom  * 40 + 20f;
         rot.y += rotVel;
 
         if (Input.GetButtonUp("Control"))
@@ -110,9 +110,9 @@ public class CameraController : MonoBehaviour {
         }
 
 
-        scale.x = Mathf.Clamp(scale.x, 0.1f, 1f);
-        scale.y = Mathf.Clamp(scale.y, 0.1f, 1f);
-        scale.z = Mathf.Clamp(scale.z, 0.1f, 1f);
+        scale.x = Mathf.Clamp(scale.x, 0.2f, 1f);
+        scale.y = Mathf.Clamp(scale.y, 0.2f, 1f);
+        scale.z = Mathf.Clamp(scale.z, 0.2f, 1f);
 
         pos.x = Mathf.Clamp(pos.x, boundMin.x, boundMax.x);
         pos.y = Mathf.Clamp(pos.y, boundMin.y, boundMax.y);
