@@ -19,6 +19,7 @@ public class GameController : MonoBehaviour
     public GameObject ScoutPrefab;
     public GameObject ColonizerPrefab;
     public GameObject MinerPrefab;
+    public GameObject WarshipPrefab;
 
     private static int year;
 
@@ -83,6 +84,14 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(MinerPrefab, homePlanet);
+                spaceship.GetComponent<Spaceship>().Init();
+                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+            }
+
+            // 0x warship
+            for (int i = 0; i < 0; i++)
+            {
+                spaceship = SpaceshipFromPref(WarshipPrefab, homePlanet);
                 spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
