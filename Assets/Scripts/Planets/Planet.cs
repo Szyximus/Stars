@@ -30,7 +30,7 @@ public class Planet : Ownable
     public PlanetCharacteristics Characteristics;
     public PlanetResources Resources;
 
-    private MyUIHoverListener uiListener;
+    private UIHoverListener uiListener;
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
@@ -42,7 +42,7 @@ public class Planet : Ownable
     void Start()
     {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
-        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         UpdateCoordinates();
         Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);

@@ -23,7 +23,7 @@ public class HexGrid : MonoBehaviour
 
     public Text cellLabelPrefab;
 
-    private MyUIHoverListener uiListener;
+    private UIHoverListener uiListener;
 
 
     void Awake()
@@ -100,7 +100,7 @@ public class HexGrid : MonoBehaviour
     void Start()
     {
 
-        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
     }
 
     void Update()
@@ -109,6 +109,12 @@ public class HexGrid : MonoBehaviour
         {
             if (!uiListener.IsUIOverride) HandleInput();
             Thread.Sleep(100);  //ugly way of not running command couple times during one click
+        }
+
+        if (Input.GetButtonUp("MouseRight"))
+        {
+            if (!uiListener.IsUIOverride) EventManager.selectionManager.SelectedObject = null;
+            Thread.Sleep(100);  
         }
 
     }

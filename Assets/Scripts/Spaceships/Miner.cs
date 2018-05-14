@@ -7,7 +7,7 @@ using System.Threading;
 using System.Linq;
 
 /**
- * Class represent colonizing spaceship.
+ * Class represent Mining spaceship.
  */
 public class Miner : Spaceship
 {
@@ -20,9 +20,6 @@ public class Miner : Spaceship
         RadarRange = 25;
     }
 
-    /**
-     * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
-     */
     public bool MinePlanet()
     {
         return true;

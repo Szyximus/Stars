@@ -2,6 +2,10 @@
 
 public class CameraController : MonoBehaviour {
 
+    /// <summary>
+    /// Controls the camera
+    /// </summary>
+
     public static CameraController main;
 
     public float panSpeed = 10f;

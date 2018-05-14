@@ -14,6 +14,7 @@ public class SideMenu : MonoBehaviour
     Button colonizeButton;
     Button buildColonizerButton;
     Button buildScoutButton;
+    Button buildMinerButton;
 
     // Use this for initialization
     void Start()
@@ -26,6 +27,7 @@ public class SideMenu : MonoBehaviour
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
         buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
+        buildMinerButton = GameObject.Find("BuildMinerButton").GetComponent<Button>();
         OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
@@ -84,11 +86,13 @@ public class SideMenu : MonoBehaviour
         {
             buildColonizerButton.gameObject.SetActive(true);
             buildScoutButton.gameObject.SetActive(true);
+            buildMinerButton.gameObject.SetActive(true);
         }
         else
         {
             buildColonizerButton.gameObject.SetActive(false);
             buildScoutButton.gameObject.SetActive(false);
+            buildMinerButton.gameObject.SetActive(false);
         }
 
     }

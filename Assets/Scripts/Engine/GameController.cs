@@ -23,6 +23,7 @@ public class GameController : MonoBehaviour
     private static int year;
 
     private HexGrid grid;
+    TurnScreen turnScreen;
 
     // Use this for initialization
     void Start()
@@ -33,6 +34,8 @@ public class GameController : MonoBehaviour
     IEnumerator DelayedStart()
     {
         grid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
+        turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
+        turnScreen.gameObject.SetActive(false);
 
         InitPlayers();
         InitMap();
@@ -76,8 +79,8 @@ public class GameController : MonoBehaviour
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
 
-            // 1x miner
-            for (int i = 0; i < 1; i++)
+            // 0x miner
+            for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(MinerPrefab, homePlanet);
                 spaceship.GetComponent<Spaceship>().Init();
@@ -215,6 +218,8 @@ public class GameController : MonoBehaviour
 
     public void NextTurn()
     {
+        turnScreen.gameObject.SetActive(true);
+        turnScreen.Play();
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
         if (currentPlayerIndex == 0)
         {

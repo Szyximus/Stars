@@ -9,14 +9,14 @@ public class Star : MonoBehaviour
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
-    private MyUIHoverListener uiListener;
+    private UIHoverListener uiListener;
 
     // Use this for initialization
     void Start()
     {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
-        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
     }
 
     void UpdateCoordinates()

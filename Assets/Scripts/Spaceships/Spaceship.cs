@@ -15,7 +15,7 @@ public class Spaceship : Ownable
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
 
-    private MyUIHoverListener uiListener;
+    private UIHoverListener uiListener;
     private AudioSource engineSound;
 
     public bool Flying;
@@ -44,7 +44,7 @@ public class Spaceship : Ownable
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
-        uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
         burster = gameObject.GetComponentInChildren<ParticleSystem>();
         bursterLight = gameObject.GetComponentInChildren<Light>();
         engineSound = gameObject.GetComponent<AudioSource>();
