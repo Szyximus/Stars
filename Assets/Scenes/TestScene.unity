@@ -13,7 +13,7 @@ OcclusionCullingSettings:
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 8
+  serializedVersion: 9
   m_Fog: 0
   m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
   m_FogMode: 3
@@ -39,6 +39,7 @@ RenderSettings:
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
   m_IndirectSpecularColor: {r: 0.15109111, g: 0.1820202, b: 0.23899662, a: 1}
+  m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -54,11 +55,10 @@ LightmapSettings:
     m_EnableBakedLightmaps: 0
     m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
-    serializedVersion: 9
+    serializedVersion: 10
     m_Resolution: 2
     m_BakeResolution: 40
-    m_TextureWidth: 1024
-    m_TextureHeight: 1024
+    m_AtlasSize: 1024
     m_AO: 0
     m_AOMaxDistance: 1
     m_CompAOExponent: 1
@@ -174,7 +174,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &493639154
 Prefab:
@@ -255,7 +255,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4008687571737378, guid: af4c81403a26c7644925290ad58a8d89, type: 2}
       propertyPath: m_RootOrder
-      value: 4
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1358551552372148, guid: af4c81403a26c7644925290ad58a8d89, type: 2}
       propertyPath: m_Name
@@ -404,6 +404,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4687fe2ec860d4b419081ca619d01861, type: 2}
   m_StaticBatchInfo:
@@ -480,6 +481,8 @@ MonoBehaviour:
   ScoutPrefab: {fileID: 1661768486814866, guid: 3810b9e8805d13949a898579129c3153,
     type: 2}
   ColonizerPrefab: {fileID: 1108593213390482, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
+    type: 2}
+  MinerPrefab: {fileID: 1272119975188878, guid: 12fd37dd8982e6345bdd2ea398c51b9d,
     type: 2}
 --- !u!4 &951704593
 Transform:
@@ -689,7 +692,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4270272786121468, guid: 45a6467618b288948bf689a8a59d3642, type: 2}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 1340457119840154, guid: 45a6467618b288948bf689a8a59d3642, type: 2}
       propertyPath: m_Name
@@ -762,7 +765,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2131032833
 GameObject:

@@ -36,9 +36,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4735529401116880}
-  - component: {fileID: 114046010320009648}
   - component: {fileID: 135996545955213200}
   - component: {fileID: 82145942305215524}
+  - component: {fileID: 114103148503660622}
   m_Layer: 0
   m_Name: Miner
   m_TagString: Unit
@@ -115,13 +115,13 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1059209477311548}
-  m_LocalRotation: {x: -0, y: 0.38268343, z: -0, w: 0.92387956}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.4, y: 0.4, z: 0.4}
+  m_LocalScale: {x: 0.25, y: 1, z: 0.5}
   m_Children: []
   m_Father: {fileID: 4735529401116880}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4471521501990034
 Transform:
   m_ObjectHideFlags: 1
@@ -416,7 +416,7 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &114046010320009648
+--- !u!114 &114103148503660622
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -424,12 +424,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1272119975188878}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afe58c33810727d4e8b7f94e7e8109e8, type: 3}
+  m_Script: {fileID: 11500000, guid: 8268fdfb941b4ee438030fb5ca319b98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   RadarRange: 0
   Flying: 0
-  MaxActionPoints: 30
+  MaxActionPoints: 0
+  PlanetToColonize: {fileID: 0}
+  Test: {fileID: 0}
 --- !u!135 &135996545955213200
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -522,7 +524,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 0.6
-      minScalar: 0.8
+      minScalar: 1.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -1066,12 +1068,12 @@ ParticleSystem:
     serializedVersion: 5
     enabled: 1
     type: 4
-    angle: 20
+    angle: 30
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
     donutRadius: 0.2
-    m_Position: {x: 0, y: 0, z: -2.75}
+    m_Position: {x: 0, y: 0, z: -2.6}
     m_Rotation: {x: 0, y: 180, z: 0}
     m_Scale: {x: 0.5, y: 0.5, z: 0.5}
     placementMode: 0
