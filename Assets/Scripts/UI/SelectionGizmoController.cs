@@ -22,6 +22,7 @@ public class SelectionGizmoController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         //This should only be called at an event, not every frame. fix later after EventManager is proper.
         if (EventManager.selectionManager.SelectedObject != null)
         {

@@ -9,21 +9,21 @@ using System.Linq;
 /**
  * Class represent colonizing spaceship.
  */
-public class Colonizer : Spaceship
+public class Miner : Spaceship
 {
-    public Planet PlanetToColonize;
+    public Planet PlanetToMine;
     public Text Test;
 
     private void Awake()
     {
-        MaxActionPoints = 4;
-        RadarRange = 20;
+        MaxActionPoints = 6;
+        RadarRange = 15;
     }
 
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
-    public bool ColonizePlanet()
+    public bool MineMinerals()
     {
         var gameObjectsInProximity =
                 Physics.OverlapSphere(transform.position, 10)
@@ -33,15 +33,11 @@ public class Colonizer : Spaceship
 
         var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
 
-        PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        if (PlanetToColonize == null || PlanetToColonize.GetOwner() == GameController.GetCurrentPlayer()) return false;
+        PlanetToMine = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
+        if (PlanetToMine == null || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer()) return false;
         else
-        if (PlanetToColonize.Colonize()) return true;
+        if (PlanetToMine.Colonize()) return true;
         return true;
 
-    }
-    private bool CheckCanBeColonizate(Planet planet)
-    {
-        return planet.Characteristics.oxygen + planet.Characteristics.radiation  + planet.Characteristics.temperature < 100 ? true : false;
     }
 }

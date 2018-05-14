@@ -14,6 +14,7 @@ public class SideMenu : MonoBehaviour
     Button colonizeButton;
     Button buildColonizerButton;
     Button buildScoutButton;
+    Button buildMinerButton;
 
     // Use this for initialization
     void Start()
@@ -22,10 +23,11 @@ public class SideMenu : MonoBehaviour
 
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
-        energy = GameObject.Find("Energy").GetComponent<Text>();
+        energy = GameObject.Find("MovementPoints").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
         buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
+        buildMinerButton = GameObject.Find("BuildMinerButton").GetComponent<Button>();
         OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
@@ -73,7 +75,7 @@ public class SideMenu : MonoBehaviour
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
         {
             energy.gameObject.SetActive(true);
-            energy.text ="Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+            energy.text = "Movement points: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
         }
         else
         {

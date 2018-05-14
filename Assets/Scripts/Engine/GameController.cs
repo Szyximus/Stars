@@ -47,13 +47,13 @@ public class GameController : MonoBehaviour
         // Create players from prefab.
         players = new List<GameObject>();
         players.Add(Instantiate(PlayerPrefab));
-        players[0].GetComponent<Player>().Human = true;
+        players[0].GetComponent<Player>().human = true;
         players[0].name = "Player";
 
-        for (int i = 1; i < 1; i++)
+        for (int i = 1; i <= 1; i++)
         {
             players.Add(Instantiate(PlayerPrefab));
-            players[i].GetComponent<Player>().Human = false;
+            players[i].GetComponent<Player>().human = false;
             players[i].name = "AI-" + i;
         }
 

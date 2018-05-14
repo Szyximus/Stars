@@ -8,27 +8,29 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using Assets.Scripts.HexLogic;
+using System.Linq;
 
 public class Planet : Ownable
 {
     [System.Serializable]
     public struct PlanetCharacteristics
     {
-        public int Temperature;
-        public int Radiation;
-        public int Oxygen;
+        public int temperature;
+        public int radiation;
+        public int oxygen;
+
     }
 
     [System.Serializable]
     public struct PlanetResources
     {
-        public int Minerals;
-        public int Energy;
-        public int Population;
+        public int minerals;
+        public int energy;
+        public int population;
     }
 
     public PlanetCharacteristics Characteristics;
-    public PlanetResources Resources;
+    public PlanetResources resources;
 
     private MyUIHoverListener uiListener;
     private HexGrid grid;
@@ -114,7 +116,9 @@ public class Planet : Ownable
     override
     public void SetupNewTurn()
     {
-
+        FindStarsNear();
+        GetOwner().AddMinerals(10);
+        GetOwner().AddPopulation(10);
     }
 
     /**
@@ -192,7 +196,46 @@ public class Planet : Ownable
         }
         */
         if (owner == GameController.GetCurrentPlayer())
-        return true;
+            return true;
         return false;
+    }
+
+    private void FindStarsNear()
+    {
+        Star star;
+        var gameObjectsInProximity =
+                Physics.OverlapSphere(transform.position, 50)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+        var cells = gameObjectsInProximity.Where(o => o.tag == "Star");
+        try
+        {
+            star = (cells.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            star = null;
+            Debug.Log("Near the planet cannot find stars");
+        }
+
+
+        if (star != null)
+        {
+            Player player = GetOwner();
+            player.AddEnergy(10);
+        }
+
+    }
+    private int GetMinerals(int mineralsCount)
+    {
+        if(resources.minerals>0)
+        resources.minerals -= mineralsCount;
+
+        return mineralsCount;
+    }
+    public void GiveMinerals(Player player) {
+        player.AddMinerals(GetMinerals(10));
     }
 }
