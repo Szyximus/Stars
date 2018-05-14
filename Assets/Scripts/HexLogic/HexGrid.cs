@@ -136,6 +136,15 @@ public class HexGrid : MonoBehaviour
         else return null;
     }
 
+    public HexCell FromCoordinates( int x, int z )
+    {
+        var a = cells.Where(c => c.Coordinates.X == x && c.Coordinates.Z == z);
+        if (a.Any())
+            return a.FirstOrDefault();
+        else
+            return null;
+    }
+
     void TouchCell(Vector3 position)
     {
         HexCoordinates coordinates = HexCoordinates.FromPosition(position);
