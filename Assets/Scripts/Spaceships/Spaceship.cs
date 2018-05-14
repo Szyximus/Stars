@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
+using System.Linq;
 
 public class Spaceship : Ownable
 {
-
+    private List<HexCell> path;
     private HexGrid grid;
     private ParticleSystem burster;
     private Light bursterLight;
@@ -81,6 +82,27 @@ public class Spaceship : Ownable
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
+    public void Move( HexCell destination )
+    {
+        var dx = Coordinates.X - destination.Coordinates.X;
+        var dz = Coordinates.Z - destination.Coordinates.Z;
+
+		if ((dx == 0) && (dz == -1))
+			Move( EDirection.TopRight );
+		else if ((dx == -1) && (dz == 0))
+			Move( EDirection.Right );
+		else if ((dx == -1) && (dz == 1))
+			Move( EDirection.BottomRight );
+		else if ((dx == 0) && (dz == 1))
+			Move( EDirection.BottomLeft );
+		else if ((dx == 1) && (dz == 0))
+			Move( EDirection.Left );
+		else if ((dx == 1) && (dz == -1))
+			Move( EDirection.TopLeft );
+		else
+			Debug.Log( "Zjebales cos dx=" + dx + "  dy=" + dz );
+    }
+
     public void Move(EDirection direction)
     {
         var r = HexMetrics.innerRadius;
@@ -139,29 +161,40 @@ public class Spaceship : Ownable
     {
         Flying = true;
         TurnEnginesOn();
-        while (Coordinates != dest && actionPoints > 0)
-        {
-            Debug.Log("moving " + actionPoints);
-            actionPoints--;
-            if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
-                Move(EDirection.TopRight);
-            else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
-                Move(EDirection.TopLeft);
-            else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
-                Move(EDirection.BottomRight);
-            else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
-                Move(EDirection.BottomLeft);
-            else if (dest.X > Coordinates.X)
-                Move(EDirection.Right);
-            else if (dest.X < Coordinates.X)
-                Move(EDirection.Left);
-            yield return new WaitForSeconds(1.05f);
+        //while (Coordinates != dest && actionPoints > 0)
+        //{
+        //    Debug.Log("moving " + actionPoints);
+        //    actionPoints--;
+        //    if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
+        //        Move(EDirection.TopRight);
+        //    else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
+        //        Move(EDirection.TopLeft);
+        //    else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
+        //        Move(EDirection.BottomRight);
+        //    else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
+        //        Move(EDirection.BottomLeft);
+        //    else if (dest.X > Coordinates.X)
+        //        Move(EDirection.Right);
+        //    else if (dest.X < Coordinates.X)
+        //        Move(EDirection.Left);
+        //    yield return new WaitForSeconds(1.05f);
 
+        //}
+
+        path = Pathfinder.CalculatePath( grid.FromCoordinates( Coordinates ), grid.FromCoordinates( dest ) );
+        while ( Coordinates != dest && actionPoints > 0 )
+        {
+            Move( path.First() );
+            path.RemoveAt( 0 );
+            actionPoints--;
+            yield return new WaitForSeconds( 1.05f );
         }
         Flying = false;
         TurnEnginesOff();
         Debug.Log("Flying done, ActionPoints: " + actionPoints);
     }
+
+
 
     IEnumerator DelayedUpdate()
     {

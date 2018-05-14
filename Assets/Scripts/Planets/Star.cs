@@ -17,6 +17,8 @@ public class Star : MonoBehaviour
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
         uiListener = GameObject.Find("WiPCanvas").GetComponent<MyUIHoverListener>();
+
+		Debug.Log( "Sun coordinates " + Coordinates.ToString() );
     }
 
     void UpdateCoordinates()
