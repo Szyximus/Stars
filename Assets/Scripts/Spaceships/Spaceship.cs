@@ -15,6 +15,7 @@ public class Spaceship : Ownable
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
+    GameController GameController;
 
     private UIHoverListener uiListener;
     private AudioSource engineSound;
@@ -46,6 +47,7 @@ public class Spaceship : Ownable
         // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
+        GameController = GameObject.Find("GameController").GetComponent<GameController>();
         burster = gameObject.GetComponentInChildren<ParticleSystem>();
         bursterLight = gameObject.GetComponentInChildren<Light>();
         engineSound = gameObject.GetComponent<AudioSource>();
@@ -159,7 +161,7 @@ public class Spaceship : Ownable
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        Flying = true;
+        GameController.LockInput();
         TurnEnginesOn();
         //while (Coordinates != dest && actionPoints > 0)
         //{
@@ -192,6 +194,7 @@ public class Spaceship : Ownable
         Flying = false;
         TurnEnginesOff();
         Debug.Log("Flying done, ActionPoints: " + actionPoints);
+        GameController.UnlockInput();
     }
 
 

@@ -57,6 +57,9 @@ public class TurnScreen : MonoBehaviour
             background.color = new Vector4(0, 0, 0, 0.83f - passedTime / 2.4f);
             yield return null;
         }
+
+        label.color = new Vector4(1, 1, 1, 0);
+        background.color = new Vector4(0, 0, 0, 0);
         gameObject.SetActive(false);
     }
 }

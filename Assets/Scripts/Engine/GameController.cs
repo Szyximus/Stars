@@ -47,6 +47,16 @@ public class GameController : MonoBehaviour
         StartGame();
     }
 
+    public void LockInput()
+    {
+        turnScreen.gameObject.SetActive(true);
+    }
+
+    public void UnlockInput()
+    {
+        turnScreen.gameObject.SetActive(false);
+    }
+
     void InitPlayers()
     {
         // Create players from prefab.
