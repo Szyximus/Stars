@@ -12,16 +12,17 @@ using System.Linq;
 public class Miner : Spaceship
 {
     public Planet PlanetToMine;
+    public Star StarToMine;
     public Text Test;
 
     private void Awake()
     {
         MaxActionPoints = 6;
         RadarRange = 15;
-        neededMinerals = 160;
+        neededMinerals = 16;
         neededPopulation = 4;
-        neededSolarPower = 20;
-        spaceshipStatistics.healtPoints = 80;
+        neededSolarPower = 2;
+        spaceshipStatistics.healthPoints = 80;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 15;
         spaceshipStatistics.speed = 6;
@@ -44,7 +45,7 @@ public class Miner : Spaceship
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
-    public bool MineMinerals()
+    public bool MineResources()
     {
         var gameObjectsInProximity =
                 Physics.OverlapSphere(transform.position, 10)
@@ -52,13 +53,53 @@ public class Miner : Spaceship
                 .Select(c => c.gameObject)
                 .ToArray();
 
-        var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
+        var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
+        var stars = gameObjectsInProximity.Where(o => o.tag == "Star");
 
-        PlanetToMine = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        if (PlanetToMine == null || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer()) return false;
-        else
-        if (GetActionPoints() > 0 && PlanetToMine.GiveMinerals(GameController.GetCurrentPlayer())) return true;
-        return true;
+        try
+        {
+            PlanetToMine = planets.FirstOrDefault().GetComponent<Planet>() as Planet;
+            Debug.Log("Jest planeta");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Nie ma planety");
+        }
+        try
+        {
+            StarToMine = stars.FirstOrDefault().GetComponent<Star>() as Star;
+            Debug.Log("Jest gwiazda");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Nie ma gwiazdy");
+        }
+        if (StarToMine == null && (PlanetToMine == null) || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer())
+        {
+            Debug.Log("Cannot find star/planet or planet belong to you");
+            return false;
+        }
+        else if (StarToMine != null)
+        {
+            if (GetActionPoints() > 0)
+            {
+                StarToMine.GiveSolarPower(GetOwner());
+                return true;
+            }
+            Debug.Log("You dont have enough movement points");
+            return false;
+        }
+        else if (PlanetToMine != null || PlanetToMine.GetOwner() != GameController.GetCurrentPlayer())
+        {
+            if (GetActionPoints() > 0)
+            {
+                PlanetToMine.GiveMineralsTo(GetOwner());
+                return true;
+            }
+            Debug.Log("You dont have enough movement points");
+            return false;
+        }
+        return false;
 
     }
 }

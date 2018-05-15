@@ -18,10 +18,10 @@ public class Colonizer : Spaceship
     {
         MaxActionPoints = 4;
         RadarRange = 20;
-        neededMinerals = 1000;
-        neededPopulation = 100;
-        neededSolarPower = 400;
-        spaceshipStatistics.healtPoints = 600;
+        neededMinerals = 10;
+        neededPopulation = 10;
+        neededSolarPower = 100;
+        spaceshipStatistics.healthPoints = 600;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 40;
         spaceshipStatistics.speed = 4;

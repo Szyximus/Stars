@@ -32,6 +32,7 @@ public class Planet : Ownable
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
 
+    private int maxHealthPoints;
 
     private UIHoverListener uiListener;
     private HexGrid grid;
@@ -40,6 +41,7 @@ public class Planet : Ownable
     private void Awake()
     {
         RadarRange = 40f;
+
     }
 
     void Start()
@@ -47,7 +49,9 @@ public class Planet : Ownable
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
+        maxHealthPoints = characteristics.healthPoints;
         UpdateCoordinates();
+
         Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
     }
@@ -240,9 +244,22 @@ public class Planet : Ownable
 
         return mineralsCount;
     }
-    public bool GiveMinerals(Player player)
+    public bool GiveMineralsTo(Player player)
     {
         player.minerals += (GetMinerals(40));
         return true;
+    }
+
+    public void AddHealthPoints(int healthPoints)
+    {
+        if ((this.characteristics.healthPoints += healthPoints) <= 0)
+        {
+            this.characteristics.healthPoints = maxHealthPoints;
+            if (this.GetOwner() != null) Lose();
+        }
+        else
+        {
+            this.characteristics.healthPoints += healthPoints;
+        }
     }
 }

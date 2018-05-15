@@ -16,11 +16,10 @@ public class Scout : Spaceship
     {
         MaxActionPoints = 7;
         RadarRange = 25;
-        neededMinerals = 100;
+        neededMinerals = 10;
         neededPopulation = 8;
-        neededSolarPower = 60;
-        SpaceshipStatistics spaceshipStatistics;
-        spaceshipStatistics.healtPoints = 150;
+        neededSolarPower = 8;
+        spaceshipStatistics.healthPoints = 150;
         spaceshipStatistics.attack = 10;
         spaceshipStatistics.defense = 25;
         spaceshipStatistics.speed = 7;

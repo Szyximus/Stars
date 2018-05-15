@@ -16,11 +16,11 @@ public class Warship : Spaceship
     {
         MaxActionPoints = 5;
         RadarRange = 25;
-        neededMinerals = 350;
-        neededPopulation = 14;
-        neededSolarPower = 140;
-        spaceshipStatistics.healtPoints = 300;
-        spaceshipStatistics.attack = 35;
+        neededMinerals = 5;
+        neededPopulation = 5;
+        neededSolarPower = 5;
+        spaceshipStatistics.healthPoints = 300;
+        spaceshipStatistics.attack = 10;
         spaceshipStatistics.defense = 50;
         spaceshipStatistics.speed = 5;
     }

@@ -497,6 +497,11 @@ Prefab:
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 951704592}
+    - target: {fileID: 114701368861187106, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
+        type: 2}
+      propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Attack
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
   m_IsPrefabParent: 0
