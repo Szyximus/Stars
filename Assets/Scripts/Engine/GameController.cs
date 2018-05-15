@@ -179,6 +179,7 @@ public class GameController : MonoBehaviour
             JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet.GetComponent<Planet>());
             planet.name = jPlanetSerialized["name"].ToString();
 
+
             float radius = (float)jPlanetSerialized["radius"];
             //planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
@@ -277,7 +278,6 @@ public class GameController : MonoBehaviour
             {
                 grid.FromCoordinates(colonizer.Coordinates).ClearObject();
                 GetCurrentPlayer().Lose(colonizer);
-                
                 Destroy(colonizer.gameObject);
 
             }
@@ -288,12 +288,15 @@ public class GameController : MonoBehaviour
     public void Mine()
     {
         var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
-        if (miner != null && miner.GetActionPoints()>0) 
+        if (miner != null && miner.GetActionPoints() > 0)
         {
-            miner.MineMinerals();
-            miner.SetActionPoints(-1);
+            if (miner.MineMinerals())
+                miner.SetActionPoints(-1);
+            else
+            {
+                Debug.Log("Cannot mine on planet");
+            }
         }
-
     }
 
     public void BuildSpaceship(GameObject spaceshipPrefab)
@@ -303,6 +306,7 @@ public class GameController : MonoBehaviour
         {
             if (planet.IsPossibleBuildSpaceship())
             {
+                Debug.Log("Building " + spaceshipPrefab.name);
                 GameObject spaceship = planet.BuildSpaceship(spaceshipPrefab);
                 spaceship.GetComponent<Spaceship>().Owned(GetCurrentPlayer());
                 spaceship.GetComponent<Spaceship>().Init();
@@ -310,6 +314,8 @@ public class GameController : MonoBehaviour
                 EventManager.selectionManager.SelectedObject = null;
                 grid.SetupNewTurn(GetCurrentPlayer());
                 GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
+
+                Debug.Log("Built " + spaceshipPrefab.name);
             }
         }
     }

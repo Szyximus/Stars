@@ -6,7 +6,8 @@ public class Player : MonoBehaviour
     public bool human;
     public int minerals;
     public int population;
-    public int energy;
+    public int power;
+    public int terraforming;
     private ArrayList spaceships;
     private ArrayList planets;
 
@@ -16,9 +17,10 @@ public class Player : MonoBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
-        minerals = random.Next(1, 15);
-        population = random.Next(1, 15);
-        energy = random.Next(1, 15);
+        minerals = 1000;
+        population = 50;
+        power = 60;
+        terraforming = 1;
     }
 
     // Update is called once per frame
@@ -69,17 +71,5 @@ public class Player : MonoBehaviour
             planets.Remove(thing);
         if (thing is Spaceship)
             spaceships.Remove(thing);
-    }
-    public void AddMinerals(int minerals)
-    {
-        this.minerals += minerals;
-    }
-    public void AddPopulation(int population)
-    {
-        this.population += population;
-    }
-    public void AddEnergy(int energy)
-    {
-        this.energy += energy;
     }
 }

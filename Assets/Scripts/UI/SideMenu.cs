@@ -10,6 +10,8 @@ public class SideMenu : MonoBehaviour
     Text label;
     Text energy;
     public Text OwnerName;
+    public Text planetResources;
+    public Text planetCharacteristics;
     Button button;
     Button colonizeButton;
     Button buildColonizerButton;
@@ -25,6 +27,8 @@ public class SideMenu : MonoBehaviour
 
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
+        planetResources = GameObject.Find("PlanetResources").GetComponent<Text>();
+        planetCharacteristics = GameObject.Find("PlanetCharacteristics").GetComponent<Text>();
         energy = GameObject.Find("MovementPoints").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         mineButton = GameObject.Find("MineButton").GetComponent<Button>();
@@ -100,6 +104,12 @@ public class SideMenu : MonoBehaviour
             buildScoutButton.gameObject.SetActive(true);
             buildMinerButton.gameObject.SetActive(true);
             buildWarshipButton.gameObject.SetActive(true);
+            planetCharacteristics.gameObject.SetActive(true);
+            Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+            planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
+                                         "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                         "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                         "HealthPoints: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         }
         else
         {
@@ -107,6 +117,35 @@ public class SideMenu : MonoBehaviour
             buildScoutButton.gameObject.SetActive(false);
             buildMinerButton.gameObject.SetActive(false);
             buildWarshipButton.gameObject.SetActive(false);
+        }
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != GameController.GetCurrentPlayer())
+        {
+            planetCharacteristics.gameObject.SetActive(true);
+            planetResources.gameObject.SetActive(true);
+            Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+            planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
+                                         "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                         "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                         "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
+                                         "HealthPoints: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+            planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
+        }
+        else
+        {
+            planetResources.gameObject.SetActive(false);
+        }
+        //hack// jak jest zaznaczony statek to rzuca nullami, trzeba to jakos ladnie obsluzyc ale teraz nie ma czasu
+        try
+        {
+            if (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet == null)
+            {
+                planetCharacteristics.gameObject.SetActive(false);
+            }
+        }
+        catch (System.Exception e)
+        {
+
         }
 
     }

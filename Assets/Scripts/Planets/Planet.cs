@@ -13,34 +13,20 @@ using System.Linq;
 public class Planet : Ownable
 {
     Random rnd = new Random();
+    [System.Serializable]
     public struct PlanetCharacteristics
     {
+        public int habitability;
+        public int healthPoints;
         public int temperature;
         public int radiation;
         public int oxygen;
-
-        public void SetTemperature(int temperature)
-        {
-            this.temperature = temperature;
-        }
-        public void SetRadiation(int radiation)
-        {
-            this.radiation = radiation;
-        }
-        public void SetOxygen(int oxygen)
-        {
-            this.oxygen = oxygen;
-        }
     }
 
     [System.Serializable]
     public struct PlanetResources
     {
         public int minerals;
-        public void SetMinerals(int minerals)
-        {
-            this.minerals = minerals;
-        }
     }
 
     public PlanetCharacteristics characteristics;
@@ -62,11 +48,8 @@ public class Planet : Ownable
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         UpdateCoordinates();
-        characteristics.SetOxygen(Random.Range(10, 100));
-        characteristics.SetRadiation(Random.Range(10, 100));
-        characteristics.SetTemperature(Random.Range(-100, 200));
-        resources.SetMinerals(Random.Range(10000, 30000));
-        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);
+        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
+                   "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
     }
 
     string ToJson()
@@ -136,8 +119,8 @@ public class Planet : Ownable
     public void SetupNewTurn()
     {
         FindStarsNear();
-        GetOwner().AddMinerals(10);
-        GetOwner().AddPopulation(10);
+        GetOwner().minerals += 10;
+        GetOwner().population += 10;
     }
 
     /**
@@ -209,10 +192,18 @@ public class Planet : Ownable
     }
     public bool IsPossibleBuildSpaceship()
     {
-        if (owner == GameController.GetCurrentPlayer() && owner.minerals > 15)
+
+        if (owner == GameController.GetCurrentPlayer())
         {
+            //    if (owner.)
+            //    {
+            //        Debug.Log("You have the required amount of minerals");
+
+            //    }
+
             return true;
         }
+        Debug.Log("nie mozesz");
         return false;
     }
     private void FindStarsNear()
@@ -239,20 +230,20 @@ public class Planet : Ownable
         if (star != null)
         {
             Player player = GetOwner();
-            player.AddEnergy(10);
+            player.power += 10;
         }
 
     }
     private int GetMinerals(int mineralsCount)
     {
-        if (resources.minerals > 0)
+        if (resources.minerals >= mineralsCount)
             resources.minerals -= mineralsCount;
 
         return mineralsCount;
     }
     public bool GiveMinerals(Player player)
     {
-        player.AddMinerals(GetMinerals(10));
+        player.minerals += (GetMinerals(40));
         return true;
     }
 }

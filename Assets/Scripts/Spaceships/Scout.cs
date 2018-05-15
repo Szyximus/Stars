@@ -7,17 +7,17 @@ using System.Threading;
 using System.Linq;
 
 /**
- * Class represent War spaceship.
+ * Class represent Scout spaceship.
  */
-public class Warship : Spaceship
+public class Scout : Spaceship
 {
 
     private void Awake()
     {
-        MaxActionPoints = 5;
+        MaxActionPoints = 7;
         RadarRange = 25;
-        neededMinerals = 350;
-        neededPopulation = 14;
+        neededMinerals = 100;
+        neededPopulation = 8;
     }
 
 

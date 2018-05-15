@@ -514,6 +514,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RadarRange: 0
+  buildCost: 0
   Flying: 0
   MaxActionPoints: 0
 --- !u!135 &135777127890119852
