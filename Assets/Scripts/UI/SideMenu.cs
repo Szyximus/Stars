@@ -25,7 +25,7 @@ public class SideMenu : MonoBehaviour
 
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
-        energy = GameObject.Find("MovementPoints").GetComponent<Text>();
+        energy = GameObject.Find("Energy").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         mineButton = GameObject.Find("MineButton").GetComponent<Button>();
         buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
@@ -79,7 +79,7 @@ public class SideMenu : MonoBehaviour
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
         {
             energy.gameObject.SetActive(true);
-            energy.text = "MovementPoints: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+            energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
         }
         else
         {
