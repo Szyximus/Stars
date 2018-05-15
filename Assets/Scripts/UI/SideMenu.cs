@@ -3,73 +3,119 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
+using System.Linq;
 public class SideMenu : MonoBehaviour
 {
     bool shown, animating = false;
     RectTransform rectTransform;
+    GameObject NamePanel;
+    GameObject PlanetCharacteristicsPanel;
+    GameObject PlanetResourcesPanel;
+    GameObject BuildPanel;
+    GameObject ShipPanel;
+
+    GameObject FreePlanetFill;
+    GameObject NoSelectionFill;
+    GameObject StarFill;
+
     Text label;
+    Text planetResources;
+    Text planetCharacteristics;
     Text energy;
-    public Text OwnerName;
-    public Text planetResources;
-    public Text planetCharacteristics;
-    Button button;
+    Text ownerName;
+
     Button colonizeButton;
-    Button buildColonizerButton;
-    Button buildScoutButton;
-    Button buildMinerButton;
-    Button buildWarshipButton;
     Button mineButton;
+
+    Image icon;
 
     // Use this for initialization
     void Start()
     {
-        //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
 
-        transform.position += new Vector3(170, 0, 0);
-        label = GameObject.Find("Name").GetComponent<Text>();
-        planetResources = GameObject.Find("PlanetResources").GetComponent<Text>();
-        planetCharacteristics = GameObject.Find("PlanetCharacteristics").GetComponent<Text>();
-        energy = GameObject.Find("Energy").GetComponent<Text>();
-        colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
-        mineButton = GameObject.Find("MineButton").GetComponent<Button>();
-        buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
-        buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
-        buildMinerButton = GameObject.Find("BuildMinerButton").GetComponent<Button>();
-        buildWarshipButton = GameObject.Find("BuildWarshipButton").GetComponent<Button>();
-        OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
+        transform.position += new Vector3(256, 0, 0);
+
+        NamePanel = GameObject.Find("NamePanel");
+        PlanetCharacteristicsPanel = GameObject.Find("PlanetCharacteristicsPanel");
+        PlanetResourcesPanel = GameObject.Find("PlanetResourcesPanel");
+        BuildPanel = GameObject.Find("BuildPanel");
+        ShipPanel = GameObject.Find("ShipPanel");
+
+        FreePlanetFill = GameObject.Find("FreePlanetFill");
+        NoSelectionFill = GameObject.Find("NoSelectionFill");
+        StarFill = GameObject.Find("StarFill");
+
+        label = NamePanel.GetComponentInChildren<Text>();
+        planetResources = PlanetResourcesPanel.GetComponentsInChildren<Text>().Last();
+        planetCharacteristics = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
+        energy = ShipPanel.GetComponentInChildren<Text>();
+        colonizeButton = ShipPanel.GetComponentsInChildren<Button>().Last();
+        mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
+        ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
+
+        icon = NamePanel.GetComponentsInChildren<Image>().Last();
 
 
     }
-
-    // Update is called once per frame
-    void Update()
+    void ShowNamePanel()
     {
+        NamePanel.SetActive(true);
+        NoSelectionFill.SetActive(false);
 
-        if (EventManager.selectionManager.SelectedObject == null && shown && !animating)
+        label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)", "");
+
+        icon.sprite = EventManager.selectionManager.SelectedObject.GetComponentInChildren<SpriteRenderer>().sprite;
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null) //If ownable
         {
-            StartCoroutine(Hide());
-        }
-
-        if (EventManager.selectionManager.SelectedObject != null && !shown && !animating)
-        {
-            StartCoroutine(Show());
-        }
-        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)", "");
-
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null)
-        {
-            string _owner = (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable).GetOwnerName();
-
-            if (_owner == "")
-                OwnerName.text = "No Owner";
-            else
-                OwnerName.text = "Owner: " + _owner;
-            OwnerName.gameObject.SetActive(true);
+            ShowOwnerName();
         }
         else
         {
-            OwnerName.gameObject.SetActive(false);
+            HideOwnerName();
         }
+    }
+
+    void ShowOwnerName()
+    {
+        string _owner = (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable).GetOwnerName();
+
+        if (_owner == "")
+            ownerName.text = "No Owner";
+        else
+            ownerName.text = _owner;
+        ownerName.gameObject.SetActive(true);
+    }
+
+    void HideOwnerName()
+    {
+        ownerName.gameObject.SetActive(false);
+    }
+    void ShowStarPanels()
+    {
+        ShipPanel.SetActive(false);
+
+        PlanetCharacteristicsPanel.SetActive(false);
+        PlanetResourcesPanel.SetActive(false);
+        BuildPanel.SetActive(false);
+        FreePlanetFill.SetActive(false);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(true);
+
+    }
+
+    void ShowShipPanel()
+    {
+        ShipPanel.SetActive(true);
+
+        PlanetCharacteristicsPanel.SetActive(false);
+        PlanetResourcesPanel.SetActive(false);
+        BuildPanel.SetActive(false);
+        FreePlanetFill.SetActive(false);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(false);
+
+        energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
         {
@@ -80,15 +126,7 @@ public class SideMenu : MonoBehaviour
             colonizeButton.gameObject.SetActive(false);
         }
 
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
-        {
-            energy.gameObject.SetActive(true);
-            energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
-        }
-        else
-        {
-            energy.gameObject.SetActive(false);
-        }
+
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null)
         {
             mineButton.gameObject.SetActive(true);
@@ -97,57 +135,106 @@ public class SideMenu : MonoBehaviour
         {
             mineButton.gameObject.SetActive(false);
         }
+    }
 
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer())
+    void ShowOwnedPlanetPanels()
+    {
+        PlanetCharacteristicsPanel.SetActive(true);
+        PlanetResourcesPanel.SetActive(false);
+        BuildPanel.SetActive(true);
+        ShipPanel.SetActive(false);
+
+        FreePlanetFill.SetActive(false);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(false);
+
+        Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+        planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
+                                     "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                     "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                     "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+    }
+
+    void ShowFreePlanetPanels()
+    {
+
+        PlanetCharacteristicsPanel.SetActive(true);
+        PlanetResourcesPanel.SetActive(true);
+        BuildPanel.SetActive(false);
+        ShipPanel.SetActive(false);
+
+        FreePlanetFill.SetActive(true);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(false);
+
+        Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+        planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
+                                     "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                     "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                     "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
+                                     "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+        planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
+
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+        if (EventManager.selectionManager.SelectedObject == null && shown && !animating) // No selection
         {
-            buildColonizerButton.gameObject.SetActive(true);
-            buildScoutButton.gameObject.SetActive(true);
-            buildMinerButton.gameObject.SetActive(true);
-            buildWarshipButton.gameObject.SetActive(true);
-            planetCharacteristics.gameObject.SetActive(true);
-            Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
-            planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
-                                         "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
-                                         "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
-                                         "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+            NamePanel.SetActive(false);
+            PlanetCharacteristicsPanel.SetActive(false);
+            PlanetResourcesPanel.SetActive(false);
+            BuildPanel.SetActive(false);
+            ShipPanel.SetActive(false);
+
+            NoSelectionFill.SetActive(true);
+            FreePlanetFill.SetActive(false);
+            StarFill.SetActive(false);
+
+            StartCoroutine(Hide());
         }
-        else
+
+        if (EventManager.selectionManager.SelectedObject != null && !shown && !animating) //selection, show menu
         {
-            buildColonizerButton.gameObject.SetActive(false);
-            buildScoutButton.gameObject.SetActive(false);
-            buildMinerButton.gameObject.SetActive(false);
-            buildWarshipButton.gameObject.SetActive(false);
+            StartCoroutine(Show());  
         }
+
+        if (EventManager.selectionManager.SelectedObject != null &&
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null ||
+            (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null ||
+            (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null ||
+            (EventManager.selectionManager.SelectedObject.GetComponent<Warship>() as Warship) != null)) // if Spaceship
+        {
+            ShowNamePanel();
+            ShowShipPanel();
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Star>() as Star) != null) //if Star
+        {
+            ShowNamePanel();
+            ShowStarPanels();
+
+        }
+
+
+        if (EventManager.selectionManager.SelectedObject != null &&
+            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()) // if owned planet
+        {
+            ShowNamePanel();
+            ShowOwnedPlanetPanels();
+        }
+
+
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != GameController.GetCurrentPlayer())
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()) //Free Planet
         {
-            planetCharacteristics.gameObject.SetActive(true);
-            planetResources.gameObject.SetActive(true);
-            Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
-            planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
-                                         "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
-                                         "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
-                                         "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
-                                         "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
-            planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
+            ShowNamePanel();
+            ShowFreePlanetPanels();
         }
-        else
-        {
-            planetResources.gameObject.SetActive(false);
-        }
-        //hack// jak jest zaznaczony statek to rzuca nullami, trzeba to jakos ladnie obsluzyc ale teraz nie ma czasu
-        try
-        {
-            if (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet == null)
-            {
-                planetCharacteristics.gameObject.SetActive(false);
-            }
-        }
-        catch (System.Exception e)
-        {
-
-        }
-
     }
 
     IEnumerator Show()
@@ -156,7 +243,7 @@ public class SideMenu : MonoBehaviour
 
         animating = true;
         float startTime = Time.time;
-        Vector3 direction = new Vector3(-170, 0, 0);
+        Vector3 direction = new Vector3(-256, 0, 0);
         var endPos = transform.position + direction;
 
         while (Time.time - startTime < 0.25) //the movement takes exactly 0,25 s. regardless of framerate
@@ -175,7 +262,7 @@ public class SideMenu : MonoBehaviour
 
         animating = true;
         float startTime = Time.time;
-        Vector3 direction = new Vector3(170, 0, 0);
+        Vector3 direction = new Vector3(256, 0, 0);
         var endPos = transform.position + direction;
 
         while (Time.time - startTime < 0.25) //the movement takes exactly 0,25 s. regardless of framerate
@@ -185,7 +272,6 @@ public class SideMenu : MonoBehaviour
             yield return null;
         }
         transform.position = endPos;
-        label.text = " ";
         shown = false;
         animating = false;
     }
