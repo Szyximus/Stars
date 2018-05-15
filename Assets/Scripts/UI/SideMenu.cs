@@ -109,7 +109,7 @@ public class SideMenu : MonoBehaviour
             planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
                                          "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
                                          "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
-                                         "HealthPoints: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+                                         "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         }
         else
         {
@@ -128,7 +128,7 @@ public class SideMenu : MonoBehaviour
                                          "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
                                          "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
                                          "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
-                                         "HealthPoints: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+                                         "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
             planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
         }
         else

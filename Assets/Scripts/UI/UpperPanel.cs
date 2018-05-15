@@ -5,14 +5,14 @@ using Assets.Scripts;
 using UnityEngine.UI;
 public class UpperPanel : MonoBehaviour
 {
-    Button menuButton;
-    Button researchButton;
-    public Text resourcesLabel;
+    public Text powerLabel;
+    public Text populationLabel;
+    public Text mineralsLabel;
     void Start()
     {
-        researchButton = GameObject.Find("ResearchButton").GetComponent<Button>();
-        menuButton = GameObject.Find("MenuButton").GetComponent<Button>();
-        resourcesLabel = GameObject.Find("Resources").GetComponent<Text>();
+        powerLabel = GameObject.Find("Power").GetComponentInChildren<Text>();
+        populationLabel = GameObject.Find("Population").GetComponentInChildren<Text>();
+        mineralsLabel = GameObject.Find("Resources").GetComponentInChildren<Text>();
     }
 
     private void Update()
@@ -20,8 +20,9 @@ public class UpperPanel : MonoBehaviour
         Player currentPlayer = GameController.GetCurrentPlayer();
         if (currentPlayer != null)
         {
-            resourcesLabel.text = "Minerals " + currentPlayer.minerals.ToString() + " Population " + currentPlayer.population.ToString()
-                                  + " Power " + currentPlayer.power.ToString() + " Terraforming " + currentPlayer.terraforming.ToString();
+            powerLabel.text = currentPlayer.power.ToString();
+            populationLabel.text = currentPlayer.population.ToString();
+            mineralsLabel.text = currentPlayer.minerals.ToString();
         }
         else
         {
