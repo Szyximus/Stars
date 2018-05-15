@@ -6,11 +6,13 @@
          "planetMain":{  
             "characteristics":{  
                "temperature":54,
-               "radiation":0,
-               "oxygen":0
+               "radiation":69,
+               "oxygen":85,
+			   "healthPoints":1000,
+			   "habitability":1
             },
             "resources":{  
-               "minerals":0,
+               "minerals":150000,
                "energy":0,
                "population":0
             }
@@ -28,11 +30,13 @@
         "planetMain": {
             "characteristics": {
                 "temperature": 69,
-                "radiation": 0,
-                "oxygen": 0
+                "radiation": 54,
+                "oxygen": 45,
+			    "healthPoints":1000,
+				"habitability":3
             },
             "resources": {
-                "minerals": 0,
+                "minerals": 34000,
                 "energy": 0,
                 "population": 0
             }
@@ -50,12 +54,14 @@
 		 "mayBeHome": true,
          "planetMain":{  
             "characteristics":{  
-               "temperature":47,
-               "radiation":0,
-               "oxygen":0
+               "temperature":56,
+               "radiation":21,
+               "oxygen":78,
+			   "healthPoints":2000,
+			   "habitability":1
             },
             "resources":{  
-               "minerals":0,
+               "minerals":150000,
                "energy":0,
                "population":0
             }
@@ -73,11 +79,13 @@
          "planetMain":{  
             "characteristics":{  
                "temperature":35,
-               "radiation":0,
-               "oxygen":0
+               "radiation":3,
+               "oxygen":0,
+			   "healthPoints":500,
+			   "habitability":2
             },
             "resources":{  
-               "minerals":0,
+               "minerals":1500,
                "energy":0,
                "population":0
             }

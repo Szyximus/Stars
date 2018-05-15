@@ -20,7 +20,8 @@ public class Spaceship : Ownable
     private UIHoverListener uiListener;
     private AudioSource engineSound;
 
-    public int buildCost;
+    public int neededMinerals;
+    public int neededPopulation;
 
     public bool Flying;
     public int MaxActionPoints;

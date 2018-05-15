@@ -21,7 +21,7 @@ public class UpperPanel : MonoBehaviour
         if (currentPlayer != null)
         {
             resourcesLabel.text = "Minerals " + currentPlayer.minerals.ToString() + " Population " + currentPlayer.population.ToString()
-                                  + " Energy " + currentPlayer.energy.ToString();
+                                  + " Power " + currentPlayer.power.ToString() + " Terraforming " + currentPlayer.terraforming.ToString();
         }
         else
         {

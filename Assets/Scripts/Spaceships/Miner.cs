@@ -13,13 +13,14 @@ public class Miner : Spaceship
 {
     public Planet PlanetToMine;
     public Text Test;
-    
+
 
     private void Awake()
     {
-        MaxActionPoints =6;
+        MaxActionPoints = 6;
         RadarRange = 15;
-        buildCost = 10;
+        neededMinerals = 160;
+        neededPopulation = 4;
     }
 
     public bool MinePlanet()
@@ -52,7 +53,7 @@ public class Miner : Spaceship
         PlanetToMine = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         if (PlanetToMine == null || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer()) return false;
         else
-        if (PlanetToMine.GiveMinerals(GameController.GetCurrentPlayer())) return true;
+        if (GetActionPoints() > 0 && PlanetToMine.GiveMinerals(GameController.GetCurrentPlayer())) return true;
         return true;
 
     }

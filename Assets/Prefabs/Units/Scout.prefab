@@ -68,9 +68,9 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4081058916496580}
-  - component: {fileID: 114869324161524294}
   - component: {fileID: 135465678517273418}
   - component: {fileID: 82245447825814314}
+  - component: {fileID: 114101080874467734}
   m_Layer: 0
   m_Name: Scout
   m_TagString: Unit
@@ -520,6 +520,22 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+--- !u!114 &114101080874467734
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1661768486814866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5c31b4e80856c04bb5eb6784957047b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RadarRange: 0
+  neededMinerals: 0
+  neededPopulation: 0
+  Flying: 0
+  MaxActionPoints: 0
 --- !u!114 &114134690136699754
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -529,18 +545,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 52c912a32390b7f408686c70ec7f5254, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 10
---- !u!114 &114869324161524294
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1661768486814866}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: afe58c33810727d4e8b7f94e7e8109e8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   RadarRange: 0

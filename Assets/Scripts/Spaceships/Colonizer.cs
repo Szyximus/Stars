@@ -18,7 +18,8 @@ public class Colonizer : Spaceship
     {
         MaxActionPoints = 4;
         RadarRange = 20;
-        buildCost = 20;
+        neededMinerals = 1000;
+        neededPopulation = 70;
     }
 
     /**
@@ -37,16 +38,33 @@ public class Colonizer : Spaceship
         PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         if (PlanetToColonize == null || PlanetToColonize.GetOwner() == GameController.GetCurrentPlayer()) return false;
         else
-        if (CheckCanBeColonizate(PlanetToColonize) && PlanetToColonize.GetOwner() == null)
+        if (CheckCanBeColonizate(PlanetToColonize) && PlanetToColonize.GetOwner() == null && GetActionPoints() > 0)
         {
             PlanetToColonize.Colonize();
+            Debug.Log("You colonized planet " + PlanetToColonize.name);
             return true;
         }
-        return true;
+        else
+        if (PlanetToColonize.GetOwner() != null && GetActionPoints() > 0)
+        {
+            if (CheckCanBeConquered(PlanetToColonize) && CheckCanBeColonizate(PlanetToColonize))
+            {
+                Debug.Log("You colonized " + PlanetToColonize.GetOwnerName() + "'s planet " + PlanetToColonize.name);
+                PlanetToColonize.Colonize();
+                return true;
+            }
+            Debug.Log("Planet's health points are over 0");
+            return false;
+        }
+        return false;
 
     }
     private bool CheckCanBeColonizate(Planet planet)
     {
-        return planet.characteristics.oxygen + planet.characteristics.radiation + planet.characteristics.temperature < 100 ? true : false;
+        return planet.characteristics.habitability <= GetOwner().terraforming;
+    }
+    private bool CheckCanBeConquered(Planet planet)
+    {
+        return (planet.characteristics.healthPoints <= 0);
     }
 }
