@@ -21,7 +21,6 @@ public class Colonizer : Spaceship
         neededMinerals = 1000;
         neededPopulation = 100;
         neededSolarPower = 400;
-        SpaceshipStatistics spaceshipStatistics;
         spaceshipStatistics.healtPoints = 600;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 40;

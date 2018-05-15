@@ -24,6 +24,7 @@ public class Spaceship : Ownable
     public int neededPopulation;
     public int neededSolarPower;
 
+    public SpaceshipStatistics spaceshipStatistics;
     [System.Serializable]
     public struct SpaceshipStatistics
     {

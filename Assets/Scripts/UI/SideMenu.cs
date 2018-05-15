@@ -7,12 +7,12 @@ public class SideMenu : MonoBehaviour
 {
     bool shown, animating = false;
     RectTransform rectTransform;
-    Text label;
-    Text energy;
-    public Text OwnerName;
+    Text objectName;
+    Text movementPoints;
+    Text spaceshipStatistics;
+    public Text ownerName;
     public Text planetResources;
     public Text planetCharacteristics;
-    Button button;
     Button colonizeButton;
     Button buildColonizerButton;
     Button buildScoutButton;
@@ -26,17 +26,18 @@ public class SideMenu : MonoBehaviour
         //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
 
         transform.position += new Vector3(170, 0, 0);
-        label = GameObject.Find("Name").GetComponent<Text>();
+        objectName = GameObject.Find("Name").GetComponent<Text>();
+    //    spaceshipStatistics = GameObject.Find("SpaceshipStatistics").GetComponent<Text>();
         planetResources = GameObject.Find("PlanetResources").GetComponent<Text>();
         planetCharacteristics = GameObject.Find("PlanetCharacteristics").GetComponent<Text>();
-        energy = GameObject.Find("Energy").GetComponent<Text>();
+        movementPoints = GameObject.Find("MovementPoints").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
         mineButton = GameObject.Find("MineButton").GetComponent<Button>();
         buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
         buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
         buildMinerButton = GameObject.Find("BuildMinerButton").GetComponent<Button>();
         buildWarshipButton = GameObject.Find("BuildWarshipButton").GetComponent<Button>();
-        OwnerName = GameObject.Find("OwnerName").GetComponent<Text>();
+        ownerName = GameObject.Find("OwnerName").GetComponent<Text>();
 
 
     }
@@ -54,21 +55,21 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)", "");
+        if (shown && EventManager.selectionManager.SelectedObject != null) objectName.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)", "");
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null)
         {
             string _owner = (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable).GetOwnerName();
 
             if (_owner == "")
-                OwnerName.text = "No Owner";
+                ownerName.text = "No Owner";
             else
-                OwnerName.text = "Owner: " + _owner;
-            OwnerName.gameObject.SetActive(true);
+                ownerName.text = "Owner: " + _owner;
+            ownerName.gameObject.SetActive(true);
         }
         else
         {
-            OwnerName.gameObject.SetActive(false);
+            ownerName.gameObject.SetActive(false);
         }
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
@@ -82,12 +83,20 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
         {
-            energy.gameObject.SetActive(true);
-            energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+            Spaceship spaceship = EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship;
+            movementPoints.gameObject.SetActive(true);
+            spaceshipStatistics.gameObject.SetActive(true);
+            movementPoints.text = "Movement Points: " + spaceship.GetActionPoints().ToString();
+            spaceshipStatistics.text = ("Speed: " + spaceship.spaceshipStatistics.speed.ToString() + "\n" +
+                                        "Attack: " + spaceship.spaceshipStatistics.attack.ToString() + "\n" +
+                                        "Defense: " + spaceship.spaceshipStatistics.defense.ToString() + "\n" +
+                                        "HP: " + spaceship.spaceshipStatistics.healtPoints.ToString()).Replace("\n", System.Environment.NewLine);
+
         }
         else
         {
-            energy.gameObject.SetActive(false);
+            movementPoints.gameObject.SetActive(false);
+            spaceshipStatistics.gameObject.SetActive(false);
         }
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null)
         {
@@ -107,9 +116,9 @@ public class SideMenu : MonoBehaviour
             planetCharacteristics.gameObject.SetActive(true);
             Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
             planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
-                                         "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
-                                         "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
-                                         "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+                                          "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                          "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                          "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         }
         else
         {
@@ -185,7 +194,7 @@ public class SideMenu : MonoBehaviour
             yield return null;
         }
         transform.position = endPos;
-        label.text = " ";
+        objectName.text = " ";
         shown = false;
         animating = false;
     }

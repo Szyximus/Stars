@@ -21,7 +21,6 @@ public class Miner : Spaceship
         neededMinerals = 160;
         neededPopulation = 4;
         neededSolarPower = 20;
-        SpaceshipStatistics spaceshipStatistics;
         spaceshipStatistics.healtPoints = 80;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 15;
