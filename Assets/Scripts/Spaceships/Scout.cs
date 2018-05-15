@@ -18,6 +18,12 @@ public class Scout : Spaceship
         RadarRange = 25;
         neededMinerals = 100;
         neededPopulation = 8;
+        neededSolarPower = 60;
+        SpaceshipStatistics spaceshipStatistics;
+        spaceshipStatistics.healtPoints = 150;
+        spaceshipStatistics.attack = 10;
+        spaceshipStatistics.defense = 25;
+        spaceshipStatistics.speed = 7;
     }
 
 

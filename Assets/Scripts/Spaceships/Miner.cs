@@ -14,13 +14,17 @@ public class Miner : Spaceship
     public Planet PlanetToMine;
     public Text Test;
 
-
     private void Awake()
     {
         MaxActionPoints = 6;
         RadarRange = 15;
         neededMinerals = 160;
         neededPopulation = 4;
+        neededSolarPower = 20;
+        spaceshipStatistics.healtPoints = 80;
+        spaceshipStatistics.attack = 5;
+        spaceshipStatistics.defense = 15;
+        spaceshipStatistics.speed = 6;
     }
 
     public bool MinePlanet()
