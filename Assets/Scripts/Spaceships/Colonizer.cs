@@ -18,6 +18,7 @@ public class Colonizer : Spaceship
     {
         MaxActionPoints = 4;
         RadarRange = 20;
+        buildCost = 20;
     }
 
     /**
@@ -36,12 +37,16 @@ public class Colonizer : Spaceship
         PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
         if (PlanetToColonize == null || PlanetToColonize.GetOwner() == GameController.GetCurrentPlayer()) return false;
         else
-        if (PlanetToColonize.Colonize()) return true;
+        if (CheckCanBeColonizate(PlanetToColonize) && PlanetToColonize.GetOwner() == null)
+        {
+            PlanetToColonize.Colonize();
+            return true;
+        }
         return true;
 
     }
     private bool CheckCanBeColonizate(Planet planet)
     {
-        return planet.Characteristics.Oxygen + planet.Characteristics.Radiation  + planet.Characteristics.Temperature < 100 ? true : false;
+        return planet.characteristics.oxygen + planet.characteristics.radiation + planet.characteristics.temperature < 100 ? true : false;
     }
 }

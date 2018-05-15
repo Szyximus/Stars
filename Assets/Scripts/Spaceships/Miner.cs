@@ -11,13 +11,15 @@ using System.Linq;
  */
 public class Miner : Spaceship
 {
-    public Planet PlanetToColonize;
+    public Planet PlanetToMine;
     public Text Test;
+    
 
     private void Awake()
     {
-        MaxActionPoints = 5;
-        RadarRange = 25;
+        MaxActionPoints =6;
+        RadarRange = 15;
+        buildCost = 10;
     }
 
     public bool MinePlanet()
@@ -32,5 +34,26 @@ public class Miner : Spaceship
     private bool CheckCanBeMined(Planet planet)
     {
         return true;
+    }
+
+    /**
+     * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
+     */
+    public bool MineMinerals()
+    {
+        var gameObjectsInProximity =
+                Physics.OverlapSphere(transform.position, 10)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+        var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
+
+        PlanetToMine = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
+        if (PlanetToMine == null || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer()) return false;
+        else
+        if (PlanetToMine.GiveMinerals(GameController.GetCurrentPlayer())) return true;
+        return true;
+
     }
 }

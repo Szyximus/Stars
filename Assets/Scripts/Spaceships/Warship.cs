@@ -16,6 +16,7 @@ public class Warship : Spaceship
     {
         MaxActionPoints = 5;
         RadarRange = 25;
+        buildCost = 13;
     }
 
 

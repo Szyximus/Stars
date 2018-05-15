@@ -19,6 +19,8 @@ public class Spaceship : Ownable
     private UIHoverListener uiListener;
     private AudioSource engineSound;
 
+    public int buildCost;
+
     public bool Flying;
     public int MaxActionPoints;
     private int actionPoints;
@@ -35,7 +37,7 @@ public class Spaceship : Ownable
 
     void Start()
     {
-        if(!initialized)
+        if (!initialized)
             Init();
     }
 
@@ -82,25 +84,25 @@ public class Spaceship : Ownable
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
 
-    public void Move( HexCell destination )
+    public void Move(HexCell destination)
     {
         var dx = Coordinates.X - destination.Coordinates.X;
         var dz = Coordinates.Z - destination.Coordinates.Z;
 
-		if ((dx == 0) && (dz == -1))
-			Move( EDirection.TopRight );
-		else if ((dx == -1) && (dz == 0))
-			Move( EDirection.Right );
-		else if ((dx == -1) && (dz == 1))
-			Move( EDirection.BottomRight );
-		else if ((dx == 0) && (dz == 1))
-			Move( EDirection.BottomLeft );
-		else if ((dx == 1) && (dz == 0))
-			Move( EDirection.Left );
-		else if ((dx == 1) && (dz == -1))
-			Move( EDirection.TopLeft );
-		else
-			Debug.Log( "Zjebales cos dx=" + dx + "  dy=" + dz );
+        if ((dx == 0) && (dz == -1))
+            Move(EDirection.TopRight);
+        else if ((dx == -1) && (dz == 0))
+            Move(EDirection.Right);
+        else if ((dx == -1) && (dz == 1))
+            Move(EDirection.BottomRight);
+        else if ((dx == 0) && (dz == 1))
+            Move(EDirection.BottomLeft);
+        else if ((dx == 1) && (dz == 0))
+            Move(EDirection.Left);
+        else if ((dx == 1) && (dz == -1))
+            Move(EDirection.TopLeft);
+        else
+            Debug.Log("Zjebales cos dx=" + dx + "  dy=" + dz);
     }
 
     public void Move(EDirection direction)
@@ -181,13 +183,13 @@ public class Spaceship : Ownable
 
         //}
 
-        path = Pathfinder.CalculatePath( grid.FromCoordinates( Coordinates ), grid.FromCoordinates( dest ) );
-        while ( Coordinates != dest && actionPoints > 0 )
+        path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
+        while (Coordinates != dest && actionPoints > 0)
         {
-            Move( path.First() );
-            path.RemoveAt( 0 );
+            Move(path.First());
+            path.RemoveAt(0);
             actionPoints--;
-            yield return new WaitForSeconds( 1.05f );
+            yield return new WaitForSeconds(1.05f);
         }
         Flying = false;
         TurnEnginesOff();
@@ -218,10 +220,14 @@ public class Spaceship : Ownable
     {
         return actionPoints;
     }
+    public void SetActionPoints(int actionPoints)
+    {
+        this.actionPoints += actionPoints;
+    }
 
     private void TurnEnginesOff()
     {
-        if (burster != null )
+        if (burster != null)
         {
             bursterLight.enabled = false;
             burster.enableEmission = false;
