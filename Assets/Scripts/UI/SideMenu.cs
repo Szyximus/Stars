@@ -16,6 +16,7 @@ public class SideMenu : MonoBehaviour
     Button buildScoutButton;
     Button buildMinerButton;
     Button buildWarshipButton;
+    Button mineButton;
 
     // Use this for initialization
     void Start()
@@ -24,8 +25,9 @@ public class SideMenu : MonoBehaviour
 
         transform.position += new Vector3(170, 0, 0);
         label = GameObject.Find("Name").GetComponent<Text>();
-        energy = GameObject.Find("Energy").GetComponent<Text>();
+        energy = GameObject.Find("MovementPoints").GetComponent<Text>();
         colonizeButton = GameObject.Find("ColonizeButton").GetComponent<Button>();
+        mineButton = GameObject.Find("MineButton").GetComponent<Button>();
         buildColonizerButton = GameObject.Find("BuildColonizerButton").GetComponent<Button>();
         buildScoutButton = GameObject.Find("BuildScoutButton").GetComponent<Button>();
         buildMinerButton = GameObject.Find("BuildMinerButton").GetComponent<Button>();
@@ -48,7 +50,7 @@ public class SideMenu : MonoBehaviour
         {
             StartCoroutine(Show());
         }
-        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)","");
+        if (shown && EventManager.selectionManager.SelectedObject != null) label.text = EventManager.selectionManager.SelectedObject.name.Replace("(Clone)", "");
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Ownable>() as Ownable) != null)
         {
@@ -77,11 +79,19 @@ public class SideMenu : MonoBehaviour
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null)
         {
             energy.gameObject.SetActive(true);
-            energy.text ="Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+            energy.text = "MovementPoints: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
         }
         else
         {
             energy.gameObject.SetActive(false);
+        }
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null)
+        {
+            mineButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            mineButton.gameObject.SetActive(false);
         }
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer())

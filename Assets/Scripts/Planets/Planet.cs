@@ -8,27 +8,44 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using Assets.Scripts.HexLogic;
+using System.Linq;
 
 public class Planet : Ownable
 {
-    [System.Serializable]
+    Random rnd = new Random();
     public struct PlanetCharacteristics
     {
-        public int Temperature;
-        public int Radiation;
-        public int Oxygen;
+        public int temperature;
+        public int radiation;
+        public int oxygen;
+
+        public void SetTemperature(int temperature)
+        {
+            this.temperature = temperature;
+        }
+        public void SetRadiation(int radiation)
+        {
+            this.radiation = radiation;
+        }
+        public void SetOxygen(int oxygen)
+        {
+            this.oxygen = oxygen;
+        }
     }
 
     [System.Serializable]
     public struct PlanetResources
     {
-        public int Minerals;
-        public int Energy;
-        public int Population;
+        public int minerals;
+        public void SetMinerals(int minerals)
+        {
+            this.minerals = minerals;
+        }
     }
 
-    public PlanetCharacteristics Characteristics;
-    public PlanetResources Resources;
+    public PlanetCharacteristics characteristics;
+    public PlanetResources resources;
+
 
     private UIHoverListener uiListener;
     private HexGrid grid;
@@ -45,6 +62,10 @@ public class Planet : Ownable
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         UpdateCoordinates();
+        characteristics.SetOxygen(Random.Range(10, 100));
+        characteristics.SetRadiation(Random.Range(10, 100));
+        characteristics.SetTemperature(Random.Range(-100, 200));
+        resources.SetMinerals(Random.Range(10000, 30000));
         Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position);
     }
 
@@ -114,7 +135,9 @@ public class Planet : Ownable
     override
     public void SetupNewTurn()
     {
-
+        FindStarsNear();
+        GetOwner().AddMinerals(10);
+        GetOwner().AddPopulation(10);
     }
 
     /**
@@ -186,13 +209,50 @@ public class Planet : Ownable
     }
     public bool IsPossibleBuildSpaceship()
     {
-        /* if(Resources.Minerals>1000)
+        if (owner == GameController.GetCurrentPlayer() && owner.minerals > 15)
         {
-        return true;
+            return true;
         }
-        */
-        if (owner == GameController.GetCurrentPlayer())
-        return true;
         return false;
+    }
+    private void FindStarsNear()
+    {
+        Star star;
+        var gameObjectsInProximity =
+                Physics.OverlapSphere(transform.position, 50)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+        var cells = gameObjectsInProximity.Where(o => o.tag == "Star");
+        try
+        {
+            star = (cells.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            star = null;
+            Debug.Log("Near the planet cannot find stars");
+        }
+
+
+        if (star != null)
+        {
+            Player player = GetOwner();
+            player.AddEnergy(10);
+        }
+
+    }
+    private int GetMinerals(int mineralsCount)
+    {
+        if (resources.minerals > 0)
+            resources.minerals -= mineralsCount;
+
+        return mineralsCount;
+    }
+    public bool GiveMinerals(Player player)
+    {
+        player.AddMinerals(GetMinerals(10));
+        return true;
     }
 }

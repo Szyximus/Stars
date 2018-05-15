@@ -3,15 +3,22 @@ using System.Collections;
 
 public class Player : MonoBehaviour
 {
-    public bool Human;
+    public bool human;
+    public int minerals;
+    public int population;
+    public int energy;
     private ArrayList spaceships;
     private ArrayList planets;
 
     // Use this for initialization
     void Awake()
     {
+        System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
+        minerals = random.Next(1, 15);
+        population = random.Next(1, 15);
+        energy = random.Next(1, 15);
     }
 
     // Update is called once per frame
@@ -62,5 +69,17 @@ public class Player : MonoBehaviour
             planets.Remove(thing);
         if (thing is Spaceship)
             spaceships.Remove(thing);
+    }
+    public void AddMinerals(int minerals)
+    {
+        this.minerals += minerals;
+    }
+    public void AddPopulation(int population)
+    {
+        this.population += population;
+    }
+    public void AddEnergy(int energy)
+    {
+        this.energy += energy;
     }
 }
