@@ -8,6 +8,9 @@ public class Player : MonoBehaviour
     public int population;
     public int solarPower;
     public int terraforming;
+    public int attack;
+    public int engines;
+    public int radars;
     private ArrayList spaceships;
     private ArrayList planets;
 
@@ -17,10 +20,14 @@ public class Player : MonoBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
-        minerals = 1000;
-        population = 50;
-        solarPower = 60;
+        minerals = 0;
+        population = 0;
+        solarPower = 0;
         terraforming = 1;
+        attack = 0;
+        engines = 0;
+        radars = 0;
+
     }
 
     // Update is called once per frame
