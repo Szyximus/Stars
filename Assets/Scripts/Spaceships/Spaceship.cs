@@ -50,7 +50,7 @@ public class Spaceship : Ownable
         UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
-        burster = gameObject.GetComponentInChildren<ParticleSystem>();
+        burster = gameObject.GetComponentsInChildren<ParticleSystem>().Last();
         bursterLight = gameObject.GetComponentInChildren<Light>();
         engineSound = gameObject.GetComponent<AudioSource>();
 
