@@ -22,6 +22,16 @@ public class Spaceship : Ownable
 
     public int neededMinerals;
     public int neededPopulation;
+    public int neededSolarPower;
+
+    [System.Serializable]
+    public struct SpaceshipStatistics
+    {
+        public int healtPoints;
+        public int attack;
+        public int defense;
+        public int speed;
+    }
 
     public bool Flying;
     public int MaxActionPoints;

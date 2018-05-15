@@ -190,20 +190,19 @@ public class Planet : Ownable
         }
         return null;
     }
-    public bool IsPossibleBuildSpaceship()
+    public bool IsPossibleBuildSpaceship(Spaceship spaceship)
     {
-
         if (owner == GameController.GetCurrentPlayer())
-        {
-            //    if (owner.)
-            //    {
-            //        Debug.Log("You have the required amount of minerals");
+            if (spaceship.neededMinerals <= GetOwner().minerals &&
+            spaceship.neededPopulation <= GetOwner().population &&
+            spaceship.neededSolarPower <= GetOwner().solarPower)
+            {
+                Debug.Log(spaceship.neededMinerals + "  " + GetOwner().minerals);
+                Debug.Log("You have the required amount of resources");
 
-            //    }
-
-            return true;
-        }
-        Debug.Log("nie mozesz");
+                return true;
+            }
+        Debug.Log("You have not the required amount of resources");
         return false;
     }
     private void FindStarsNear()
@@ -230,7 +229,7 @@ public class Planet : Ownable
         if (star != null)
         {
             Player player = GetOwner();
-            player.power += 10;
+            player.solarPower += 10;
         }
 
     }

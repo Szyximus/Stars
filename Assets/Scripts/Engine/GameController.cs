@@ -304,11 +304,23 @@ public class GameController : MonoBehaviour
         var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
         if (planet != null)
         {
-            if (planet.IsPossibleBuildSpaceship())
+
+            GameObject mockSpaceship = new GameObject();
+
+            mockSpaceship = Instantiate(spaceshipPrefab);
+            mockSpaceship.gameObject.SetActive(false);
+            mockSpaceship.gameObject.GetComponent<Spaceship>().enabled = false;
+
+            if (planet.IsPossibleBuildSpaceship(mockSpaceship.GetComponent<Spaceship>() as Spaceship))
             {
                 Debug.Log("Building " + spaceshipPrefab.name);
                 GameObject spaceship = planet.BuildSpaceship(spaceshipPrefab);
                 spaceship.GetComponent<Spaceship>().Owned(GetCurrentPlayer());
+
+                GetCurrentPlayer().minerals -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededMinerals;
+                GetCurrentPlayer().population -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededPopulation;
+                GetCurrentPlayer().solarPower -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededSolarPower;
+
                 spaceship.GetComponent<Spaceship>().Init();
 
                 EventManager.selectionManager.SelectedObject = null;

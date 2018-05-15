@@ -20,7 +20,7 @@ public class UpperPanel : MonoBehaviour
         Player currentPlayer = GameController.GetCurrentPlayer();
         if (currentPlayer != null)
         {
-            powerLabel.text = currentPlayer.power.ToString();
+            powerLabel.text = currentPlayer.solarPower.ToString();
             populationLabel.text = currentPlayer.population.ToString();
             mineralsLabel.text = currentPlayer.minerals.ToString();
         }

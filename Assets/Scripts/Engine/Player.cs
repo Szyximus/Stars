@@ -6,7 +6,7 @@ public class Player : MonoBehaviour
     public bool human;
     public int minerals;
     public int population;
-    public int power;
+    public int solarPower;
     public int terraforming;
     private ArrayList spaceships;
     private ArrayList planets;
@@ -19,7 +19,7 @@ public class Player : MonoBehaviour
         planets = new ArrayList();
         minerals = 1000;
         population = 50;
-        power = 60;
+        solarPower = 60;
         terraforming = 1;
     }
 
