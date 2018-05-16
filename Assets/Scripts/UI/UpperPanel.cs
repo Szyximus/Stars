@@ -14,6 +14,8 @@ public class UpperPanel : MonoBehaviour
     Text enginesLabel;
     Text radarsLabel;
 
+    Text playerLabel;
+
     void Start()
     {
         powerLabel = GameObject.Find("Power").GetComponentInChildren<Text>();
@@ -24,11 +26,14 @@ public class UpperPanel : MonoBehaviour
         attackLabel = GameObject.Find("Attack").GetComponentInChildren<Text>();
         enginesLabel = GameObject.Find("Engines").GetComponentInChildren<Text>();
         radarsLabel = GameObject.Find("Radars").GetComponentInChildren<Text>();
+
+        playerLabel = GameObject.Find("PlayerName").GetComponentInChildren<Text>();
     }
 
     private void Update()
     {
         Player currentPlayer = GameController.GetCurrentPlayer();
+        playerLabel.text = currentPlayer.ToString();
         if (currentPlayer != null)
         {
             powerLabel.text = currentPlayer.solarPower.ToString();

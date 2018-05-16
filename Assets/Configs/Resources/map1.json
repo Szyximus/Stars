@@ -12,7 +12,7 @@
 			   "habitability":1
             },
             "resources":{  
-               "minerals":150000,
+               "minerals":15,
                "energy":0,
                "population":0
             }
@@ -36,7 +36,7 @@
 				"habitability":3
             },
             "resources": {
-                "minerals": 34000,
+                "minerals": 12,
                 "energy": 0,
                 "population": 0
             }
@@ -61,7 +61,7 @@
 			   "habitability":1
             },
             "resources":{  
-               "minerals":150000,
+               "minerals":20,
                "energy":0,
                "population":0
             }
@@ -85,7 +85,7 @@
 			   "habitability":2
             },
             "resources":{  
-               "minerals":1500,
+               "minerals":10,
                "energy":0,
                "population":0
             }

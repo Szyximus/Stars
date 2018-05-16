@@ -63,13 +63,13 @@ public class GameController : MonoBehaviour
         players = new List<GameObject>();
         players.Add(Instantiate(PlayerPrefab));
         players[0].GetComponent<Player>().human = true;
-        players[0].name = "Player";
+        players[0].name = "Player0";
 
         for (int i = 1; i <= 1; i++)
         {
             players.Add(Instantiate(PlayerPrefab));
-            players[i].GetComponent<Player>().human = false;
-            players[i].name = "AI-" + i;
+            players[i].GetComponent<Player>().human = true;
+            players[i].name = "Player" + i;
         }
 
         currentPlayerIndex = 0;

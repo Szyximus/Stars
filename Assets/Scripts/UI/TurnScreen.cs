@@ -23,9 +23,13 @@ public class TurnScreen : MonoBehaviour
     public void Play()
     {
         sound.Play();
-        label.text = "year " + (GameController.GetYear() + 2401).ToString();
         gameObject.SetActive(true);
         StartCoroutine(FadeIn());
+    }
+
+    public void Update()
+    {
+        label.text = "year " + (GameController.GetYear() + 2400).ToString();
     }
 
     IEnumerator FadeIn()

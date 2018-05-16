@@ -25,6 +25,7 @@ public class SideMenu : MonoBehaviour
     Text planetResources;
     Text planetCharacteristics;
     Text energy;
+    Text shipHP;
     Text ownerName;
 
     Text scoutCosts;
@@ -58,7 +59,8 @@ public class SideMenu : MonoBehaviour
         planetResources = PlanetResourcesPanel.GetComponentsInChildren<Text>().Last();
         planetCharacteristics = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
         energy = ShipPanel.GetComponentInChildren<Text>();
-        colonizeButton = ShipPanel.GetComponentsInChildren<Button>().Last();
+        shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
+        colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
 
@@ -130,6 +132,7 @@ public class SideMenu : MonoBehaviour
         StarFill.SetActive(false);
 
         energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
+        shipHP.text = "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString();
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
         {
@@ -247,10 +250,19 @@ public class SideMenu : MonoBehaviour
         }
 
         if (EventManager.selectionManager.SelectedObject != null &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null))// if Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()))// if owed Spaceship
         {
             ShowNamePanel();
             ShowShipPanel();
+        }
+
+        if (EventManager.selectionManager.SelectedObject != null &&
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()))// if enemy Spaceship
+        {
+            ShowNamePanel();
+            ShowStarPanels();
         }
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Star>() as Star) != null) //if Star
