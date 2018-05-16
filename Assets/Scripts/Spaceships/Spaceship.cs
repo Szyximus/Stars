@@ -286,7 +286,14 @@ public class Spaceship : Ownable
         {
             if (GetActionPoints() > 0)
             {
+
+                GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
+                GameObject TargetFire = Instantiate(GameController.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
+
                 spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
+
+                Destroy(SourceFire, 1f);
+                Destroy(TargetFire, 1f);
                 return true;
             }
             Debug.Log("You dont have enough movement points");
@@ -309,15 +316,18 @@ public class Spaceship : Ownable
     {
         if ((this.spaceshipStatistics.healthPoints += healthPoints) <= 0)
         {
+            GameObject Explosion = Instantiate(GameController.ExplosionPrefab, transform.position, transform.rotation);
             this.GetOwner().Lose(this);
             grid.FromCoordinates(this.Coordinates).ClearObject();
             GameController.GetCurrentPlayer().Lose(this);
+            Destroy(Explosion, 2f);
             Destroy(this.gameObject);
             if (this.GetOwner() != null) Lose();
         }
         else
         {
             this.spaceshipStatistics.healthPoints += healthPoints;
+            
         }
     }
 

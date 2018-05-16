@@ -41,29 +41,29 @@ public class Player : MonoBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
-        minerals = 20;
-        population = 20;
-        solarPower = 20;
+        minerals = 10;
+        population = 10;
+        solarPower = 10;
         terraforming = 1;
         attack = 0;
         engines = 0;
         radars = 0;
 
-        spaceshipsCosts.scoutNeededMinerals = 8;
+        spaceshipsCosts.scoutNeededMinerals = 5;
         spaceshipsCosts.scoutNeededPopulation = 2;
-        spaceshipsCosts.scoutNeededSolarPower = 5;
+        spaceshipsCosts.scoutNeededSolarPower = 4;
 
-        spaceshipsCosts.minerNeededMinerals = 9;
-        spaceshipsCosts.minerNeededPopulation = 6;
-        spaceshipsCosts.minerNeededSolarPower = 2;
+        spaceshipsCosts.minerNeededMinerals = 2;
+        spaceshipsCosts.minerNeededPopulation = 5;
+        spaceshipsCosts.minerNeededSolarPower = 6;
 
         spaceshipsCosts.warshipNeededMinerals = 6;
-        spaceshipsCosts.warshipNeededPopulation = 5;
-        spaceshipsCosts.warshipNeededSolarPower = 8;
+        spaceshipsCosts.warshipNeededPopulation = 4;
+        spaceshipsCosts.warshipNeededSolarPower = 5;
 
         spaceshipsCosts.colonizerNeededMinerals = 7;
         spaceshipsCosts.colonizerNeededPopulation = 9;
-        spaceshipsCosts.colonizerNeededSolarPower = 9;
+        spaceshipsCosts.colonizerNeededSolarPower = 8;
 
 
     }

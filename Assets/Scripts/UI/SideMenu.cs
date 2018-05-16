@@ -13,6 +13,7 @@ public class SideMenu : MonoBehaviour
     RectTransform rectTransform;
     GameObject NamePanel;
     GameObject PlanetCharacteristicsPanel;
+    GameObject ShipCharacteristicsPanel;
     GameObject PlanetResourcesPanel;
     GameObject BuildPanel;
     GameObject ShipPanel;
@@ -24,8 +25,9 @@ public class SideMenu : MonoBehaviour
     Text label;
     Text planetResources;
     Text planetCharacteristics;
+    Text shipCharacteristics;
     Text energy;
-    Text shipHP;
+    //Text shipHP;
     Text ownerName;
 
     Text scoutCosts;
@@ -47,6 +49,7 @@ public class SideMenu : MonoBehaviour
 
         NamePanel = GameObject.Find("NamePanel");
         PlanetCharacteristicsPanel = GameObject.Find("PlanetCharacteristicsPanel");
+        ShipCharacteristicsPanel = GameObject.Find("ShipCharacteristicsPanel");
         PlanetResourcesPanel = GameObject.Find("PlanetResourcesPanel");
         BuildPanel = GameObject.Find("BuildPanel");
         ShipPanel = GameObject.Find("ShipPanel");
@@ -57,9 +60,11 @@ public class SideMenu : MonoBehaviour
 
         label = NamePanel.GetComponentInChildren<Text>();
         planetResources = PlanetResourcesPanel.GetComponentsInChildren<Text>().Last();
-        planetCharacteristics = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
+
+        planetCharacteristics = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().First();
+        shipCharacteristics = ShipCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
         energy = ShipPanel.GetComponentInChildren<Text>();
-        shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
+        //shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
@@ -112,6 +117,7 @@ public class SideMenu : MonoBehaviour
         ShipPanel.SetActive(false);
 
         PlanetCharacteristicsPanel.SetActive(false);
+        ShipCharacteristicsPanel.SetActive(false);
         PlanetResourcesPanel.SetActive(false);
         BuildPanel.SetActive(false);
         FreePlanetFill.SetActive(false);
@@ -125,6 +131,7 @@ public class SideMenu : MonoBehaviour
         ShipPanel.SetActive(true);
 
         PlanetCharacteristicsPanel.SetActive(false);
+        ShipCharacteristicsPanel.SetActive(true);
         PlanetResourcesPanel.SetActive(false);
         BuildPanel.SetActive(false);
         FreePlanetFill.SetActive(false);
@@ -132,7 +139,11 @@ public class SideMenu : MonoBehaviour
         StarFill.SetActive(false);
 
         energy.text = "Energy: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetActionPoints().ToString();
-        shipHP.text = "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString();
+
+        shipCharacteristics.text = ("FirePower: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.attack + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
+                                     //"Defense: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.defense.ToString() + "\n" +
+                                     "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
+                                     "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
         {
@@ -154,9 +165,28 @@ public class SideMenu : MonoBehaviour
         }
     }
 
+    void ShowEnemySpaceshipPanels()
+    {
+        ShipPanel.SetActive(false);
+
+        PlanetCharacteristicsPanel.SetActive(false);
+        PlanetResourcesPanel.SetActive(false);
+        BuildPanel.SetActive(false);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(false);
+
+        ShipCharacteristicsPanel.SetActive(true);
+        shipCharacteristics.text = ("FirePower: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.attack + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
+                                 //"Defense: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.defense.ToString() + "\n" +
+                                 "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
+                                 "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+        FreePlanetFill.SetActive(true);
+    }
+
     void ShowOwnedPlanetPanels()
     {
         PlanetCharacteristicsPanel.SetActive(true);
+        ShipCharacteristicsPanel.SetActive(false);
         PlanetResourcesPanel.SetActive(false);
         BuildPanel.SetActive(true);
         ShipPanel.SetActive(false);
@@ -207,6 +237,7 @@ public class SideMenu : MonoBehaviour
 
         PlanetCharacteristicsPanel.SetActive(true);
         PlanetResourcesPanel.SetActive(true);
+        ShipCharacteristicsPanel.SetActive(false);
         BuildPanel.SetActive(false);
         ShipPanel.SetActive(false);
 
@@ -262,7 +293,7 @@ public class SideMenu : MonoBehaviour
             ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()))// if enemy Spaceship
         {
             ShowNamePanel();
-            ShowStarPanels();
+            ShowEnemySpaceshipPanels();
         }
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Star>() as Star) != null) //if Star

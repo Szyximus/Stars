@@ -21,6 +21,10 @@ public class GameController : MonoBehaviour
     public GameObject MinerPrefab;
     public GameObject WarshipPrefab;
 
+    public GameObject ExplosionPrefab;
+    public GameObject AttackPrefab;
+    public GameObject HitPrefab;
+
     private static int year;
 
     private HexGrid grid;
@@ -343,6 +347,23 @@ public class GameController : MonoBehaviour
                 Debug.Log("Built " + spaceshipPrefab.name);
             }
         }
+    }
+
+    public void AddTerraforming()
+    {
+        if (GetCurrentPlayer().terraforming < 3) GetCurrentPlayer().terraforming++;
+    }
+    public void AddAttack()
+    {
+        if (GetCurrentPlayer().attack < 2) GetCurrentPlayer().attack++;
+    }
+    public void AddEngines()
+    {
+        if (GetCurrentPlayer().engines < 2) GetCurrentPlayer().engines++;
+    }
+    public void AddRadars()
+    {
+        if (GetCurrentPlayer().radars < 2) GetCurrentPlayer().radars++;
     }
 
     // Update is called once per frame

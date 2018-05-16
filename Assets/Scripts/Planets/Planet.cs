@@ -124,8 +124,8 @@ public class Planet : Ownable
     {
         Player player = GetOwner();
         FindStarsNear();
-        player.population += player.terraforming - characteristics.habitability + 1;
-        player.minerals += 1;
+        player.population += player.terraforming - characteristics.habitability + 2;
+        player.minerals += resources.minerals / 3;
     }
 
     /**
