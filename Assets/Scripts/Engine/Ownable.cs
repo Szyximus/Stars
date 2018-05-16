@@ -9,7 +9,7 @@ public abstract class Ownable : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-    
+
     }
 
     // Update is called once per frame
@@ -24,6 +24,11 @@ public abstract class Ownable : MonoBehaviour
             this.owner.Lose(this);
         newOwner.Own(this);
         this.owner = newOwner;
+    }
+
+    public void Lose()
+    {
+        this.owner = null;
     }
 
     public string GetOwnerName()

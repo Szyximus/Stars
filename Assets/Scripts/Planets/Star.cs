@@ -6,6 +6,13 @@ using System.Threading;
 
 public class Star : MonoBehaviour
 {
+    [System.Serializable]
+    public struct StarResources
+    {
+        public int solarPower;
+    }
+
+    StarResources starResources;
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
@@ -36,5 +43,18 @@ public class Star : MonoBehaviour
     private void OnMouseDown()
     {
         if (!uiListener.IsUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+    }
+
+    private int GetSolarPower(int solarPowerCount)
+    {
+        if (starResources.solarPower >= solarPowerCount)
+            starResources.solarPower -= solarPowerCount;
+
+        return solarPowerCount;
+    }
+    public bool GiveSolarPower(Player player)
+    {
+        player.solarPower += (GetSolarPower(30));
+        return true;
     }
 }

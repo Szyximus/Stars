@@ -28,7 +28,7 @@ public class Spaceship : Ownable
     [System.Serializable]
     public struct SpaceshipStatistics
     {
-        public int healtPoints;
+        public int healthPoints;
         public int attack;
         public int defense;
         public int speed;
@@ -38,14 +38,21 @@ public class Spaceship : Ownable
     public int MaxActionPoints;
     private int actionPoints;
 
+    public Planet planetToAttack;
+    public Spaceship spaceshipsToAttack;
+
+
     int i = 0; //for the movement test, remove later
     private bool initialized = false;
+
+    public int maxHealthPoints;
 
     private void Awake()
     {
         Flying = false;
         RadarRange = 26f;
         MaxActionPoints = 7;
+        maxHealthPoints = spaceshipStatistics.healthPoints;
     }
 
     void Start()
@@ -238,6 +245,80 @@ public class Spaceship : Ownable
     public void SetActionPoints(int actionPoints)
     {
         this.actionPoints += actionPoints;
+    }
+
+    public bool Attack()
+    {
+        var gameObjectsInProximity =
+                Physics.OverlapSphere(transform.position, 10)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+        var spaceships = gameObjectsInProximity.Where(o => o.tag == "Unit");
+        var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
+        // try catch to taki hacks narazie tylko na demo
+        try
+        {
+            spaceshipsToAttack = spaceships.FirstOrDefault().GetComponent<Spaceship>() as Spaceship;
+            Debug.Log("Jest statek");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Nie ma statkow");
+        }
+        try
+        {
+            planetToAttack = planets.FirstOrDefault().GetComponent<Planet>() as Planet;
+            Debug.Log("Jest planeta");
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Nie ma planet");
+        }
+        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == GameController.GetCurrentPlayer() &&
+               (planetToAttack == null || planetToAttack.GetOwner() == GameController.GetCurrentPlayer()))
+        {
+            Debug.Log("Cannot find planet or planet belong to you");
+            return false;
+        }
+        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        {
+            if (GetActionPoints() > 0)
+            {
+                spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
+                return true;
+            }
+            Debug.Log("You dont have enough movement points");
+            return false;
+        }
+        else if (planetToAttack != null || planetToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        {
+            if (GetActionPoints() > 0)
+            {
+                planetToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
+                return true;
+            }
+            Debug.Log("You dont have enough movement points");
+            return false;
+        }
+        return false;
+    }
+
+    private void AddHealthPoints(int healthPoints)
+    {
+        if ((this.spaceshipStatistics.healthPoints += healthPoints) <= 0)
+        {
+            this.GetOwner().Lose(this);
+            grid.FromCoordinates(this.Coordinates).ClearObject();
+            GameController.GetCurrentPlayer().Lose(this);
+            Destroy(this.gameObject);
+            if (this.GetOwner() != null) Lose();
+        }
+        else
+        {
+            this.spaceshipStatistics.healthPoints += healthPoints;
+        }
     }
 
     private void TurnEnginesOff()
