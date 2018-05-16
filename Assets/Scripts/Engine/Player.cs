@@ -41,9 +41,9 @@ public class Player : MonoBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
-        minerals = 0;
-        population = 0;
-        solarPower = 0;
+        minerals = 20;
+        population = 20;
+        solarPower = 20;
         terraforming = 1;
         attack = 0;
         engines = 0;

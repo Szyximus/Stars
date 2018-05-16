@@ -122,9 +122,10 @@ public class Planet : Ownable
     override
     public void SetupNewTurn()
     {
+        Player player = GetOwner();
         FindStarsNear();
-        GetOwner().minerals += 10;
-        GetOwner().population += 10;
+        player.population += player.terraforming - characteristics.habitability + 1;
+        player.minerals += 1;
     }
 
     /**
@@ -211,29 +212,81 @@ public class Planet : Ownable
     }
     private void FindStarsNear()
     {
-        Star star;
-        var gameObjectsInProximity =
-                Physics.OverlapSphere(transform.position, 50)
+        List<GameObject> list;
+        List<Star> starsList;
+        Star starOneHex;
+        Star starTwoHex;
+        Star starThreeHex;
+
+        var gameObjectsInProximityOneHex =
+                Physics.OverlapSphere(transform.position, 10)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+        var gameObjectsInProximityTwoHex =
+                Physics.OverlapSphere(transform.position, 20)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+        var gameObjectsInProximityThreeHex =
+                Physics.OverlapSphere(transform.position, 150)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
 
-        var cells = gameObjectsInProximity.Where(o => o.tag == "Star");
+        var starsInProximityOneHex = gameObjectsInProximityOneHex.Where(o => o.tag == "Star");
+        var starsInProximityTwoHex = gameObjectsInProximityTwoHex.Where(o => o.tag == "Star");
+        var starsInProximityThreeHex = gameObjectsInProximityThreeHex.Where(o => o.tag == "Star");
+        //zmienic ten syf
         try
         {
-            star = (cells.FirstOrDefault().GetComponent<Star>() as Star);
+            //  list = starsInProximityOneHex.ToList();
+            //if (list.Count() > 1)
+            //{
+            //    starsList.Add(list.)
+            //}
+            //   else if (list.Count() == 0)
+            starOneHex = (starsInProximityOneHex.FirstOrDefault().GetComponent<Star>() as Star);
         }
         catch
         {
-            star = null;
-            Debug.Log("Near the planet cannot find stars");
+            starOneHex = null;
+            Debug.Log("Near (one hex) the planet cannot find stars");
+
+        }
+        try
+        {
+            starTwoHex = (starsInProximityTwoHex.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            starTwoHex = null;
+            Debug.Log("Near (two hex)  the planet cannot find stars");
         }
 
-
-        if (star != null)
+        try
         {
-            Player player = GetOwner();
-            player.solarPower += 10;
+            starThreeHex = (starsInProximityThreeHex.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            starThreeHex = null;
+            Debug.Log("Near (three hex) the planet cannot find stars");
+        }
+
+        Player player = GetOwner();
+
+        if (starOneHex != null)
+        {
+            starOneHex.GiveSolarPower(GetOwner(), 3);
+        }
+        else if (starTwoHex != null)
+        {
+            starTwoHex.GiveSolarPower(GetOwner(), 2);
+        }
+        else if (starThreeHex != null)
+        {
+            starThreeHex.GiveSolarPower(GetOwner(), 1);
         }
 
     }
@@ -244,9 +297,9 @@ public class Planet : Ownable
 
         return mineralsCount;
     }
-    public bool GiveMineralsTo(Player player)
+    public bool GiveMineralsTo(Player player, int mineralsCount)
     {
-        player.minerals += (GetMinerals(40));
+        player.minerals += (GetMinerals(mineralsCount));
         return true;
     }
 

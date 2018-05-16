@@ -317,7 +317,7 @@ public class GameController : MonoBehaviour
         var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
         if (planet != null)
         {
-
+            //wywalic tego mocka 
             GameObject mockSpaceship = new GameObject();
 
             mockSpaceship = Instantiate(spaceshipPrefab);
