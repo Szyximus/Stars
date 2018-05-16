@@ -76,7 +76,7 @@ public class Miner : Spaceship
         {
             Debug.Log("Nie ma gwiazdy");
         }
-        if (StarToMine == null && (PlanetToMine == null) || PlanetToMine.GetOwner() == GameController.GetCurrentPlayer())
+        if (StarToMine == null )
         {
             Debug.Log("Cannot find star/planet or planet belong to you");
             return false;
@@ -85,7 +85,7 @@ public class Miner : Spaceship
         {
             if (GetActionPoints() > 0)
             {
-                StarToMine.GiveSolarPower(GetOwner());
+                StarToMine.GiveSolarPower(GetOwner(), 1);
                 return true;
             }
             Debug.Log("You dont have enough movement points");
@@ -95,7 +95,7 @@ public class Miner : Spaceship
         {
             if (GetActionPoints() > 0)
             {
-                PlanetToMine.GiveMineralsTo(GetOwner());
+                PlanetToMine.GiveMineralsTo(GetOwner(),1);
                 return true;
             }
             Debug.Log("You dont have enough movement points");

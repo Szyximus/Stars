@@ -52,9 +52,9 @@ public class Star : MonoBehaviour
 
         return solarPowerCount;
     }
-    public bool GiveSolarPower(Player player)
+    public bool GiveSolarPower(Player player,int solarPowerCount)
     {
-        player.solarPower += (GetSolarPower(30));
+        player.solarPower += (GetSolarPower(solarPowerCount));
         return true;
     }
 }
