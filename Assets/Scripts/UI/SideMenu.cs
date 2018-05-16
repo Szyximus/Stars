@@ -7,6 +7,9 @@ using System.Linq;
 public class SideMenu : MonoBehaviour
 {
     bool shown, animating = false;
+
+    GameController GameController;
+
     RectTransform rectTransform;
     GameObject NamePanel;
     GameObject PlanetCharacteristicsPanel;
@@ -24,6 +27,11 @@ public class SideMenu : MonoBehaviour
     Text energy;
     Text ownerName;
 
+    Text scoutCosts;
+    Text minerCosts;
+    Text warshipCosts;
+    Text colonizerCosts;
+
     Button colonizeButton;
     Button mineButton;
 
@@ -32,6 +40,7 @@ public class SideMenu : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        GameController = GameObject.Find("GameController").GetComponent<GameController>();
 
         transform.position += new Vector3(256, 0, 0);
 
@@ -52,6 +61,11 @@ public class SideMenu : MonoBehaviour
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>().Last();
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
+
+        scoutCosts = BuildPanel.GetComponentsInChildren<Text>()[1];
+        minerCosts = BuildPanel.GetComponentsInChildren<Text>()[2];
+        warshipCosts = BuildPanel.GetComponentsInChildren<Text>()[3];
+        colonizerCosts = BuildPanel.GetComponentsInChildren<Text>()[4];
 
         icon = NamePanel.GetComponentsInChildren<Image>().Last();
 
@@ -152,7 +166,36 @@ public class SideMenu : MonoBehaviour
         planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
                                      "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
                                      "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                     "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+
+        scoutCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation.ToString();
+
+        minerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation.ToString();
+
+        warshipCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation.ToString();
+
+
+        colonizerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals.ToString() +
+            "     " +
+            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation.ToString();
+
+
+
     }
 
     void ShowFreePlanetPanels()
@@ -203,10 +246,7 @@ public class SideMenu : MonoBehaviour
         }
 
         if (EventManager.selectionManager.SelectedObject != null &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null ||
-            (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null ||
-            (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null ||
-            (EventManager.selectionManager.SelectedObject.GetComponent<Warship>() as Warship) != null)) // if Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null))// if Spaceship
         {
             ShowNamePanel();
             ShowShipPanel();

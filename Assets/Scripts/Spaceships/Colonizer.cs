@@ -18,9 +18,9 @@ public class Colonizer : Spaceship
     {
         MaxActionPoints = 4;
         RadarRange = 20;
-        neededMinerals = 1000;
-        neededPopulation = 100;
-        neededSolarPower = 400;
+        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals;
+        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation;
+        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower;
         spaceshipStatistics.healtPoints = 600;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 40;

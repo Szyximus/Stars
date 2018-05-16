@@ -14,6 +14,27 @@ public class Player : MonoBehaviour
     private ArrayList spaceships;
     private ArrayList planets;
 
+    public SpaceshipsCosts spaceshipsCosts;
+
+    public struct SpaceshipsCosts
+    {
+        public int scoutNeededMinerals;
+        public int scoutNeededPopulation;
+        public int scoutNeededSolarPower;
+
+        public int minerNeededMinerals;
+        public int minerNeededPopulation;
+        public int minerNeededSolarPower;
+
+        public int warshipNeededMinerals;
+        public int warshipNeededPopulation;
+        public int warshipNeededSolarPower;
+
+        public int colonizerNeededMinerals;
+        public int colonizerNeededPopulation;
+        public int colonizerNeededSolarPower;
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -27,6 +48,23 @@ public class Player : MonoBehaviour
         attack = 0;
         engines = 0;
         radars = 0;
+
+        spaceshipsCosts.scoutNeededMinerals = 8;
+        spaceshipsCosts.scoutNeededPopulation = 2;
+        spaceshipsCosts.scoutNeededSolarPower = 5;
+
+        spaceshipsCosts.minerNeededMinerals = 9;
+        spaceshipsCosts.minerNeededPopulation = 6;
+        spaceshipsCosts.minerNeededSolarPower = 2;
+
+        spaceshipsCosts.warshipNeededMinerals = 6;
+        spaceshipsCosts.warshipNeededPopulation = 5;
+        spaceshipsCosts.warshipNeededSolarPower = 8;
+
+        spaceshipsCosts.colonizerNeededMinerals = 7;
+        spaceshipsCosts.colonizerNeededPopulation = 9;
+        spaceshipsCosts.colonizerNeededSolarPower = 9;
+
 
     }
 

@@ -18,9 +18,9 @@ public class Miner : Spaceship
     {
         MaxActionPoints = 6;
         RadarRange = 15;
-        neededMinerals = 160;
-        neededPopulation = 4;
-        neededSolarPower = 20;
+        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals;
+        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation;
+        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower;
         spaceshipStatistics.healtPoints = 80;
         spaceshipStatistics.attack = 5;
         spaceshipStatistics.defense = 15;

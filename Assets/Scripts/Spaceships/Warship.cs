@@ -16,9 +16,9 @@ public class Warship : Spaceship
     {
         MaxActionPoints = 5;
         RadarRange = 25;
-        neededMinerals = 350;
-        neededPopulation = 14;
-        neededSolarPower = 140;
+        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals;
+        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation;
+        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower;
         spaceshipStatistics.healtPoints = 300;
         spaceshipStatistics.attack = 35;
         spaceshipStatistics.defense = 50;
