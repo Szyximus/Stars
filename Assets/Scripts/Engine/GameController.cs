@@ -65,7 +65,7 @@ public class GameController : MonoBehaviour
         players[0].GetComponent<Player>().human = true;
         players[0].name = "Player";
 
-        for (int i = 1; i < 1; i++)
+        for (int i = 1; i <= 1; i++)
         {
             players.Add(Instantiate(PlayerPrefab));
             players[i].GetComponent<Player>().human = false;
@@ -290,15 +290,28 @@ public class GameController : MonoBehaviour
         var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
         if (miner != null && miner.GetActionPoints() > 0)
         {
-            if (miner.MineMinerals())
+            if (miner.MineResources())
                 miner.SetActionPoints(-1);
             else
             {
-                Debug.Log("Cannot mine on planet");
+                Debug.Log("Cannot mine");
             }
         }
     }
 
+    public void Attack()
+    {
+        var spaceship = EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>();
+
+        if (spaceship != null && spaceship.GetActionPoints() > 0)
+        {
+            if (spaceship.Attack())
+            {
+                Debug.Log("You attacked");
+                spaceship.SetActionPoints(-1);
+            }
+        }
+    }
     public void BuildSpaceship(GameObject spaceshipPrefab)
     {
         var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();

@@ -163,6 +163,7 @@ public class SideMenu : MonoBehaviour
         StarFill.SetActive(false);
 
         Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+
         planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
                                      "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
                                      "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
@@ -218,7 +219,7 @@ public class SideMenu : MonoBehaviour
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
 
-        
+
     }
 
     // Update is called once per frame
@@ -242,7 +243,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null && !shown && !animating) //selection, show menu
         {
-            StartCoroutine(Show());  
+            StartCoroutine(Show());
         }
 
         if (EventManager.selectionManager.SelectedObject != null &&
