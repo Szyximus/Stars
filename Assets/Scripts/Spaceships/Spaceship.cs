@@ -41,31 +41,16 @@ public class Spaceship : Ownable
     public Planet planetToAttack;
     public Spaceship spaceshipsToAttack;
 
-
-    int i = 0; //for the movement test, remove later
-    private bool initialized = false;
-
     public int maxHealthPoints;
 
-    private void Awake()
+    protected void Awake()
     {
         Flying = false;
         RadarRange = 26f;
         MaxActionPoints = 7;
         maxHealthPoints = spaceshipStatistics.healthPoints;
-    }
 
-    void Start()
-    {
-        if (!initialized)
-            Init();
-    }
-
-    public void Init()
-    {
-        initialized = true;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
-        // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
         GameController = GameObject.Find("GameController").GetComponent<GameController>();
@@ -226,17 +211,6 @@ public class Spaceship : Ownable
         UpdateCoordinates();
     }
 
-    public void DoTestStuff()
-    {
-        if (EventManager.selectionManager.SelectedObject.tag == "Unit")
-        {
-            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Move((EDirection)i);
-            i++;
-            if (i > 5) i = 0;
-
-            Debug.Log(string.Format("Destination: {0}", Destination));
-        }
-    }
 
     public int GetActionPoints()
     {

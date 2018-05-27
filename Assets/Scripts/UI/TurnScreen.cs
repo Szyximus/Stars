@@ -11,7 +11,7 @@ public class TurnScreen : MonoBehaviour
     AudioSource sound;
 
     // Controls the fading in and out of Big turn counter
-    void Start()
+    void Awake()
     {
         label = gameObject.GetComponentInChildren<Text>();
         background = gameObject.GetComponent<RawImage>();

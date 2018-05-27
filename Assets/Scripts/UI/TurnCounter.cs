@@ -9,8 +9,7 @@ public class TurnCounter : MonoBehaviour
     Text label;
     Text _Text;
 
-    // Use this for initialization
-    void Start()
+    void Awake()
     {
         //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         label = gameObject.GetComponent<Text>();

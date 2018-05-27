@@ -12,8 +12,10 @@ using System.Linq;
 public class Scout : Spaceship
 {
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
+
         MaxActionPoints = 7;
         RadarRange = 25;
 

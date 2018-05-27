@@ -12,8 +12,9 @@ using System.Linq;
 public class Warship : Spaceship
 {
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         MaxActionPoints = 5;
         RadarRange = 25;
 

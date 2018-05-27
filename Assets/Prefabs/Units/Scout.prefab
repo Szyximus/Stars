@@ -534,8 +534,17 @@ MonoBehaviour:
   RadarRange: 0
   neededMinerals: 0
   neededPopulation: 0
+  neededSolarPower: 0
+  spaceshipStatistics:
+    healthPoints: 0
+    attack: 0
+    defense: 0
+    speed: 0
   Flying: 0
   MaxActionPoints: 0
+  planetToAttack: {fileID: 0}
+  spaceshipsToAttack: {fileID: 0}
+  maxHealthPoints: 0
 --- !u!114 &114134690136699754
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -547,10 +556,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c912a32390b7f408686c70ec7f5254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RadarRange: 0
-  buildCost: 0
-  Flying: 0
-  MaxActionPoints: 30
+  Speed: 5
 --- !u!135 &135465678517273418
 SphereCollider:
   m_ObjectHideFlags: 1

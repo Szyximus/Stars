@@ -42,19 +42,16 @@ public class Planet : Ownable
     {
         RadarRange = 40f;
 
-    }
-
-    void Start()
-    {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         maxHealthPoints = characteristics.healthPoints;
         UpdateCoordinates();
 
-        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
+        Debug.Log("Awake planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
     }
+
 
     string ToJson()
     {

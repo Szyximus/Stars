@@ -631,9 +631,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RadarRange: 20
-  buildCost: 0
+  neededMinerals: 0
+  neededPopulation: 0
+  neededSolarPower: 0
+  spaceshipStatistics:
+    healthPoints: 0
+    attack: 0
+    defense: 0
+    speed: 0
   Flying: 0
   MaxActionPoints: 30
+  planetToAttack: {fileID: 0}
+  spaceshipsToAttack: {fileID: 0}
+  maxHealthPoints: 0
   PlanetToColonize: {fileID: 0}
   Test: {fileID: 0}
 --- !u!114 &114450804300382794

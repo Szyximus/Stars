@@ -15,8 +15,9 @@ public class Miner : Spaceship
     public Star StarToMine;
     public Text Test;
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         MaxActionPoints = 6;
         RadarRange = 15;
 

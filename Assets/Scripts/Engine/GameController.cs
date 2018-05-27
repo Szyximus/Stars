@@ -30,24 +30,21 @@ public class GameController : MonoBehaviour
     private HexGrid grid;
     TurnScreen turnScreen;
 
-    // Use this for initialization
-    void Start()
-    {
-        StartCoroutine(DelayedStart());
-    }
-
-    IEnumerator DelayedStart()
+    void Awake()
     {
         grid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
         turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
         turnScreen.gameObject.SetActive(false);
 
+        Debug.Log("GameContoller awake");
+    }
+
+    void Start()
+    {
         InitPlayers();
         InitMap();
-        yield return new WaitForSeconds(0.1f);  // spaceships after hex grid
         InitSpaceships();
 
-        yield return new WaitForSeconds(0.25f); // start after all the rest
         StartGame();
     }
 
@@ -90,7 +87,6 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 1; i++)
             {
                 spaceship = SpaceshipFromPref(ScoutPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
 
@@ -98,7 +94,6 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(MinerPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
 
@@ -106,7 +101,6 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(WarshipPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
 
@@ -114,7 +108,6 @@ public class GameController : MonoBehaviour
             for (int i = 0; i < 0; i++)
             {
                 spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
                 spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
             }
         }
@@ -337,8 +330,6 @@ public class GameController : MonoBehaviour
                 GetCurrentPlayer().minerals -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededMinerals;
                 GetCurrentPlayer().population -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededPopulation;
                 GetCurrentPlayer().solarPower -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededSolarPower;
-
-                spaceship.GetComponent<Spaceship>().Init();
 
                 EventManager.selectionManager.SelectedObject = null;
                 grid.SetupNewTurn(GetCurrentPlayer());
