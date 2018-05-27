@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
+[System.Serializable]
 public class Star : MonoBehaviour
 {
     [System.Serializable]
@@ -12,7 +13,7 @@ public class Star : MonoBehaviour
         public int solarPower;
     }
 
-    StarResources starResources;
+    public StarResources starResources;
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
@@ -25,6 +26,11 @@ public class Star : MonoBehaviour
         UpdateCoordinates();
     }
 
+    private void Start()
+    {
+        Debug.Log("star start: " + name);
+        Debug.Log(JsonUtility.ToJson(this));
+    }
     void UpdateCoordinates()
     {
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);

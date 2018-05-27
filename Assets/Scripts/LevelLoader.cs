@@ -11,8 +11,9 @@ public class LevelLoader : MonoBehaviour {
     /// </summary>
 
     public GameObject slider;
+    
 
-	public void LoadLevel (string scene)
+    public void LoadLevel (string scene)
     {
         if (slider != null)
             slider.SetActive(true);
@@ -21,6 +22,11 @@ public class LevelLoader : MonoBehaviour {
 
     IEnumerator LoadAsynchronously(string scene)
     {
+        if ("GameScene".Equals(scene))
+        {
+            GameObject.Find("GameApp").GetComponent<GameApp>().PersistInputField("SavedGameFile", "MenuCanvas/SavedGameFileInput");
+        }
+
         AsyncOperation operation = SceneManager.LoadSceneAsync(scene);
 
         while (!operation.isDone)

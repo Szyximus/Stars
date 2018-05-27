@@ -168,3 +168,6 @@ C:\Users\Michał\Documents\Stars\Temp\bin\Debug\UnityEngine.SpatialTracking.xml
 C:\Users\Michał\Documents\Stars\Temp\bin\Debug\Newtonsoft.Json.xml
 C:\Users\Michał\Documents\Stars\obj\Debug\Assembly-CSharp.csproj.CopyComplete
 C:\Users\Michał\Documents\Stars\obj\Debug\Assembly-CSharp.dll
+C:\Users\GrosWin\Desktop\Stars\obj\Debug\Assembly-CSharp.csprojAssemblyReference.cache
+C:\Users\GrosWin\Desktop\Stars\obj\Debug\Assembly-CSharp.csproj.CoreCompileInputs.cache
+C:\Users\GrosWin\Desktop\Stars\obj\Debug\Assembly-CSharp.dll

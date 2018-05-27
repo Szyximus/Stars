@@ -1,4 +1,9 @@
 {  
+   "players":[
+   	   {"name":"player1", "human":true},
+	   {"name":"player2", "human":true}
+   ],
+   "map":{
    "planets":[  
       {  
          "name":"Korriban",
@@ -22,7 +27,8 @@
             307.4,
             0,
             292.5
-         ]
+         ],
+		 "owner":"player1"
       },
     {
         "name": "planet X",
@@ -47,7 +53,8 @@
             405,
             0,
             280
-        ]
+        ],
+		"owner":"player2"
     },
       {  
          "name":"Nova",
@@ -128,5 +135,12 @@
 			],
 			"material": "RedStarMaterial"
 		},
+   ],
+   "spaceships":[
+       {"type":"Scout", "owner":"player1", "position":[298.7, 0, 292.5], "spaceshipMain": {"RadarRange":25.0,"neededMinerals":5,"neededPopulation":2,"neededSolarPower":4,"spaceshipStatistics":{"healthPoints":150,"attack":10,"defense":25,"speed":7},"MaxActionPoints":7}},
+	   {"type":"Miner", "owner":"player1", "position":[311.7, 0, 285], "spaceshipMain": {"RadarRange":15.0,"neededMinerals":2,"neededPopulation":5,"neededSolarPower":6,"spaceshipStatistics":{"healthPoints":80,"attack":5,"defense":15,"speed":6},"MaxActionPoints":6}},
+	   {"type":"Warship", "owner":"player2", "position":[410, 0, 277.5], "spaceshipMain": {"RadarRange":25.0,"neededMinerals":6,"neededPopulation":4,"neededSolarPower":5,"spaceshipStatistics":{"healthPoints":300,"attack":35,"defense":50,"speed":5},"MaxActionPoints":5}},
+	   {"type":"Colonizer", "owner":"player2", "position":[402.7, 0, 260.5], "spaceshipMain": {"RadarRange":20.0,"neededMinerals":7,"neededPopulation":9,"neededSolarPower":8,"spaceshipStatistics":{"healthPoints":600,"attack":5,"defense":40,"speed":4},"MaxActionPoints":4}}
    ]
+   }
 }
