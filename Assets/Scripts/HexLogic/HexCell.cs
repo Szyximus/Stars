@@ -18,10 +18,7 @@ public class HexCell : MonoBehaviour
         ObjectInCell = null;
         visibleByList = new ArrayList();
         discoveredBy = new HashSet<Player>();
-    }
 
-    private void Start()
-    {
         UnDiscover();
     }
 

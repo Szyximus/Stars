@@ -59,6 +59,8 @@ public class Spaceship : Ownable
         engineSound = gameObject.GetComponent<AudioSource>();
 
         TurnEnginesOff();
+
+        Debug.Log("Awake spaceship");
     }
 
     override
