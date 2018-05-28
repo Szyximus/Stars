@@ -10,6 +10,7 @@ public class GameApp : MonoBehaviour
 
     // variables between scenes
     public Dictionary<string, string> Parameters;
+    public Dictionary<string, List<string>> ParametersList;
 
     void Awake()
     {
@@ -22,7 +23,7 @@ public class GameApp : MonoBehaviour
         }
     }
 
-    private string GetInputFiled(string inputFieldName)
+    private string FindInputFiled(string inputFieldName)
     {
         if (GameObject.Find(inputFieldName) != null)
         {
@@ -37,7 +38,7 @@ public class GameApp : MonoBehaviour
 
     public void PersistInputField(string key, string inputFieldName)
     {
-        string value = GetInputFiled(inputFieldName);
+        string value = FindInputFiled(inputFieldName);
         if (value != null)
             Parameters.Add(key, value);
     }
@@ -46,6 +47,17 @@ public class GameApp : MonoBehaviour
     {
         if (Parameters.ContainsKey(key))
             Parameters.Remove(key);
+    }
+
+    public string GetAndRemoveInputField(string key)
+    {
+        if (Parameters.ContainsKey(key))
+        {
+            string toReturn = Parameters[key];
+            Parameters.Remove(key);
+            return toReturn;
+        }
+        return null;
     }
 
 }

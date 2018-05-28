@@ -4,6 +4,8 @@ using System.Collections;
 [System.Serializable]
 public class Player : MonoBehaviour
 {
+    public string password;
+
     public bool human;
     public int minerals;
     public int population;

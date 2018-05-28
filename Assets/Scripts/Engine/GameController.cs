@@ -64,7 +64,7 @@ public class GameController : MonoBehaviour
 
     void Start()
     {
-        string savedGameFile = gameApp.Parameters["SavedGameFile"];
+        string savedGameFile = gameApp.GetAndRemoveInputField("SavedGameFile");
         if(savedGameFile == null || savedGameFile.Equals(""))
         {
             Debug.Log("savedGameFile empty");
