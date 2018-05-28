@@ -15,6 +15,8 @@ public class Warship : Spaceship
     private new void Awake()
     {
         base.Awake();
+
+        model = "Warship";
         MaxActionPoints = 5;
         RadarRange = 25;
 

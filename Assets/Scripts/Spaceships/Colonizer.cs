@@ -18,6 +18,7 @@ public class Colonizer : Spaceship
     {
         base.Awake();
 
+        model = "Colonizer";
         MaxActionPoints = 4;
         RadarRange = 20;
         neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals;
@@ -76,4 +77,5 @@ public class Colonizer : Spaceship
     {
         return (planet.characteristics.healthPoints <= 0);
     }
+
 }

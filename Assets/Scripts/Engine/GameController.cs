@@ -7,6 +7,9 @@ using System;
 using System.Linq;
 using Assets.Scripts;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using System.Text;
+using UnityEditor;
 
 public class GameController : MonoBehaviour
 {
@@ -29,9 +32,13 @@ public class GameController : MonoBehaviour
 
     private HexGrid grid;
     TurnScreen turnScreen;
+    private static readonly string configsPath = "Assets/Configs/Resources/";
 
     private GameApp gameApp;
     private LevelLoader levelLoader;
+
+    public InputField SaveGameFileInput;
+
 
     void Awake()
     {
@@ -42,6 +49,7 @@ public class GameController : MonoBehaviour
         turnScreen.gameObject.SetActive(false);
 
         players = new List<GameObject>();
+
         currentPlayerIndex = 0;
 
         Debug.Log("GameContoller awake");
@@ -57,26 +65,218 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        System.Object savedGameResource = Resources.Load(savedGameFile);
-        if(savedGameResource == null)
+        
+        string path = configsPath + "/" + savedGameFile + ".json";
+        StreamReader reader = new StreamReader(path);
+        string savedGameContent = reader.ReadToEnd();
+        reader.Close();
+
+        if (savedGameContent == null || "".Equals(savedGameContent))
         {
-            Debug.Log("savedGameResource is null, savedGameFile: " + savedGameFile);
+            Debug.Log("savedGameContent is null, path: " + path);
             levelLoader.LoadLevel("MainMenuScene");
             return;
         }
 
-        LoadMap(savedGameResource.ToString());
+        LoadMap(savedGameContent);
         StartGame();
     }
 
-    public void LockInput()
+    public void Exit()
     {
-        turnScreen.gameObject.SetActive(true);
+        levelLoader.LoadLevel("MainMenuScene");
     }
 
-    public void UnlockInput()
+    public void SaveGame()
     {
-        turnScreen.gameObject.SetActive(false);
+        string SaveGameFile = SaveGameFileInput.text;
+        if (SaveGameFile == null || "".Equals(SaveGameFile))
+            return;
+
+        Debug.Log("Saving to file " + SaveGameFile);
+
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("players");
+            writer.WriteRawValue(SavePlayers());
+
+            writer.WritePropertyName("map");
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("planets");
+            writer.WriteRawValue(SavePlanets());
+
+            writer.WritePropertyName("stars");
+            writer.WriteRawValue(SaveStars());
+
+            writer.WritePropertyName("spaceships");
+            writer.WriteRawValue(SaveSpaceships());
+
+            writer.WriteEndObject();
+            writer.WriteEndObject();
+        }
+
+        string path = configsPath + "/" + SaveGameFile + ".json";
+        StreamWriter StreamWriter = new StreamWriter(path);
+        StreamWriter.Write(sb.ToString());
+        StreamWriter.Close();
+
+        AssetDatabase.ImportAsset(path);
+    }
+
+    private string SavePlayers()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (GameObject playerGameObject in players)
+            {
+                Player player = playerGameObject.GetComponent<Player>();
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(playerGameObject.name);
+
+                writer.WritePropertyName("playerMain");
+                writer.WriteRawValue(JsonUtility.ToJson(player));
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
+    }
+
+    private string SavePlanets()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (Planet planet in Resources.FindObjectsOfTypeAll(typeof(Planet)))
+            {
+
+                GameObject planetGameObject = planet.gameObject;
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(planetGameObject.name);
+
+                writer.WritePropertyName("owner");
+                writer.WriteValue(planet.GetOwnerName());
+
+                writer.WritePropertyName("planetMain");
+                writer.WriteRawValue(JsonUtility.ToJson(planet));
+
+                writer.WritePropertyName("radius");
+                writer.WriteValue(planet.transform.localScale.x);
+
+                writer.WritePropertyName("material");
+                writer.WriteValue(planetGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(planetGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+
+        return sb.ToString();
+    }
+
+    private string SaveStars()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (Star star in Resources.FindObjectsOfTypeAll(typeof(Star)))
+            {
+                GameObject starGameObject = star.gameObject;
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(starGameObject.name);
+
+                writer.WritePropertyName("starMain");
+                writer.WriteRawValue(JsonUtility.ToJson(star));
+
+                writer.WritePropertyName("radius");
+                writer.WriteValue(star.transform.localScale.x);
+
+                writer.WritePropertyName("material");
+                writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)",""));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(starGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
+    }
+
+    private string SaveSpaceships()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (Spaceship spaceship in Resources.FindObjectsOfTypeAll(typeof(Spaceship)))
+            {
+                GameObject spaceshipGameObject = spaceship.gameObject;
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(spaceshipGameObject.name);
+
+                writer.WritePropertyName("model");
+                writer.WriteValue(spaceship.getModel());
+
+                writer.WritePropertyName("owner");
+                writer.WriteValue(spaceship.GetOwnerName());
+
+                writer.WritePropertyName("spaceshipMain");
+                writer.WriteRawValue(JsonUtility.ToJson(spaceship));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
+            }
+
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
     }
 
     void LoadMap(string savedGame)
@@ -90,26 +290,31 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        InitPlayers((JArray)savedGameJson["players"]);
+        LoadPlayers((JArray)savedGameJson["players"]);
 
         JObject mapJson = (JObject)savedGameJson["map"];
-        InitPlanets((JArray)mapJson["planets"]);
-        InitStars((JArray)mapJson["stars"]);
-        InitSpaceships((JArray)mapJson["spaceships"]);
+        LoadPlanets((JArray)mapJson["planets"]);
+        LoadStars((JArray)mapJson["stars"]);
+        LoadSpaceships((JArray)mapJson["spaceships"]);
     }
 
 
-    void InitPlayers(JArray playersJson)
+    void LoadPlayers(JArray playersJson)
     {
         foreach (JObject playerJson in playersJson)
         {
-            players.Add(Instantiate(PlayerPrefab));
-            players.Last().GetComponent<Player>().human = (bool)playerJson["human"];
-            players.Last().name = (string)playerJson["name"];
+            // init
+            GameObject player = Instantiate(PlayerPrefab);
+            JsonUtility.FromJsonOverwrite(playerJson["playerMain"].ToString(), player.GetComponent<Player>());
+
+            // general
+            player.name = (string)playerJson["name"];
+
+            players.Add(player);
         }
     }
 
-    void InitSpaceships(JArray spaceshipsJson)
+    void LoadSpaceships(JArray spaceshipsJson)
     {
         int counter = 0;
         foreach (JObject spaceshipJson in spaceshipsJson)
@@ -124,13 +329,13 @@ public class GameController : MonoBehaviour
                 continue;
 
             // init
-            GameObject spaceship = Instantiate(original: FindPrefab((string)spaceshipJson["type"]), position: new Vector3(
+            GameObject spaceship = Instantiate(original: FindPrefab((string)spaceshipJson["model"]), position: new Vector3(
                 (float)spaceshipJson["position"][0], (float)spaceshipJson["position"][1], (float)spaceshipJson["position"][2]), rotation: Quaternion.identity
             );
             JsonUtility.FromJsonOverwrite(spaceshipJson["spaceshipMain"].ToString(), spaceship.GetComponent<Spaceship>());
 
             // general
-            spaceship.name = spaceshipJson["type"] + "-" + counter;
+            spaceship.name = spaceshipJson["model"] + "-" + counter;
 
             // references and owner
             spaceship.GetComponent<Spaceship>().Owned(player);
@@ -171,7 +376,7 @@ public class GameController : MonoBehaviour
 
     
 
-    void InitPlanets(JArray planetsJson)
+    void LoadPlanets(JArray planetsJson)
     {
         foreach (JObject planetJson in planetsJson)
         {
@@ -185,7 +390,7 @@ public class GameController : MonoBehaviour
             planet.name = planetJson["name"].ToString();
 
             // references and owner
-            if (planetJson["owner"] != null)
+            if (planetJson["owner"] != null && !"".Equals(planetJson["owner"]))
             {
                 Player player = FindPlayer((string)planetJson["owner"]);
                 if(player != null)
@@ -201,14 +406,17 @@ public class GameController : MonoBehaviour
             string materialString = (string)planetJson["material"];
             if (materialString != null)
             {
-                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                Material newMaterial = Resources.Load(materialString.Replace(" (Instance)", ""), typeof(Material)) as Material;
                 if (materialString != null)
+                {
                     planet.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+                    planet.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
+                }
             }
         }
     }
 
-    void InitStars(JArray starsJson)
+    void LoadStars(JArray starsJson)
     {
         foreach (JObject starJson in starsJson)
         {
@@ -216,6 +424,7 @@ public class GameController : MonoBehaviour
             GameObject star = Instantiate(original: StartPrefab, position: new Vector3(
                 (float)starJson["position"][0], (float)starJson["position"][1], (float)starJson["position"][2]), rotation: Quaternion.identity
             );
+            JsonUtility.FromJsonOverwrite(starJson["starMain"].ToString(), star.GetComponent<Star>());
 
             // general
             star.name = starJson["name"].ToString();
@@ -229,9 +438,12 @@ public class GameController : MonoBehaviour
             string materialString = (string)starJson["material"];
             if (materialString != null)
             {
-                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                Material newMaterial = Resources.Load(materialString.Replace(" (Instance)", ""), typeof(Material)) as Material;
                 if (materialString != null)
+                {
                     star.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+                    star.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
+                }
             }
         }
     }
@@ -250,7 +462,20 @@ public class GameController : MonoBehaviour
 
     Player FindPlayer(string name)
     {
-        return players.Find(p => p.name == name).GetComponent<Player>();
+        GameObject player = players.Find(p => p.name == name);
+        if(player != null)
+            return player.GetComponent<Player>();
+        return null;
+    }
+
+    public void LockInput()
+    {
+        turnScreen.gameObject.SetActive(true);
+    }
+
+    public void UnlockInput()
+    {
+        turnScreen.gameObject.SetActive(false);
     }
 
     void StartGame()
@@ -388,11 +613,5 @@ public class GameController : MonoBehaviour
     public void AddRadars()
     {
         if (GetCurrentPlayer().radars < 2) GetCurrentPlayer().radars++;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

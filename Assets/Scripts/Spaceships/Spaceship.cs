@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Threading;
 using System.Linq;
 
+[System.Serializable]
 public class Spaceship : Ownable
 {
     private List<HexCell> path;
@@ -20,11 +21,12 @@ public class Spaceship : Ownable
     private UIHoverListener uiListener;
     private AudioSource engineSound;
 
+    protected string model;
+
     public int neededMinerals;
     public int neededPopulation;
     public int neededSolarPower;
 
-    public SpaceshipStatistics spaceshipStatistics;
     [System.Serializable]
     public struct SpaceshipStatistics
     {
@@ -33,6 +35,8 @@ public class Spaceship : Ownable
         public int defense;
         public int speed;
     }
+
+    public SpaceshipStatistics spaceshipStatistics;
 
     public bool Flying;
     public int MaxActionPoints;
@@ -45,6 +49,7 @@ public class Spaceship : Ownable
 
     protected void Awake()
     {
+        model = null;
         Flying = false;
         RadarRange = 26f;
         MaxActionPoints = 7;
@@ -329,6 +334,11 @@ public class Spaceship : Ownable
         {
             engineSound.Play();
         }
+    }
+
+    public string getModel()
+    {
+        return this.model;
     }
 }
 

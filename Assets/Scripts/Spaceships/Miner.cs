@@ -18,6 +18,8 @@ public class Miner : Spaceship
     private new void Awake()
     {
         base.Awake();
+
+        model = "Miner";
         MaxActionPoints = 6;
         RadarRange = 15;
 

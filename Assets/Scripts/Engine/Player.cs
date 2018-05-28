@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class Player : MonoBehaviour
 {
     public bool human;
@@ -11,11 +12,11 @@ public class Player : MonoBehaviour
     public int attack;
     public int engines;
     public int radars;
+
     private ArrayList spaceships;
     private ArrayList planets;
 
-    public SpaceshipsCosts spaceshipsCosts;
-
+    [System.Serializable]
     public struct SpaceshipsCosts
     {
         public int scoutNeededMinerals;
@@ -34,6 +35,8 @@ public class Player : MonoBehaviour
         public int colonizerNeededPopulation;
         public int colonizerNeededSolarPower;
     }
+
+    public SpaceshipsCosts spaceshipsCosts;
 
     // Use this for initialization
     void Awake()

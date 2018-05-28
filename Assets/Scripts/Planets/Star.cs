@@ -13,7 +13,7 @@ public class Star : MonoBehaviour
         public int solarPower;
     }
 
-    public StarResources starResources;
+    public StarResources resources;
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
@@ -52,8 +52,8 @@ public class Star : MonoBehaviour
 
     private int GetSolarPower(int solarPowerCount)
     {
-        if (starResources.solarPower >= solarPowerCount)
-            starResources.solarPower -= solarPowerCount;
+        if (resources.solarPower >= solarPowerCount)
+            resources.solarPower -= solarPowerCount;
 
         return solarPowerCount;
     }

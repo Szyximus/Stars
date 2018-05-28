@@ -12,7 +12,8 @@ using System.Linq;
 
 public class Planet : Ownable
 {
-    Random rnd = new Random();
+    Random random = new Random();
+
     [System.Serializable]
     public struct PlanetCharacteristics
     {
@@ -31,6 +32,7 @@ public class Planet : Ownable
 
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
+    public bool mayBeHome;
 
     private int maxHealthPoints;
 
@@ -52,34 +54,6 @@ public class Planet : Ownable
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
     }
 
-
-    string ToJson()
-    {
-        StringBuilder sb = new StringBuilder();
-        StringWriter sw = new StringWriter(sb);
-        using (JsonWriter writer = new JsonTextWriter(sw))
-        {
-            writer.Formatting = Formatting.Indented;
-            writer.WriteStartObject();
-
-            writer.WritePropertyName("planetMain");
-            writer.WriteRawValue(JsonUtility.ToJson(this));
-
-            writer.WritePropertyName("radius");
-            writer.WriteValue(this.GetComponent<SphereCollider>().radius);
-
-            writer.WritePropertyName("material");
-            writer.WriteValue(this.GetComponentsInChildren<MeshRenderer>()[0].material);
-
-            writer.WritePropertyName("position");
-            writer.WriteStartArray();
-            writer.WriteRawValue(this.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
-            writer.WriteEndArray();
-
-            writer.WriteEndObject();
-        }
-        return sb.ToString();
-    }
 
     void UpdateCoordinates()
     {

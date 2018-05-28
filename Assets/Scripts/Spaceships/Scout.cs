@@ -16,6 +16,7 @@ public class Scout : Spaceship
     {
         base.Awake();
 
+        model = "Scout";
         MaxActionPoints = 7;
         RadarRange = 25;
 
