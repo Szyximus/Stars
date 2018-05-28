@@ -17,6 +17,10 @@ public class GameController : MonoBehaviour
     public GameObject PlayerPrefab;
     private static int currentPlayerIndex;
 
+    private List<GameObject> planets;
+    private List<GameObject> stars;
+    public List<GameObject> spaceships;
+
     public GameObject PlanetPrefab;
     public GameObject StartPrefab;
     public GameObject ScoutPrefab;
@@ -49,6 +53,9 @@ public class GameController : MonoBehaviour
         turnScreen.gameObject.SetActive(false);
 
         players = new List<GameObject>();
+        planets = new List<GameObject>();
+        stars = new List<GameObject>();
+        spaceships = new List<GameObject>();
 
         currentPlayerIndex = 0;
 
@@ -166,10 +173,10 @@ public class GameController : MonoBehaviour
             writer.Formatting = Formatting.Indented;
             writer.WriteStartArray();
 
-            foreach (Planet planet in Resources.FindObjectsOfTypeAll(typeof(Planet)))
+            foreach (GameObject planetGameObject in planets)
             {
 
-                GameObject planetGameObject = planet.gameObject;
+                Planet planet = planetGameObject.GetComponent<Planet>();
                 writer.WriteStartObject();
 
                 writer.WritePropertyName("name");
@@ -210,9 +217,9 @@ public class GameController : MonoBehaviour
             writer.Formatting = Formatting.Indented;
             writer.WriteStartArray();
 
-            foreach (Star star in Resources.FindObjectsOfTypeAll(typeof(Star)))
+            foreach (GameObject starGameObject in stars)
             {
-                GameObject starGameObject = star.gameObject;
+                Star star = starGameObject.GetComponent<Star>();
                 writer.WriteStartObject();
 
                 writer.WritePropertyName("name");
@@ -249,9 +256,9 @@ public class GameController : MonoBehaviour
             writer.Formatting = Formatting.Indented;
             writer.WriteStartArray();
 
-            foreach (Spaceship spaceship in Resources.FindObjectsOfTypeAll(typeof(Spaceship)))
+            foreach (GameObject spaceshipGameObject in spaceships)
             {
-                GameObject spaceshipGameObject = spaceship.gameObject;
+                Spaceship spaceship = spaceshipGameObject.GetComponent<Spaceship>();
                 writer.WriteStartObject();
 
                 writer.WritePropertyName("name");
@@ -339,6 +346,8 @@ public class GameController : MonoBehaviour
 
             // references and owner
             spaceship.GetComponent<Spaceship>().Owned(player);
+
+            spaceships.Add(spaceship);
         }
     }
 
@@ -413,6 +422,8 @@ public class GameController : MonoBehaviour
                     planet.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
                 }
             }
+
+            planets.Add(planet);
         }
     }
 
@@ -445,6 +456,8 @@ public class GameController : MonoBehaviour
                     star.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
                 }
             }
+
+            stars.Add(star);
         }
     }
 
@@ -594,6 +607,8 @@ public class GameController : MonoBehaviour
                 GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
                 Debug.Log("Built " + spaceshipPrefab.name);
+
+                spaceships.Add(spaceship);
             }
         }
     }

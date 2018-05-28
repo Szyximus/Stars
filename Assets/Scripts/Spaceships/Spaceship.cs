@@ -303,6 +303,7 @@ public class Spaceship : Ownable
             GameController.GetCurrentPlayer().Lose(this);
             Destroy(Explosion, 2f);
             Destroy(this.gameObject);
+            GameController.spaceships.Remove(this.gameObject);
             if (this.GetOwner() != null) Lose();
         }
         else
