@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using UnityEngine.Networking.NetworkSystem;
 
 public class ServerNetworkManager : NetworkManager
 {
@@ -80,12 +81,44 @@ public class ServerNetworkManager : NetworkManager
 
     // Server callbacks
 
+    public void OnServerClientAssignPlayer(NetworkMessage netMsg)
+    {
+        var clientPlayerName = netMsg.ReadMessage<StringMessage>();
+        Debug.Log("received OnServerClientAssignPlayer " + clientPlayerName.value);
+
+        if(connections.ContainsKey(clientPlayerName.value))
+        {
+            Debug.Log("OnServerClientAssignPlayer: player taken");
+            netMsg.conn.Send(GameApp.connAssignPlayerError, new StringMessage("Player is taken"));
+            netMsg.conn.Disconnect();
+        }
+        else if(gameController.FindPlayer(clientPlayerName.value) == null)
+        {
+            Debug.Log("OnServerClientAssignPlayer: player name not found, " + clientPlayerName.value);
+            netMsg.conn.Send(GameApp.connAssignPlayerError, new StringMessage("Player with name " + clientPlayerName.value + " not found"));
+            netMsg.conn.Disconnect();
+        }
+        else
+        {
+            Debug.Log("OnServerClientAssignPlayer: player join, " + clientPlayerName.value);
+            netMsg.conn.Send(GameApp.connAssignPlayerSuccess, new StringMessage("Player with name " + clientPlayerName.value + " assigned"));
+            connections.Add(clientPlayerName.value, netMsg.conn);
+
+            if (clientPlayerName.value.Equals(GameController.GetCurrentPlayer().name))
+            {
+                Debug.Log("OnServerClientAssignPlayer, it is new client turn");
+                NetworkServer.SetClientReady(netMsg.conn);
+            }
+        }
+    }
+
     public override void OnServerSceneChanged(string sceneName)
     {
         Debug.Log("OnServerSceneChanged: " + sceneName);
         base.OnServerSceneChanged(sceneName);
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController.serverNetworkManager = this;
 
         if (isNewGame)
         {
@@ -155,9 +188,9 @@ public class ServerNetworkManager : NetworkManager
     public override void OnServerAddPlayer(NetworkConnection conn, short playerControllerId)
     {
 
-        var player = (GameObject)GameObject.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+       // var player = (GameObject)GameObject.Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
 
-        NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
+       // NetworkServer.AddPlayerForConnection(conn, player, playerControllerId);
 
         Debug.Log("Client has requested to get his player added to the game");
 
@@ -167,9 +200,9 @@ public class ServerNetworkManager : NetworkManager
     public override void OnServerRemovePlayer(NetworkConnection conn, PlayerController player)
     {
 
-        if (player.gameObject != null)
+       // if (player.gameObject != null)
 
-            NetworkServer.Destroy(player.gameObject);
+         //   NetworkServer.Destroy(player.gameObject);
 
     }
 
@@ -190,6 +223,7 @@ public class ServerNetworkManager : NetworkManager
     public override void OnStartServer()
     {
         Debug.Log("Server has started");
+        NetworkServer.RegisterHandler(GameApp.connAssignPlayerId, OnServerClientAssignPlayer);
     }
 
     public override void OnStopServer()

@@ -11,36 +11,53 @@ public class TurnScreen : MonoBehaviour
     AudioSource sound;
 
     private GameController gameController;
-    private bool initialized = false;
+    private bool showed = false;
 
     // Controls the fading in and out of Big turn counter
     public void Init()
     {
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
-
         label = gameObject.GetComponentInChildren<Text>();
         background = gameObject.GetComponent<RawImage>();
         sound = gameObject.GetComponent<AudioSource>();
         label.color = new Vector4(255, 255, 255, 0);
         background.color = new Vector4(0, 0, 0, 0);
-
-        initialized = true;
     }
 
     public void Play(string value)
     {
-        if (initialized == false)
+        if (showed)
             return;
 
+        gameObject.SetActive(true);
         label.text = value;
         sound.Play();
-        gameObject.SetActive(true);
-        StartCoroutine(FadeIn());
+        StartCoroutine(FadeIn(true));
     }
 
-    IEnumerator FadeIn()
+    public void Show(string value)
     {
+        if (showed)
+            return;
 
+        gameObject.SetActive(true);
+        label.text = value;
+        sound.Play();
+        StartCoroutine(FadeIn(false));
+    }
+
+    public void Hide()
+    {
+        if (showed == false)
+            return;
+
+        sound.Play();
+        StartCoroutine(FadeOut());
+    }
+
+    IEnumerator FadeIn(bool autoFadeOut)
+    {
+        showed = true;
+        gameObject.SetActive(true);
         float startTime = Time.time;
 
         while (Time.time - startTime < 1) // takes exactly 1 s. regardless of framerate
@@ -52,12 +69,13 @@ public class TurnScreen : MonoBehaviour
         }
         label.color = new Vector4(1, 1, 1, 1);
         background.color = new Vector4(0, 0, 0, 0.83f);
-        StartCoroutine(FadeOut());
+
+        if (autoFadeOut)
+            StartCoroutine(FadeOut());
     }
 
     IEnumerator FadeOut()
     {
-
         float startTime = Time.time;
 
         while (Time.time - startTime < 1) // takes exactly 2 s. regardless of framerate
@@ -71,5 +89,6 @@ public class TurnScreen : MonoBehaviour
         label.color = new Vector4(1, 1, 1, 0);
         background.color = new Vector4(0, 0, 0, 0);
         gameObject.SetActive(false);
+        showed = false;
     }
 }

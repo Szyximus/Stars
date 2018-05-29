@@ -34,7 +34,7 @@ public class GameController : NetworkBehaviour
     public GameObject AttackPrefab;
     public GameObject HitPrefab;
 
-    private static int year;
+    private int year;
 
     private HexGrid grid;
     TurnScreen turnScreen;
@@ -42,12 +42,10 @@ public class GameController : NetworkBehaviour
 
     private GameApp gameApp;
     private LevelLoader levelLoader;
-    private ClientNetworkManager clientNetworkManager;
-    private ServerNetworkManager serverNetworkManager;
+    public ClientNetworkManager clientNetworkManager;
+    public ServerNetworkManager serverNetworkManager;
 
     public InputField SaveGameFileInput;
-
-    private static readonly short clientMapJsonId = 1337;
 
     void Awake()
     {
@@ -63,18 +61,16 @@ public class GameController : NetworkBehaviour
         stars = new List<GameObject>();
         spaceships = new List<GameObject>();
 
+        GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
+        GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
+        turnScreen.Init();
+
         currentPlayerIndex = 0;
     }
 
     private void Start()
     {
         Debug.Log("GameContoller Start");
-
-        GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
-        GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
-
-        turnScreen.Init();
-        turnScreen.gameObject.SetActive(false);
     }
 
     // called from ServerNetworkManager
@@ -88,6 +84,7 @@ public class GameController : NetworkBehaviour
         }
 
         string path = gameApp.configsPath + "/StartMaps/map1.json";
+        Debug.Log("ServerStartNewGame reading " + path);
         StreamReader reader = new StreamReader(path);
         string newGameContent = reader.ReadToEnd();
         reader.Close();
@@ -110,6 +107,7 @@ public class GameController : NetworkBehaviour
 
         PlayersFromMenu(PlayerMenuList);
         MapFromJson((JObject)newGameJson["map"]);
+        InfoFromJson((JObject)newGameJson["info"]);
         StartGame();
     }
 
@@ -140,13 +138,15 @@ public class GameController : NetworkBehaviour
 
     public void Exit()
     {
+        Debug.Log("Exit");
         levelLoader.LoadLevel("MainMenuScene");
     }
 
 
     public void SaveGame()
     {
-        if(!isServer)
+        Debug.Log("SaveGame");
+        if (!isServer)
         {
             Debug.Log("Client can't save game");
             return;
@@ -165,8 +165,6 @@ public class GameController : NetworkBehaviour
         StreamWriter StreamWriter = new StreamWriter(path);
         StreamWriter.Write(GameToJson());
         StreamWriter.Close();
-
-        AssetDatabase.ImportAsset(path);
     }
 
     private string GameToJson()
@@ -181,8 +179,31 @@ public class GameController : NetworkBehaviour
             writer.WritePropertyName("players");
             writer.WriteRawValue(PlayersToJson());
 
+            writer.WritePropertyName("info");
+            writer.WriteRawValue(InfoToJson());
+
             writer.WritePropertyName("map");
             writer.WriteRawValue(MapToJson());
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+    
+    private string InfoToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("currentPlayer");
+            writer.WriteValue(GetCurrentPlayer().name);
+
+            writer.WritePropertyName("year");
+            writer.WriteValue(year);
 
             writer.WriteEndObject();
         }
@@ -389,6 +410,21 @@ public class GameController : NetworkBehaviour
         MapFromJson((JObject)savedGameJson["map"]);
     }
 
+    void InfoFromJson(JObject infoJson)
+    {
+        Debug.Log("InfoFromJson");
+        year = (int)infoJson["year"];
+        string currentPlayerName = (string)infoJson["currentPlayer"];
+        if(FindPlayer(currentPlayerName))
+        {
+            currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
+        }
+        else
+        {
+            currentPlayerIndex = 0;
+        }
+    }
+
     void MapFromJson(JObject mapJson)
     {
         PlanetsFromJson((JArray)mapJson["planets"]);
@@ -580,7 +616,7 @@ public class GameController : NetworkBehaviour
         }
     }
 
-    Player FindPlayer(string name)
+    public Player FindPlayer(string name)
     {
         GameObject player = players.Find(p => p.name == name);
         if(player != null)
@@ -608,19 +644,24 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        NetworkServer.RegisterHandler(clientMapJsonId, OnServerClientNextTurnDone);
-        currentPlayerIndex = players.Count() - 1; // NextTurn will wrap index to zero at the beginning
-        year = -1;  // NextTurn will increment Year at the beginning
+        NetworkServer.RegisterHandler(GameApp.connMapJsonId, OnServerClientNextTurnDone);
+        currentPlayerIndex -= 1; // NextTurn will wrap index to zero at the beginning
         NextTurn();
     }
 
     public void OnServerClientNextTurnDone(NetworkMessage netMsg)
     {
+        Debug.Log("OnServerClientNextTurnDone");
+        if (!isServer)
+        {
+            Debug.Log("OnServerClientNextTurnDone not a server, return");
+            return;
+        }
+
         var clientMapJson = netMsg.ReadMessage<StringMessage>();
         Debug.Log("received OnServerReadyToBeginMessage " + clientMapJson.value);
         serverNetworkManager.NextTurnScene(clientMapJson.value);
     }
-
 
     public void NextTurnClient()
     {
@@ -632,7 +673,7 @@ public class GameController : NetworkBehaviour
         }
 
         StringMessage clientMapJson = new StringMessage(MapToJson());
-        clientNetworkManager.networkClient.Send(clientMapJsonId, clientMapJson);
+        clientNetworkManager.networkClient.Send(GameApp.connMapJsonId, clientMapJson);
     }
 
     public void NextTurnServer()
@@ -669,19 +710,24 @@ public class GameController : NetworkBehaviour
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
+            turnScreen.Hide();
+            turnScreen.Play("year: " + year + " | player: " + GetCurrentPlayer().name);
         }
         else
         {
             // now remote player turn, start client for the player and wait on the server
             Debug.Log("Next remote turn");
-            //NetworkServer.SetClientReady();
+            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name);
+
+            // client for the player is connected, set him ready
+            if(serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+                NetworkServer.SetClientReady(serverNetworkManager.connections[GetCurrentPlayer().name]);
         }
     }
 
     public void NextTurn()
     {
-
-        turnScreen.Play("year: " + year);
+        Debug.Log("NextTurn");
 
         if (isServer)
             NextTurnServer();
@@ -689,8 +735,11 @@ public class GameController : NetworkBehaviour
             NextTurnClient();
     }
 
+
     public static Player GetCurrentPlayer()
     {
+        if (players.Count == 0 || currentPlayerIndex >= players.Count || currentPlayerIndex < 0)
+            return null;
         return players[currentPlayerIndex].GetComponent<Player>();
     }
 

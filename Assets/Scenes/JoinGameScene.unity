@@ -2181,9 +2181,9 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 114535565}
-          m_MethodName: LoadLevel
-          m_Mode: 5
+        - m_Target: {fileID: 1935523476}
+          m_MethodName: SetupClient
+          m_Mode: 1
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -2620,7 +2620,7 @@ MonoBehaviour:
   m_MaxDelay: 0.01
   m_LogLevel: 2
   m_PlayerPrefab: {fileID: 0}
-  m_AutoCreatePlayer: 1
+  m_AutoCreatePlayer: 0
   m_PlayerSpawnMethod: 0
   m_OfflineScene: 
   m_OnlineScene: 
@@ -2680,10 +2680,6 @@ MonoBehaviour:
   matchSize: 4
   isNetworkActive: 0
   matchMaker: {fileID: 0}
-  serverAddressInputField: {fileID: 0}
-  serverPortInputField: {fileID: 0}
-  playerInputField: {fileID: 0}
-  playerName: 
 --- !u!4 &1935523477
 Transform:
   m_ObjectHideFlags: 0

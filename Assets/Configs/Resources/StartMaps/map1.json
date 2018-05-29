@@ -1,4 +1,8 @@
 {
+	"info": {
+		"currentPlayer": "{{player2}}",
+		"year": 2400
+	},
 	"map": {
 		"planets": [{
 				"name": "Korriban",

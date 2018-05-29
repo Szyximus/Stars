@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine.Networking.NetworkSystem;
 
 public class ClientNetworkManager : NetworkManager
 {
@@ -43,30 +44,44 @@ public class ClientNetworkManager : NetworkManager
         base.OnClientSceneChanged(conn);
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController.clientNetworkManager = this;
     }
 
     public override void OnClientConnect(NetworkConnection conn)
-
     {
         base.OnClientConnect(conn);
         Debug.Log("Connected successfully to server");
+
+        NetworkServer.RegisterHandler(GameApp.connAssignPlayerError, OnClientAssignPlayerError);
+        NetworkServer.RegisterHandler(GameApp.connAssignPlayerSuccess, OnClientAssignPlayerSuccess);
+
+        string playerName = gameApp.GetAndRemoveInputField("PlayerName");
+        string password = gameApp.GetAndRemoveInputField("Password");
+
+        StringMessage playerMsg = new StringMessage(playerName);
+        networkClient.Send(GameApp.connAssignPlayerId, playerMsg);
+    }
+
+    public void OnClientAssignPlayerError(NetworkMessage netMsg)
+    {
+        Debug.Log("OnClientAssignPlayerError: " + netMsg.ReadMessage<StringMessage>());
+    }
+
+    public void OnClientAssignPlayerSuccess(NetworkMessage netMsg)
+    {
+        Debug.Log("OnClientAssignPlayerSuccess: " + netMsg.ReadMessage<StringMessage>());
     }
 
     public override void OnClientDisconnect(NetworkConnection conn)
     {
-
         StopClient();
 
         if (conn.lastError != NetworkError.Ok)
-
         {
-
             if (LogFilter.logError) { Debug.LogError("ClientDisconnected due to error: " + conn.lastError); }
-
         }
 
         Debug.Log("Client disconnected from server: " + conn);
-
     }
 
     public override void OnClientError(NetworkConnection conn, int errorCode)

@@ -42,6 +42,9 @@ public class UpperPanel : MonoBehaviour
             return;
 
         Player currentPlayer = GameController.GetCurrentPlayer();
+        if (currentPlayer == null)
+            return;
+
         playerLabel.text = currentPlayer.ToString();
         if (currentPlayer != null)
         {

@@ -5,8 +5,13 @@ using System.Collections.Generic;
 
 public class GameApp : MonoBehaviour
 {
-    public readonly string configsPath = "Assets/Configs/Resources/";
+    public string configsPath;
     private static bool created = false;
+
+    public static readonly short connMapJsonId = 1337;
+    public static readonly short connAssignPlayerId = 20001;
+    public static readonly short connAssignPlayerError = 20002;
+    public static readonly short connAssignPlayerSuccess = 20003;
 
     // variables between scenes
     public Dictionary<string, string> Parameters;
@@ -61,6 +66,8 @@ public class GameApp : MonoBehaviour
         if (!created)
         {
             Parameters = new Dictionary<string, string>();
+            configsPath = Application.persistentDataPath + "/Configs/";
+            Debug.Log("GameApp configsPath: " + configsPath);
 
             DontDestroyOnLoad(this.gameObject);
             created = true;
