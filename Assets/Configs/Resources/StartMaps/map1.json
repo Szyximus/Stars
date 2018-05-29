@@ -1,0 +1,223 @@
+{
+	"map": {
+		"planets": [{
+				"name": "Korriban",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 54,
+						"radiation": 69,
+						"oxygen": 85,
+						"healthPoints": 100,
+						"habitability": 1
+					},
+					"resources": {
+						"minerals": 15,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 1,
+				"position": [
+					307.4,
+					0,
+					292.5
+				],
+				"owner": "{{player1}}"
+			},
+			{
+				"name": "planet X",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 69,
+						"radiation": 54,
+						"oxygen": 45,
+						"healthPoints": 100,
+						"habitability": 3
+					},
+					"resources": {
+						"minerals": 12,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": false
+				},
+				"radius": 1.8,
+				"material": "Planet3Material",
+				"position": [
+					405,
+					0,
+					280
+				],
+				"owner": "{{player2}}"
+			},
+			{
+				"name": "Nova",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 56,
+						"radiation": 21,
+						"oxygen": 78,
+						"healthPoints": 50,
+						"habitability": 1
+					},
+					"resources": {
+						"minerals": 20,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 1.2,
+				"position": [
+					364.5,
+					0,
+					316
+				],
+				"owner": "{{player3}}"
+			},
+			{
+				"name": "Moon",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 35,
+						"radiation": 3,
+						"oxygen": 0,
+						"healthPoints": 50,
+						"habitability": 2
+					},
+					"resources": {
+						"minerals": 10,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 0.5,
+				"material": "Planet2Material",
+				"position": [
+					311.8,
+					0,
+					300
+				]
+			}
+		],
+		"stars": [{
+				"name": "Sun",
+				"starMain": {
+					"resources": {
+						"solarPower": 100
+					}
+				},
+				"radius": 1,
+				"position": [
+					287.73,
+					0,
+					295.7
+				]
+			},
+			{
+				"name": "Super Star",
+				"starMain": {
+					"resources": {
+						"solarPower": 200
+					}
+				},
+				"radius": 1.1,
+				"position": [
+					444.5,
+					0,
+					397.45
+				]
+			},
+			{
+				"name": "Red Star",
+				"starMain": {
+					"resources": {
+						"solarPower": 50
+					}
+				},
+				"radius": 1,
+				"position": [
+					382.32,
+					0,
+					303.37
+				],
+				"material": "RedStarMaterial"
+			}
+		],
+		"spaceships": [{
+				"model": "Scout",
+				"owner": "{{player1}}",
+				"position": [298.7, 0, 292.5],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
+				}
+			},
+			{
+				"model": "Miner",
+				"owner": "{{player1}}",
+				"position": [311.7, 0, 285],
+				"spaceshipMain": {
+					"RadarRange": 15.0,
+					"neededMinerals": 2,
+					"neededPopulation": 5,
+					"neededSolarPower": 6,
+					"spaceshipStatistics": {
+						"healthPoints": 80,
+						"attack": 5,
+						"defense": 15,
+						"speed": 6
+					},
+					"MaxActionPoints": 6
+				}
+			},
+			{
+				"model": "Warship",
+				"owner": "{{player2}}",
+				"position": [410, 0, 277.5],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 6,
+					"neededPopulation": 4,
+					"neededSolarPower": 5,
+					"spaceshipStatistics": {
+						"healthPoints": 300,
+						"attack": 35,
+						"defense": 50,
+						"speed": 5
+					},
+					"MaxActionPoints": 5
+				}
+			},
+			{
+				"model": "Colonizer",
+				"owner": "{{player3}}",
+				"position": [402.7, 0, 260.5],
+				"spaceshipMain": {
+					"RadarRange": 20.0,
+					"neededMinerals": 7,
+					"neededPopulation": 9,
+					"neededSolarPower": 8,
+					"spaceshipStatistics": {
+						"healthPoints": 600,
+						"attack": 5,
+						"defense": 40,
+						"speed": 4
+					},
+					"MaxActionPoints": 4
+				}
+			}
+		]
+	}
+}

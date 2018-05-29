@@ -8,7 +8,8 @@ public class SideMenu : MonoBehaviour
 {
     bool shown, animating = false;
 
-    GameController GameController;
+    GameController gameController;
+    private bool initialized = false;
 
     RectTransform rectTransform;
     GameObject NamePanel;
@@ -41,9 +42,9 @@ public class SideMenu : MonoBehaviour
     Image icon;
 
     // Use this for initialization
-    void Start()
+    public void Init()
     {
-        GameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
 
         transform.position += new Vector3(256, 0, 0);
 
@@ -76,7 +77,7 @@ public class SideMenu : MonoBehaviour
 
         icon = NamePanel.GetComponentsInChildren<Image>().Last();
 
-
+        initialized = true;
     }
     void ShowNamePanel()
     {
@@ -259,6 +260,8 @@ public class SideMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (initialized == false)
+            return;
 
         if (EventManager.selectionManager.SelectedObject == null && shown && !animating) // No selection
         {

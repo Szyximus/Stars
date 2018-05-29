@@ -5,6 +5,8 @@ using System.Collections;
 public class Player : MonoBehaviour
 {
     public string password;
+    public bool local;
+    public bool clientConnected;
 
     public bool human;
     public int minerals;

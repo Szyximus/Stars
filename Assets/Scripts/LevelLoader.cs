@@ -11,39 +11,29 @@ public class LevelLoader : MonoBehaviour {
     /// </summary>
 
     public GameObject slider;
+    private GameApp gameApp;
 
-    public Dictionary<string, List<ParameterMapping>> parametersToPersist = new Dictionary<string, List<ParameterMapping>>
+    private void Awake()
     {
-        {"GameScene",  new List<ParameterMapping> {
-                new ParameterMapping { name="SavedGameFile", inputField = "MenuCanvas/SavedGameFileInput" }
-            }
-        },
-        {"NewGameScene",  new List<ParameterMapping> {
-                new ParameterMapping { name="Address", inputField = "MenuCanvas/AddressInput" },
-                new ParameterMapping { name="Port", inputField = "MenuCanvas/PortInput" },
-                new ParameterMapping { name="PlayerName1", inputField = "MenuCanvas/PlayerName1Input" },
-                new ParameterMapping { name="PlayerName2", inputField = "MenuCanvas/PlayerName2Input" },
-                new ParameterMapping { name="PlayerName3", inputField = "MenuCanvas/PlayerName3Input" },
-                new ParameterMapping { name="PlayerPass1", inputField = "MenuCanvas/PlayerPass1Input" },
-                new ParameterMapping { name="PlayerPass2", inputField = "MenuCanvas/PlayerPass2Input" },
-                new ParameterMapping { name="PlayerPass3", inputField = "MenuCanvas/PlayerPass3Input" },
-            }
-        },
-        {"JoinGameScene",  new List<ParameterMapping> {
-                new ParameterMapping { name="ServerAddress", inputField = "MenuCanvas/ServerAddressInput" },
-                new ParameterMapping { name="ServerPort", inputField = "MenuCanvas/ServerPortInput" },
-                new ParameterMapping { name="PlayerName", inputField = "MenuCanvas/PlayerNameInput" },
-                new ParameterMapping { name="Password", inputField = "MenuCanvas/PasswordInput" },
-            }
-        }
-    };
-
-    public struct ParameterMapping
-    {
-        public string name;
-        public string inputField;
+        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
     }
-    
+
+    public void Back(string scene)
+    {
+        gameApp.RemoveAllParameters();
+
+        GameObject serverNetworkManager = GameObject.Find("ServerNetworkManager");
+        if (serverNetworkManager != null)
+            Destroy(serverNetworkManager);
+
+        GameObject clientNetworkManager = GameObject.Find("ClientNetworkManager");
+        if (clientNetworkManager != null)
+            Destroy(clientNetworkManager);
+
+        if (slider != null)
+            slider.SetActive(true);
+        StartCoroutine(LoadAsynchronously(scene));
+    }
 
     public void LoadLevel (string scene)
     {
@@ -54,19 +44,7 @@ public class LevelLoader : MonoBehaviour {
 
     IEnumerator LoadAsynchronously(string scene)
     {
-        if (parametersToPersist.ContainsKey(scene)) {
-            GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
-            if (gameApp != null)
-            {
-                foreach (ParameterMapping parameterMapping in parametersToPersist[scene])
-                {
-                    gameApp.PersistInputField(parameterMapping.name, parameterMapping.inputField);
-                }
-            } else
-            {
-                Debug.Log("gameApp is null");
-            }
-        }
+        gameApp.PersistAllParameters(scene);
 
         AsyncOperation operation = SceneManager.LoadSceneAsync(scene);
 

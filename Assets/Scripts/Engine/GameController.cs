@@ -10,8 +10,10 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text;
 using UnityEditor;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 
-public class GameController : MonoBehaviour
+public class GameController : NetworkBehaviour
 {
     private static List<GameObject> players;
     public GameObject PlayerPrefab;
@@ -36,21 +38,25 @@ public class GameController : MonoBehaviour
 
     private HexGrid grid;
     TurnScreen turnScreen;
-    private static readonly string configsPath = "Assets/Configs/Resources/";
+    
 
     private GameApp gameApp;
     private LevelLoader levelLoader;
+    private ClientNetworkManager clientNetworkManager;
+    private ServerNetworkManager serverNetworkManager;
 
     public InputField SaveGameFileInput;
 
+    private static readonly short clientMapJsonId = 1337;
 
     void Awake()
     {
+        Debug.Log("GameContoller Awake");
+
         grid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
         gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
-        turnScreen.gameObject.SetActive(false);
 
         players = new List<GameObject>();
         planets = new List<GameObject>();
@@ -58,35 +64,78 @@ public class GameController : MonoBehaviour
         spaceships = new List<GameObject>();
 
         currentPlayerIndex = 0;
-
-        Debug.Log("GameContoller awake");
     }
 
-    void Start()
+    private void Start()
     {
-        string savedGameFile = gameApp.GetAndRemoveInputField("SavedGameFile");
-        if(savedGameFile == null || savedGameFile.Equals(""))
+        Debug.Log("GameContoller Start");
+
+        GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
+        GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
+
+        turnScreen.Init();
+        turnScreen.gameObject.SetActive(false);
+    }
+
+    // called from ServerNetworkManager
+    public void ServerStartNewGame(List<GameApp.PlayerMenu> PlayerMenuList)
+    {
+        Debug.Log("ServerStartNewGame");
+        if (!isServer)
         {
-            Debug.Log("savedGameFile empty");
-            levelLoader.LoadLevel("MainMenuScene");
+            Debug.Log("ServerStartNewGame not a server, return");
             return;
         }
 
-        
-        string path = configsPath + "/" + savedGameFile + ".json";
+        string path = gameApp.configsPath + "/StartMaps/map1.json";
         StreamReader reader = new StreamReader(path);
-        string savedGameContent = reader.ReadToEnd();
+        string newGameContent = reader.ReadToEnd();
         reader.Close();
 
-        if (savedGameContent == null || "".Equals(savedGameContent))
+        if (newGameContent == null || "".Equals(newGameContent))
         {
             Debug.Log("savedGameContent is null, path: " + path);
-            levelLoader.LoadLevel("MainMenuScene");
             return;
         }
 
-        LoadMap(savedGameContent);
+        // replace player names
+        newGameContent = PreparseStartMap(newGameContent, PlayerMenuList);
+
+        JObject newGameJson = JObject.Parse(newGameContent);
+        if (newGameJson == null)
+        {
+            Debug.Log("Error loading json");
+            return;
+        }
+
+        PlayersFromMenu(PlayerMenuList);
+        MapFromJson((JObject)newGameJson["map"]);
         StartGame();
+    }
+
+    // called from ServerNetworkManager
+    public void ServerLoadGame(string savedGameContent)
+    {
+        Debug.Log("ServerLoadGame");
+        if(!isServer)
+        {
+            Debug.Log("ServerLoadGame not a server, return");
+            return;
+        }
+
+        GameFromJson(savedGameContent);
+        StartGame();
+    }
+
+    // called from ClientNetworkManager
+    public void StartClient()
+    {
+        Debug.Log("StartClient");
+        if (!isClient)
+        {
+            Debug.Log("StartClient not a client, return");
+            return;
+        }
     }
 
     public void Exit()
@@ -94,14 +143,34 @@ public class GameController : MonoBehaviour
         levelLoader.LoadLevel("MainMenuScene");
     }
 
+
     public void SaveGame()
     {
+        if(!isServer)
+        {
+            Debug.Log("Client can't save game");
+            return;
+        }
+
         string SaveGameFile = SaveGameFileInput.text;
         if (SaveGameFile == null || "".Equals(SaveGameFile))
+        {
+            Debug.Log("SaveGameFile null or empty");
             return;
+        }
 
+        string path = gameApp.configsPath + "/" + SaveGameFile + ".json";
         Debug.Log("Saving to file " + SaveGameFile);
 
+        StreamWriter StreamWriter = new StreamWriter(path);
+        StreamWriter.Write(GameToJson());
+        StreamWriter.Close();
+
+        AssetDatabase.ImportAsset(path);
+    }
+
+    private string GameToJson()
+    {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
@@ -110,33 +179,40 @@ public class GameController : MonoBehaviour
             writer.WriteStartObject();
 
             writer.WritePropertyName("players");
-            writer.WriteRawValue(SavePlayers());
+            writer.WriteRawValue(PlayersToJson());
 
             writer.WritePropertyName("map");
+            writer.WriteRawValue(MapToJson());
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+
+    private string MapToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
             writer.WriteStartObject();
 
             writer.WritePropertyName("planets");
-            writer.WriteRawValue(SavePlanets());
+            writer.WriteRawValue(PlanetsToJson());
 
             writer.WritePropertyName("stars");
-            writer.WriteRawValue(SaveStars());
+            writer.WriteRawValue(StarsToJson());
 
             writer.WritePropertyName("spaceships");
-            writer.WriteRawValue(SaveSpaceships());
+            writer.WriteRawValue(SpaceshipsToJson());
 
-            writer.WriteEndObject();
             writer.WriteEndObject();
         }
-
-        string path = configsPath + "/" + SaveGameFile + ".json";
-        StreamWriter StreamWriter = new StreamWriter(path);
-        StreamWriter.Write(sb.ToString());
-        StreamWriter.Close();
-
-        AssetDatabase.ImportAsset(path);
+        return sb.ToString();
     }
 
-    private string SavePlayers()
+    private string PlayersToJson()
     {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
@@ -164,7 +240,7 @@ public class GameController : MonoBehaviour
         return sb.ToString();
     }
 
-    private string SavePlanets()
+    private string PlanetsToJson()
     {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
@@ -208,7 +284,7 @@ public class GameController : MonoBehaviour
         return sb.ToString();
     }
 
-    private string SaveStars()
+    private string StarsToJson()
     {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
@@ -247,7 +323,7 @@ public class GameController : MonoBehaviour
         return sb.ToString();
     }
 
-    private string SaveSpaceships()
+    private string SpaceshipsToJson()
     {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
@@ -286,7 +362,19 @@ public class GameController : MonoBehaviour
         return sb.ToString();
     }
 
-    void LoadMap(string savedGame)
+
+    string PreparseStartMap(string newGameContent, List<GameApp.PlayerMenu> PlayerMenuList)
+    {
+        int playerCounter = 1;
+        foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
+        {
+            newGameContent = newGameContent.Replace("{{player" + playerCounter + "}}", playerMenu.name);
+            playerCounter += 1;
+        }
+        return newGameContent;
+    }
+
+    void GameFromJson(string savedGame)
     {
         // todo: w jsonach nie moze byc utf8
 
@@ -297,16 +385,36 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        LoadPlayers((JArray)savedGameJson["players"]);
-
-        JObject mapJson = (JObject)savedGameJson["map"];
-        LoadPlanets((JArray)mapJson["planets"]);
-        LoadStars((JArray)mapJson["stars"]);
-        LoadSpaceships((JArray)mapJson["spaceships"]);
+        PlayersFromJson((JArray)savedGameJson["players"]);
+        MapFromJson((JObject)savedGameJson["map"]);
     }
 
+    void MapFromJson(JObject mapJson)
+    {
+        PlanetsFromJson((JArray)mapJson["planets"]);
+        StarsFromJson((JArray)mapJson["stars"]);
+        SpaceshipsFromJson((JArray)mapJson["spaceships"]);
+    }
 
-    void LoadPlayers(JArray playersJson)
+    void PlayersFromMenu(List<GameApp.PlayerMenu> PlayerMenuList)
+    {
+        foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
+        {
+            // init
+            GameObject playerGameObject = Instantiate(PlayerPrefab);
+            Player player = playerGameObject.GetComponent<Player>();
+
+            // general
+            player.name = playerMenu.name;
+            player.password = playerMenu.password;
+            player.human = playerMenu.isHuman;
+            player.local = playerMenu.local.Equals("Y");
+
+            players.Add(playerGameObject);
+        }
+    }
+
+    void PlayersFromJson(JArray playersJson)
     {
         foreach (JObject playerJson in playersJson)
         {
@@ -321,7 +429,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void LoadSpaceships(JArray spaceshipsJson)
+    void SpaceshipsFromJson(JArray spaceshipsJson)
     {
         int counter = 0;
         foreach (JObject spaceshipJson in spaceshipsJson)
@@ -383,9 +491,7 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    
-
-    void LoadPlanets(JArray planetsJson)
+    void PlanetsFromJson(JArray planetsJson)
     {
         foreach (JObject planetJson in planetsJson)
         {
@@ -427,7 +533,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    void LoadStars(JArray starsJson)
+    void StarsFromJson(JArray starsJson)
     {
         foreach (JObject starJson in starsJson)
         {
@@ -461,6 +567,7 @@ public class GameController : MonoBehaviour
         }
     }
 
+
     GameObject FindPrefab(string prefabName)
     {
         switch(prefabName)
@@ -491,18 +598,52 @@ public class GameController : MonoBehaviour
         turnScreen.gameObject.SetActive(false);
     }
 
+    
     void StartGame()
     {
-        Debug.Log("Starting game");
+        Debug.Log("StartGame");
+        if (!isServer)
+        {
+            Debug.Log("StartGame not a server, return");
+            return;
+        }
+
+        NetworkServer.RegisterHandler(clientMapJsonId, OnServerClientNextTurnDone);
         currentPlayerIndex = players.Count() - 1; // NextTurn will wrap index to zero at the beginning
         year = -1;  // NextTurn will increment Year at the beginning
         NextTurn();
     }
 
-    public void NextTurn()
+    public void OnServerClientNextTurnDone(NetworkMessage netMsg)
     {
-        turnScreen.gameObject.SetActive(true);
-        turnScreen.Play();
+        var clientMapJson = netMsg.ReadMessage<StringMessage>();
+        Debug.Log("received OnServerReadyToBeginMessage " + clientMapJson.value);
+        serverNetworkManager.NextTurnScene(clientMapJson.value);
+    }
+
+
+    public void NextTurnClient()
+    {
+        Debug.Log("NextTurnClient");
+        if (!isClient)
+        {
+            Debug.Log("NextTurnClient not a client, return");
+            return;
+        }
+
+        StringMessage clientMapJson = new StringMessage(MapToJson());
+        clientNetworkManager.networkClient.Send(clientMapJsonId, clientMapJson);
+    }
+
+    public void NextTurnServer()
+    {
+        Debug.Log("NextTurnServer");
+        if (!isServer)
+        {
+            Debug.Log("NextTurnServer not a server, return");
+            return;
+        }
+
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
         if (currentPlayerIndex == 0)
         {
@@ -519,12 +660,33 @@ public class GameController : MonoBehaviour
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
-        Debug.Log("Next turn, player: " + GetCurrentPlayer().name);
+        Debug.Log("Next turn, player: " + GetCurrentPlayer().name + ", local: " + GetCurrentPlayer().local);
 
-        foreach (Spaceship s in GetCurrentPlayer().GetSpaceships()) {
-            Debug.Log("s " + s.name + ": "  + JsonUtility.ToJson(s));
+        // set all clients to wait state
+        NetworkServer.SetAllClientsNotReady();
+
+        if (GetCurrentPlayer().local)
+        {
+            // local player turn, just play
+            Debug.Log("Next local turn on server");
         }
+        else
+        {
+            // now remote player turn, start client for the player and wait on the server
+            Debug.Log("Next remote turn");
+            //NetworkServer.SetClientReady();
+        }
+    }
 
+    public void NextTurn()
+    {
+
+        turnScreen.Play("year: " + year);
+
+        if (isServer)
+            NextTurnServer();
+        else
+            NextTurnClient();
     }
 
     public static Player GetCurrentPlayer()
@@ -532,10 +694,11 @@ public class GameController : MonoBehaviour
         return players[currentPlayerIndex].GetComponent<Player>();
     }
 
-    public static int GetYear()
+    public int GetYear()
     {
         return year;
     }
+
 
     public void Colonize()
     {
@@ -580,6 +743,7 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
     public void BuildSpaceship(GameObject spaceshipPrefab)
     {
         var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
