@@ -3,20 +3,31 @@ using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
 
+/*
+ *  Class for global configuration and persistance data between scenes
+ *  Singleton, created at "MainMenuScene", should be available all the time
+ *  
+ *  When some scene with input fields will be changed soon, this class can persists data from the scene
+ */
 public class GameApp : MonoBehaviour
 {
-    public string configsPath;
     private static bool created = false;
 
+    // base path for saved games files and new game files
+    public string configsPath;
+
+    // ids for network messaging
     public static readonly short connMapJsonId = 1337;
     public static readonly short connAssignPlayerId = 20001;
-    public static readonly short connAssignPlayerError = 20002;
-    public static readonly short connAssignPlayerSuccess = 20003;
+    public static readonly short connAssignPlayerErrorId = 20002;
+    public static readonly short connAssignPlayerSuccessId = 20003;
+    public static readonly short connClientReadyId = 20004;
 
-    // variables between scenes
+    // variables that will be available between scenes
     public Dictionary<string, string> Parameters;
-    public Dictionary<string, List<string>> ParametersList;
 
+    // data that will be saved, based on scene name
+    // Dictionary<scene name, List<{saved value name, path to input filed in editor}>>
     private Dictionary<string, List<ParameterMapping>> parametersToPersist = new Dictionary<string, List<ParameterMapping>>
     {
         {"GameScene",  new List<ParameterMapping> {
@@ -37,6 +48,11 @@ public class GameApp : MonoBehaviour
                 new ParameterMapping { name="PlayerIsLocal3", inputField = "MenuCanvas/PlayerLocal3Input" }
             }
         },
+        {"LoadGameScene",  new List<ParameterMapping> {
+                new ParameterMapping { name="Address", inputField = "MenuCanvas/AddressInput" },
+                new ParameterMapping { name="Port", inputField = "MenuCanvas/PortInput" },
+            }
+        },
         {"JoinGameScene",  new List<ParameterMapping> {
                 new ParameterMapping { name="ServerAddress", inputField = "MenuCanvas/ServerAddressInput" },
                 new ParameterMapping { name="ServerPort", inputField = "MenuCanvas/ServerPortInput" },
@@ -46,6 +62,7 @@ public class GameApp : MonoBehaviour
         }
     };
 
+    // Scripts can receive inputs by "name". Inputs are found by object name ("inputField") in editor 
     private struct ParameterMapping
     {
         public string name;
@@ -66,15 +83,20 @@ public class GameApp : MonoBehaviour
         if (!created)
         {
             Parameters = new Dictionary<string, string>();
+
             configsPath = Application.persistentDataPath + "/Configs/";
             Debug.Log("GameApp configsPath: " + configsPath);
 
             DontDestroyOnLoad(this.gameObject);
             created = true;
+
             Debug.Log("Awake: " + this.gameObject);
         }
     }
 
+    /*
+     *  Persists players data from "NewGameScene". todo: change to list
+     */
     public List<PlayerMenu> GetAllPlayersFromMenu()
     {
         List<PlayerMenu> playerMenuList = new List<PlayerMenu>();
@@ -102,11 +124,15 @@ public class GameApp : MonoBehaviour
         return playerMenuList;
     }
 
+
     public void RemoveAllParameters()
     {
-        parametersToPersist.Clear();
+        Parameters.Clear();
     }
 
+    /*
+     *  Get current scene name and persists all input fields
+     */
     public void PersistAllParameters(string scene)
     {
         if (parametersToPersist.ContainsKey(scene))
@@ -126,12 +152,6 @@ public class GameApp : MonoBehaviour
             if (inputField != null)
             {
                 return inputField.text;
-            }
-
-            Toggle toogle = GameObject.Find(inputFieldName).GetComponent<Toggle>();
-            if (toogle != null)
-            {
-                return toogle ? "true" : "false";
             }
         }
         return null;

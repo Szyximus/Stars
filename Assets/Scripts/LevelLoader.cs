@@ -43,9 +43,7 @@ public class LevelLoader : MonoBehaviour {
     }
 
     IEnumerator LoadAsynchronously(string scene)
-    {
-        gameApp.PersistAllParameters(scene);
-
+    { 
         AsyncOperation operation = SceneManager.LoadSceneAsync(scene);
 
         while (!operation.isDone)

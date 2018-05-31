@@ -13,6 +13,10 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 
+/*
+ *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
+ *  Except starting game and "NextTurn" functions, which are different on server and clients
+ */
 public class GameController : NetworkBehaviour
 {
     private static List<GameObject> players;
@@ -34,14 +38,17 @@ public class GameController : NetworkBehaviour
     public GameObject AttackPrefab;
     public GameObject HitPrefab;
 
+    // current year in the game
     private int year;
+
 
     private HexGrid grid;
     TurnScreen turnScreen;
-    
 
     private GameApp gameApp;
     private LevelLoader levelLoader;
+
+    // one of this is initialized from corresponding networkManagers
     public ClientNetworkManager clientNetworkManager;
     public ServerNetworkManager serverNetworkManager;
 
@@ -61,6 +68,7 @@ public class GameController : NetworkBehaviour
         stars = new List<GameObject>();
         spaceships = new List<GameObject>();
 
+        // init it here, because they depends on GameController, which is started after MonoBehaviour scripts
         GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
         GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
         turnScreen.Init();
@@ -73,7 +81,12 @@ public class GameController : NetworkBehaviour
         Debug.Log("GameContoller Start");
     }
 
-    // called from ServerNetworkManager
+    // start game
+    /*
+     *  Server only
+     *  Called from ServerNetworkManager
+     *  Starts new game, player names from the "NewGameScene" inputs, maps loaded is "map1"
+     */
     public void ServerStartNewGame(List<GameApp.PlayerMenu> PlayerMenuList)
     {
         Debug.Log("ServerStartNewGame");
@@ -108,10 +121,17 @@ public class GameController : NetworkBehaviour
         PlayersFromMenu(PlayerMenuList);
         MapFromJson((JObject)newGameJson["map"]);
         InfoFromJson((JObject)newGameJson["info"]);
-        StartGame();
+
+        // because "NextTurn" will increment
+        currentPlayerIndex -= 1;
+        NextTurn();
     }
 
-    // called from ServerNetworkManager
+    /*
+     *  Server only
+     *  Called from ServerNetworkManager
+     *  Load game from json (as string)
+     */
     public void ServerLoadGame(string savedGameContent)
     {
         Debug.Log("ServerLoadGame");
@@ -122,33 +142,60 @@ public class GameController : NetworkBehaviour
         }
 
         GameFromJson(savedGameContent);
-        StartGame();
-    }
 
-    // called from ClientNetworkManager
-    public void StartClient()
+        // because "NextTurn" will increment
+        currentPlayerIndex -= 1;
+        NextTurn();
+    }
+    
+    /*
+    *  Server only
+    *  Called from ServerNetworkManager
+    *  Load game from json (as string)
+    */
+    public void ServerNextTurnGame(string savedGameContent)
     {
-        Debug.Log("StartClient");
-        if (!isClient)
+        Debug.Log("ServerLoadGame");
+        if (!isServer)
         {
-            Debug.Log("StartClient not a client, return");
+            Debug.Log("ServerLoadGame not a server, return");
             return;
         }
+
+        GameFromJson(savedGameContent);
+
+        // just make new turn, do not decrement currentPlayerId
+        NextTurn();
     }
 
+    /*
+     *  "Exit" button in the game, do clean up
+     */
     public void Exit()
     {
         Debug.Log("Exit");
+
+        if (isServer)
+            Destroy(serverNetworkManager);
+        else if (isClient)
+            Destroy(clientNetworkManager);
+        else
+            Debug.Log("wtf we are?");
+
         levelLoader.LoadLevel("MainMenuScene");
     }
 
 
+    /*
+     * Server only
+     *  Called from "Save" button
+     */
     public void SaveGame()
     {
         Debug.Log("SaveGame");
         if (!isServer)
         {
-            Debug.Log("Client can't save game");
+            Debug.Log("Client can't save the game");
             return;
         }
 
@@ -160,13 +207,16 @@ public class GameController : NetworkBehaviour
         }
 
         string path = gameApp.configsPath + "/" + SaveGameFile + ".json";
-        Debug.Log("Saving to file " + SaveGameFile);
+        Debug.Log("Saving to file: " + path);
 
         StreamWriter StreamWriter = new StreamWriter(path);
         StreamWriter.Write(GameToJson());
         StreamWriter.Close();
     }
 
+    /*
+     *  Make json with: info(year, currentPlayer), players and map(planets, stars, spaceships)
+     */
     private string GameToJson()
     {
         StringBuilder sb = new StringBuilder();
@@ -384,6 +434,11 @@ public class GameController : NetworkBehaviour
     }
 
 
+    // game deserialization
+    /*
+     *  When creating new game, json with the game contains strings like "{{player1}}", "{{player3}}" etc
+     *  They should be replaced with correct player names, indicating who own what and current player (first player)
+     */
     string PreparseStartMap(string newGameContent, List<GameApp.PlayerMenu> PlayerMenuList)
     {
         int playerCounter = 1;
@@ -395,11 +450,14 @@ public class GameController : NetworkBehaviour
         return newGameContent;
     }
 
-    void GameFromJson(string savedGame)
+    /*
+     *  Setup variables in GameController, create objects on the map etc.
+     */
+    void GameFromJson(string savedGameContent)
     {
         // todo: w jsonach nie moze byc utf8
 
-        JObject savedGameJson = JObject.Parse(savedGame);
+        JObject savedGameJson = JObject.Parse(savedGameContent);
         if(savedGameJson == null)
         {
             Debug.Log("Error loading json");
@@ -407,6 +465,7 @@ public class GameController : NetworkBehaviour
         }
 
         PlayersFromJson((JArray)savedGameJson["players"]);
+        InfoFromJson((JObject)savedGameJson["info"]);
         MapFromJson((JObject)savedGameJson["map"]);
     }
 
@@ -604,63 +663,18 @@ public class GameController : NetworkBehaviour
     }
 
 
-    GameObject FindPrefab(string prefabName)
+    // game logic
+    /*
+     *  Make turns, different for server and remote clients
+     */
+    public void NextTurn()
     {
-        switch(prefabName)
-        {
-            case "Scout": return ScoutPrefab;
-            case "Miner": return MinerPrefab;
-            case "Warship": return WarshipPrefab;
-            case "Colonizer": return ColonizerPrefab;
-            default: return ScoutPrefab;
-        }
-    }
+        Debug.Log("NextTurn");
 
-    public Player FindPlayer(string name)
-    {
-        GameObject player = players.Find(p => p.name == name);
-        if(player != null)
-            return player.GetComponent<Player>();
-        return null;
-    }
-
-    public void LockInput()
-    {
-        turnScreen.gameObject.SetActive(true);
-    }
-
-    public void UnlockInput()
-    {
-        turnScreen.gameObject.SetActive(false);
-    }
-
-    
-    void StartGame()
-    {
-        Debug.Log("StartGame");
-        if (!isServer)
-        {
-            Debug.Log("StartGame not a server, return");
-            return;
-        }
-
-        NetworkServer.RegisterHandler(GameApp.connMapJsonId, OnServerClientNextTurnDone);
-        currentPlayerIndex -= 1; // NextTurn will wrap index to zero at the beginning
-        NextTurn();
-    }
-
-    public void OnServerClientNextTurnDone(NetworkMessage netMsg)
-    {
-        Debug.Log("OnServerClientNextTurnDone");
-        if (!isServer)
-        {
-            Debug.Log("OnServerClientNextTurnDone not a server, return");
-            return;
-        }
-
-        var clientMapJson = netMsg.ReadMessage<StringMessage>();
-        Debug.Log("received OnServerReadyToBeginMessage " + clientMapJson.value);
-        serverNetworkManager.NextTurnScene(clientMapJson.value);
+        if (isServer)
+            NextTurnServer();
+        else
+            NextTurnClient();
     }
 
     public void NextTurnClient()
@@ -672,7 +686,8 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        StringMessage clientMapJson = new StringMessage(MapToJson());
+        // we have played locally, now serialize game and send to the server
+        StringMessage clientMapJson = new StringMessage(GameToJson());
         clientNetworkManager.networkClient.Send(GameApp.connMapJsonId, clientMapJson);
     }
 
@@ -685,6 +700,7 @@ public class GameController : NetworkBehaviour
             return;
         }
 
+        // change player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
         if (currentPlayerIndex == 0)
         {
@@ -692,6 +708,7 @@ public class GameController : NetworkBehaviour
             Debug.Log("New year: " + year);
         }
 
+        // update objects for new turn
         foreach (Ownable owned in GetCurrentPlayer().GetOwned())
         {
             owned.SetupNewTurn();
@@ -700,6 +717,7 @@ public class GameController : NetworkBehaviour
         EventManager.selectionManager.SelectedObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
+
 
         Debug.Log("Next turn, player: " + GetCurrentPlayer().name + ", local: " + GetCurrentPlayer().local);
 
@@ -715,27 +733,44 @@ public class GameController : NetworkBehaviour
         }
         else
         {
-            // now remote player turn, start client for the player and wait on the server
+            // now remote player turn, wait on the server
             Debug.Log("Next remote turn");
             turnScreen.Show("Waiting for player " + GetCurrentPlayer().name);
 
-            // client for the player is connected, set him ready
-            if(serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
-                NetworkServer.SetClientReady(serverNetworkManager.connections[GetCurrentPlayer().name]);
+            // if client for the player is connected, set him ready and invoke "OnClientReady" message
+            if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkServer.SetClientReady(connection);
+                NetworkServer.SendToClient(connection.connectionId, GameApp.connClientReadyId, new EmptyMessage());
+            }
+
+            // if client is not connected, we should have some "skip turn" button on the server
         }
     }
 
-    public void NextTurn()
-    {
-        Debug.Log("NextTurn");
 
-        if (isServer)
-            NextTurnServer();
-        else
-            NextTurnClient();
+    // client game logic
+    /*
+     *  Called from clientNetworkManager, when the client should wait
+     */
+    public void WaitForTurn()
+    {
+        Debug.Log("WaitForTurn");
+        turnScreen.Show("Waiting for our turn...");
+    }
+
+    /*
+     * Called from clientNetworkManager, when the client should play
+     */
+    public void StopWaitForTurn()
+    {
+        Debug.Log("StopWaitForTurn");
+        turnScreen.Hide();
     }
 
 
+    // getters for basic info
     public static Player GetCurrentPlayer()
     {
         if (players.Count == 0 || currentPlayerIndex >= players.Count || currentPlayerIndex < 0)
@@ -749,6 +784,39 @@ public class GameController : NetworkBehaviour
     }
 
 
+    // helpers
+    GameObject FindPrefab(string prefabName)
+    {
+        switch (prefabName)
+        {
+            case "Scout": return ScoutPrefab;
+            case "Miner": return MinerPrefab;
+            case "Warship": return WarshipPrefab;
+            case "Colonizer": return ColonizerPrefab;
+            default: return ScoutPrefab;
+        }
+    }
+
+    public Player FindPlayer(string name)
+    {
+        GameObject player = players.Find(p => p.name == name);
+        if (player != null)
+            return player.GetComponent<Player>();
+        return null;
+    }
+
+    public void LockInput()
+    {
+        turnScreen.gameObject.SetActive(true);
+    }
+
+    public void UnlockInput()
+    {
+        turnScreen.gameObject.SetActive(false);
+    }
+
+
+    // local game stuff
     public void Colonize()
     {
         var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
