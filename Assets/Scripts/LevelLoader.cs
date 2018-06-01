@@ -4,18 +4,28 @@ using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 
+/*
+ *  Class for pretty scene changing, menu navigation buttons
+ *  Singleton, created at "MainMenuScene", should be available all the time
+ *  
+ *  It clears gameApp.Parameters and destroy networkManagers on "Back"
+ */
 public class LevelLoader : MonoBehaviour {
-
-    /// <summary>
-    /// Loads the DemoScene
-    /// </summary>
 
     public GameObject slider;
     private GameApp gameApp;
 
+    private static bool created = false;
+
     private void Awake()
     {
-        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        if (!created)
+        {
+            gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+
+            DontDestroyOnLoad(this.gameObject);
+            created = true;
+        }
     }
 
     public void Back(string scene)

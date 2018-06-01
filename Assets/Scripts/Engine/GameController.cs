@@ -92,20 +92,23 @@ public class GameController : NetworkBehaviour
         Debug.Log("ServerStartNewGame");
         if (!isServer)
         {
-            Debug.Log("ServerStartNewGame not a server, return");
-            return;
+            throw new Exception("ServerStartNewGame not a server, return");
         }
 
-        string path = gameApp.configsPath + "/StartMaps/map1.json";
+        string path = gameApp.startMapsPath + "map1";
         Debug.Log("ServerStartNewGame reading " + path);
-        StreamReader reader = new StreamReader(path);
-        string newGameContent = reader.ReadToEnd();
-        reader.Close();
+
+        TextAsset mapAsset = Resources.Load(path) as TextAsset;
+        if(mapAsset == null)
+        {
+            throw new Exception("mapAsset is null");
+        }
+
+        string newGameContent = mapAsset.text;
 
         if (newGameContent == null || "".Equals(newGameContent))
         {
-            Debug.Log("savedGameContent is null, path: " + path);
-            return;
+            throw new Exception("savedGameContent is null, path: " + path);
         }
 
         // replace player names
@@ -114,8 +117,7 @@ public class GameController : NetworkBehaviour
         JObject newGameJson = JObject.Parse(newGameContent);
         if (newGameJson == null)
         {
-            Debug.Log("Error loading json");
-            return;
+            throw new Exception("Error loading json");
         }
 
         PlayersFromMenu(PlayerMenuList);
@@ -137,8 +139,7 @@ public class GameController : NetworkBehaviour
         Debug.Log("ServerLoadGame");
         if(!isServer)
         {
-            Debug.Log("ServerLoadGame not a server, return");
-            return;
+            throw new Exception("ServerLoadGame not a server, return");
         }
 
         GameFromJson(savedGameContent);
@@ -158,8 +159,7 @@ public class GameController : NetworkBehaviour
         Debug.Log("ServerLoadGame");
         if (!isServer)
         {
-            Debug.Log("ServerLoadGame not a server, return");
-            return;
+            throw new Exception("ServerLoadGame not a server, return");
         }
 
         GameFromJson(savedGameContent);
@@ -206,7 +206,7 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        string path = gameApp.configsPath + "/" + SaveGameFile + ".json";
+        string path = gameApp.savedGamesPath + "/" + SaveGameFile + ".json";
         Debug.Log("Saving to file: " + path);
 
         StreamWriter StreamWriter = new StreamWriter(path);

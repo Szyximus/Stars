@@ -17,8 +17,9 @@ public class ServerNetworkManager : NetworkManager
 {
     private GameController gameController;
     private GameApp gameApp;
+    private LevelLoader levelLoader;
 
-    private static bool created = false;
+    private bool created = false;
 
     // these vars are used at scene change, which may be after game creation, game loading or next turn from remote client
     private bool isNewGame;
@@ -34,6 +35,8 @@ public class ServerNetworkManager : NetworkManager
         if (!created)
         {
             connections = new Dictionary<string, NetworkConnection>();
+
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
             DontDestroyOnLoad(this.gameObject);
@@ -66,7 +69,7 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-        this.networkAddress = "192.168.1.10";
+        this.networkAddress = "127.0.0.1";
         this.networkPort = 7777;
         this.StartServer();
         this.ServerChangeScene("GameScene");
@@ -139,7 +142,16 @@ public class ServerNetworkManager : NetworkManager
         {
             // create new game
             List<GameApp.PlayerMenu> PlayerMenuList = gameApp.GetAllPlayersFromMenu();
-            gameController.ServerStartNewGame(PlayerMenuList);
+
+            try
+            {
+                gameController.ServerStartNewGame(PlayerMenuList);
+            }
+            catch (Exception e)
+            {
+                Debug.Log("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
+                this.StopServer();
+            }
         }
         else if(isLoadGame)
         {
@@ -152,7 +164,7 @@ public class ServerNetworkManager : NetworkManager
                 return;
             }
 
-            string path = gameApp.configsPath + "/" + savedGameFile + ".json";
+            string path = gameApp.savedGamesPath + "/" + savedGameFile + ".json";
             StreamReader reader = new StreamReader(path);
             string savedGameContent = reader.ReadToEnd();
             reader.Close();
@@ -164,13 +176,27 @@ public class ServerNetworkManager : NetworkManager
                 return;
             }
 
-            gameController.ServerLoadGame(savedGameContent);
+            try
+            {
+                gameController.ServerLoadGame(savedGameContent);
+            } catch(Exception e)
+            {
+                Debug.Log("OnServerSceneChanged gameController.ServerLoadGame error: " + e.Message);
+                this.StopServer();
+                return;
+            }
         }
         else
         {
-            // next turn from remote client
-            gameController.ServerLoadGame(nextTurnGameJson);
-            nextTurnGameJson = null;
+            try
+            {
+                // next turn from remote client
+                gameController.ServerLoadGame(nextTurnGameJson);
+                nextTurnGameJson = null;
+            } catch(Exception e)
+            {
+                Debug.Log("OnServerSceneChanged gameController.ServerLoadGame error: " + e.Message);
+            }
         }
     }
 
@@ -185,7 +211,6 @@ public class ServerNetworkManager : NetworkManager
         {
             Debug.Log("OnServerClientAssignPlayer, clientPlayerNameMsg is null ");
             netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("clientPlayerNameMsg is null"));
-            netMsg.conn.Disconnect();
             return;
         }
 
@@ -197,13 +222,11 @@ public class ServerNetworkManager : NetworkManager
         {
             Debug.Log("OnServerClientAssignPlayer: player taken");
             netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
-            netMsg.conn.Disconnect();
         }
         else if (gameController.FindPlayer(clientPlayerName) == null)
         {
             Debug.Log("OnServerClientAssignPlayer: player name not found, " + clientPlayerName);
             netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("Player with name " + clientPlayerName + " not found"));
-            netMsg.conn.Disconnect();
         }
         else
         {
@@ -344,10 +367,13 @@ public class ServerNetworkManager : NetworkManager
         Debug.Log("Host has started");
     }
 
+    /*
+     *  Server stopped, return to main menu
+     */
     public override void OnStopServer()
     {
         Debug.Log("Server has stopped");
-        Destroy(this);
+        levelLoader.Back("MainMenuScene");
     }
 
     public override void OnStopHost()

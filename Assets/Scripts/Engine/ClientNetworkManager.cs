@@ -15,16 +15,19 @@ public class ClientNetworkManager : NetworkManager
 
     private GameController gameController;
     private GameApp gameApp;
+    private LevelLoader levelLoader;
+
     public NetworkClient networkClient;
     public NetworkConnection connection;
 
-    private static bool created = false;
+    private bool created = false;
 
     void Awake()
     {
         if (!created)
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
 
             DontDestroyOnLoad(this.gameObject);
             created = true;
@@ -54,7 +57,7 @@ public class ClientNetworkManager : NetworkManager
             return;
         }
 
-        this.networkAddress = "192.168.1.10";
+        this.networkAddress = "127.0.0.1";
         this.networkPort = 7777;
         this.StartClient();
     }
@@ -68,7 +71,7 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
         Debug.Log("OnClientSceneChanged: " + conn);
-        base.OnClientSceneChanged(conn);
+        //base.OnClientSceneChanged(conn);
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.clientNetworkManager = this;
@@ -81,15 +84,16 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientConnect(NetworkConnection conn)
     {
         //base.OnClientConnect(conn);
-        Debug.Log("Connected successfully to server");
+        Debug.Log("OnClientConnect: Connected successfully to server");
 
-        NetworkServer.RegisterHandler(GameApp.connAssignPlayerErrorId, OnClientAssignPlayerError);
-        NetworkServer.RegisterHandler(GameApp.connAssignPlayerSuccessId, OnClientAssignPlayerSuccess);
-        NetworkServer.RegisterHandler(GameApp.connClientReadyId, OnClientReady);
+        networkClient.RegisterHandler(GameApp.connAssignPlayerErrorId, OnClientAssignPlayerError);
+        networkClient.RegisterHandler(GameApp.connAssignPlayerSuccessId, OnClientAssignPlayerSuccess);
+        networkClient.RegisterHandler(GameApp.connClientReadyId, OnClientReady);
 
         string playerName = gameApp.GetAndRemoveInputField("PlayerName");
         string password = gameApp.GetAndRemoveInputField("Password");
 
+        Debug.Log("OnClientConnect: sending player name: " + playerName);
         StringMessage playerMsg = new StringMessage(playerName);
         networkClient.Send(GameApp.connAssignPlayerId, playerMsg);
     }
@@ -102,7 +106,8 @@ public class ClientNetworkManager : NetworkManager
      */
     public void OnClientAssignPlayerError(NetworkMessage netMsg)
     {
-        Debug.Log("OnClientAssignPlayerError: " + netMsg.ReadMessage<StringMessage>());
+        Debug.Log("OnClientAssignPlayerError: " + netMsg.ReadMessage<StringMessage>().value);
+        netMsg.conn.Disconnect();
     }
 
     /*
@@ -113,7 +118,9 @@ public class ClientNetworkManager : NetworkManager
     public void OnClientAssignPlayerSuccess(NetworkMessage netMsg)
     {
         Debug.Log("OnClientAssignPlayerSuccess: " + netMsg.ReadMessage<StringMessage>());
-        gameController.WaitForTurn();
+
+        if (gameController != null)
+            gameController.WaitForTurn();
     }
 
     /*
@@ -125,7 +132,9 @@ public class ClientNetworkManager : NetworkManager
     {
         Debug.Log("OnClientReady");
         ClientScene.Ready(netMsg.conn);
-        gameController.StopWaitForTurn();
+
+        if(gameController != null)
+            gameController.StopWaitForTurn();
     }
 
     /*
@@ -135,7 +144,9 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientNotReady(NetworkConnection conn)
     {
         Debug.Log("Server has set client to be not-ready (stop getting state updates): " + conn);
-        gameController.WaitForTurn();
+
+        if (gameController != null)
+            gameController.WaitForTurn();
     }
 
 
@@ -147,6 +158,8 @@ public class ClientNetworkManager : NetworkManager
             if (LogFilter.logError) { Debug.LogError("ClientDisconnected due to error: " + conn.lastError); }
         }
         Debug.Log("Client disconnected from server: " + conn);
+
+        levelLoader.Back("MainMenuScene");
     }
 
     public override void OnClientError(NetworkConnection conn, int errorCode)

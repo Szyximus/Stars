@@ -14,7 +14,8 @@ public class GameApp : MonoBehaviour
     private static bool created = false;
 
     // base path for saved games files and new game files
-    public string configsPath;
+    public string startMapsPath;
+    public string savedGamesPath;
 
     // ids for network messaging
     public static readonly short connMapJsonId = 1337;
@@ -84,8 +85,13 @@ public class GameApp : MonoBehaviour
         {
             Parameters = new Dictionary<string, string>();
 
-            configsPath = Application.persistentDataPath + "/Configs/";
-            Debug.Log("GameApp configsPath: " + configsPath);
+            // path to Assets/Configs/Resources/StartMaps/, included in build
+            startMapsPath = "StartMaps/";
+            Debug.Log("GameApp startMapsPath: " + startMapsPath);
+
+            // path to (on win10) <User>/AppData/LocalLow/Informatyka/Stars!/Configs/
+            savedGamesPath = Application.persistentDataPath + "/Configs/";
+            Debug.Log("GameApp savedGamesPath: " + savedGamesPath);
 
             DontDestroyOnLoad(this.gameObject);
             created = true;
