@@ -30,6 +30,7 @@ public class GameController : MonoBehaviour
     private HexGrid grid;
     TurnScreen turnScreen;
 
+
     // Use this for initialization
     void Start()
     {
@@ -276,40 +277,46 @@ public class GameController : MonoBehaviour
     public void Colonize()
     {
         var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
-        if (colonizer != null)
+        Planet planetToColonize = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
+        if (colonizer != null && planetToColonize != null)
         {
-            if (colonizer.ColonizePlanet())
+            if (colonizer.Colonize(planetToColonize))
             {
                 grid.FromCoordinates(colonizer.Coordinates).ClearObject();
-                GetCurrentPlayer().Lose(colonizer);
+                GameController.GetCurrentPlayer().Lose(colonizer);
                 Destroy(colonizer.gameObject);
-
             }
         }
-
     }
 
     public void Mine()
     {
         var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
-        if (miner != null && miner.GetActionPoints() > 0)
+        if (EventManager.selectionManager.TargetObject != null &&
+            EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
         {
-            if (miner.MineResources())
-                miner.SetActionPoints(-1);
-            else
-            {
-                Debug.Log("Cannot mine");
-            }
-        }
-    }
+            Planet planetToMine = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
+            miner.MinePlanet(planetToMine);
 
+        }
+        else if (EventManager.selectionManager.TargetObject != null &&
+             EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)
+        {
+            Star starToMine = EventManager.selectionManager.TargetObject.GetComponent<Star>();
+            miner.MineStar(starToMine);
+        }
+
+
+    }
     public void Attack()
     {
         var spaceship = EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>();
+        Ownable target = EventManager.selectionManager.TargetObject.GetComponent<Ownable>();
 
-        if (spaceship != null && spaceship.GetActionPoints() > 0)
+        if (spaceship != null && spaceship.GetActionPoints() > 0 && target != null)
         {
-            if (spaceship.Attack())
+
+            if (spaceship.Attack(target))
             {
                 Debug.Log("You attacked");
                 spaceship.SetActionPoints(-1);

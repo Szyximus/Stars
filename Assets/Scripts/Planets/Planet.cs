@@ -29,6 +29,11 @@ public class Planet : Ownable
         public int minerals;
     }
 
+    bool targetMenuVisible = false;
+    Vector3 targetMenuPosition;
+
+
+
     public PlanetCharacteristics characteristics;
     public PlanetResources resources;
 
@@ -113,11 +118,30 @@ public class Planet : Ownable
     {
 
     }
+ 
+
 
     private void OnMouseUpAsButton()
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled && GameController.GetCurrentPlayer() != this.GetOwner() &&
+            EventManager.selectionManager.SelectedObject != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
+        {
+            Debug.Log("cel");
+            EventManager.selectionManager.TargetObject = this.gameObject;
+            Thread.Sleep(150);
+        }
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        {
+            Debug.Log("tu nie");
+            EventManager.selectionManager.TargetObject = null;
+        }
+    }
+
 
     override
     public void SetupNewTurn()

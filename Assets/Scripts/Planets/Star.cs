@@ -17,7 +17,7 @@ public class Star : MonoBehaviour
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
     private UIHoverListener uiListener;
-
+    Vector3 targetMenuPosition;
     // Use this for initialization
     void Start()
     {
@@ -52,9 +52,27 @@ public class Star : MonoBehaviour
 
         return solarPowerCount;
     }
-    public bool GiveSolarPower(Player player,int solarPowerCount)
+    public bool GiveSolarPower(Player player, int solarPowerCount)
     {
         player.solarPower += (GetSolarPower(solarPowerCount));
         return true;
     }
+
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
+            EventManager.selectionManager.SelectedObject != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
+        {
+            Debug.Log("cel");
+            EventManager.selectionManager.TargetObject = this.gameObject;
+            Thread.Sleep(150);
+        }
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        {
+            Debug.Log("tu nie");
+            EventManager.selectionManager.TargetObject = null;
+        }
+    }
+
 }
