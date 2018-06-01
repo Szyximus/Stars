@@ -53,15 +53,15 @@ public class GameController : NetworkBehaviour
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
 
-        players = new List<GameObject>();
-        planets = new List<GameObject>();
-        stars = new List<GameObject>();
-        spaceships = new List<GameObject>();
-
         // init it here, because they depends on GameController, which is started after MonoBehaviour scripts
         GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
         GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
         turnScreen.Init();
+
+        players = new List<GameObject>();
+        planets = new List<GameObject>();
+        stars = new List<GameObject>();
+        spaceships = new List<GameObject>();
 
         currentPlayerIndex = 0;
     }

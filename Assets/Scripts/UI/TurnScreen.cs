@@ -11,23 +11,27 @@ public class TurnScreen : MonoBehaviour
     AudioSource sound;
 
     private GameController gameController;
-    private bool showed = false;
+    private bool showed;
 
+    public void Start()
+    {
+        Debug.Log("TurnScreen start");
+    }
     // Controls the fading in and out of Big turn counter
     public void Init()
     {
+        Debug.Log("TurnScreen init");
         label = gameObject.GetComponentInChildren<Text>();
         background = gameObject.GetComponent<RawImage>();
         sound = gameObject.GetComponent<AudioSource>();
         label.color = new Vector4(255, 255, 255, 0);
         background.color = new Vector4(0, 0, 0, 0);
+
+        Hide();
     }
 
     public void Play(string value)
     {
-        if (showed)
-            return;
-
         gameObject.SetActive(true);
         label.text = value;
         sound.Play();
@@ -36,9 +40,6 @@ public class TurnScreen : MonoBehaviour
 
     public void Show(string value)
     {
-        if (showed)
-            return;
-
         gameObject.SetActive(true);
         label.text = value;
         sound.Play();
@@ -47,15 +48,13 @@ public class TurnScreen : MonoBehaviour
 
     public void Hide()
     {
-        if (showed == false)
-            return;
-
         sound.Play();
         StartCoroutine(FadeOut());
     }
 
     IEnumerator FadeIn(bool autoFadeOut)
     {
+        Debug.Log("TurnScreen: fade in");
         showed = true;
         gameObject.SetActive(true);
         float startTime = Time.time;
@@ -76,6 +75,7 @@ public class TurnScreen : MonoBehaviour
 
     IEnumerator FadeOut()
     {
+        Debug.Log("TurnScreen: fade out");
         float startTime = Time.time;
 
         while (Time.time - startTime < 1) // takes exactly 2 s. regardless of framerate
