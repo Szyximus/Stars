@@ -39,7 +39,7 @@ public class Spaceship : Ownable
 
     public bool Flying;
     public int MaxActionPoints;
-    private int actionPoints;
+    public int actionPoints;
 
     public Planet planetToAttack;
     public Spaceship spaceshipsToAttack;

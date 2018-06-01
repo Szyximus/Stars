@@ -7,6 +7,7 @@ using System.IO;
 using System;
 using UnityEngine.Networking.NetworkSystem;
 using Newtonsoft.Json.Linq;
+using System.Linq;
 
 /*
  *  This is singleton object
@@ -191,11 +192,11 @@ public class ServerNetworkManager : NetworkManager
             try
             {
                 // next turn from remote client
-                gameController.ServerLoadGame(nextTurnGameJson);
+                gameController.ServerNextTurnGame(nextTurnGameJson);
                 nextTurnGameJson = null;
             } catch(Exception e)
             {
-                Debug.Log("OnServerSceneChanged gameController.ServerLoadGame error: " + e.Message);
+                Debug.Log("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
             }
         }
     }
@@ -290,8 +291,6 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-
-
         SetupNextTurn(clientGameJson);
     }
 
@@ -325,6 +324,11 @@ public class ServerNetworkManager : NetworkManager
         }
 
         Debug.Log("A client disconnected from the server: " + conn);
+
+        foreach (var item in connections.Where(kvp => kvp.Value == conn).ToList())
+        {
+            connections.Remove(item.Key);
+        }
     }
 
     /*

@@ -155,7 +155,7 @@ public class ClientNetworkManager : NetworkManager
         string savedGame = netMsg.ReadMessage<StringMessage>().value;
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        gameController.ServerLoadGame(savedGame);
+        gameController.ClientNextTurnGame(savedGame);
     }
 
     /*

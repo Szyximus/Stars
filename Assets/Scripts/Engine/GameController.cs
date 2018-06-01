@@ -127,7 +127,7 @@ public class GameController : NetworkBehaviour
     public void ServerLoadGame(string savedGameContent)
     {
         Debug.Log("ServerLoadGame");
-        if(!isServer)
+        if (!isServer)
         {
             throw new Exception("ServerLoadGame not a server, return");
         }
@@ -147,11 +147,29 @@ public class GameController : NetworkBehaviour
     public void ServerNextTurnGame(string savedGameContent)
     {
         Debug.Log("ServerLoadGame");
+        if (!isServer)
+        {
+            throw new Exception("ServerNextTurnGame not a server, return");
+        }
 
         GameFromJson(savedGameContent);
 
         // just make new turn, do not decrement currentPlayerId
         NextTurn();
+    }
+
+    public void ClientNextTurnGame(string savedGameContent)
+    {
+        Debug.Log("ClientNextTurnGame");
+        if (!isClient)
+        {
+            throw new Exception("ClientNextTurnGame not a client, return");
+        }
+
+        GameFromJson(savedGameContent);
+
+        // just make new turn, do not decrement currentPlayerId
+        SetupNextTurnClient();
     }
 
     /*
@@ -492,7 +510,7 @@ public class GameController : NetworkBehaviour
             player.local = playerMenu.local.Equals("Y");
 
             players.Add(playerGameObject);
-            NetworkServer.Spawn(playerGameObject);
+            // NetworkServer.Spawn(playerGameObject);
         }
     }
 
@@ -508,7 +526,7 @@ public class GameController : NetworkBehaviour
             player.name = (string)playerJson["name"];
 
             players.Add(player);
-            NetworkServer.Spawn(player);
+            // NetworkServer.Spawn(player);
         }
     }
 
@@ -539,7 +557,7 @@ public class GameController : NetworkBehaviour
             spaceship.GetComponent<Spaceship>().Owned(player);
 
             spaceships.Add(spaceship);
-            NetworkServer.Spawn(spaceship);
+            // NetworkServer.Spawn(spaceship);
         }
     }
 
@@ -584,7 +602,7 @@ public class GameController : NetworkBehaviour
                 (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
-            NetworkServer.Spawn(planet);
+            // NetworkServer.Spawn(planet);
 
             // general
             planet.name = planetJson["name"].ToString();
@@ -615,7 +633,7 @@ public class GameController : NetworkBehaviour
             }
 
             planets.Add(planet);
-            NetworkServer.Spawn(planet);
+            // NetworkServer.Spawn(planet);
         }
     }
 
@@ -628,7 +646,7 @@ public class GameController : NetworkBehaviour
                 (float)starJson["position"][0], (float)starJson["position"][1], (float)starJson["position"][2]), rotation: Quaternion.identity
             );
             JsonUtility.FromJsonOverwrite(starJson["starMain"].ToString(), star.GetComponent<Star>());
-            NetworkServer.Spawn(star);
+            // NetworkServer.Spawn(star);
 
             // general
             star.name = starJson["name"].ToString();
@@ -651,7 +669,7 @@ public class GameController : NetworkBehaviour
             }
 
             stars.Add(star);
-            NetworkServer.Spawn(star);
+            // NetworkServer.Spawn(star);
         }
     }
 
@@ -681,7 +699,16 @@ public class GameController : NetworkBehaviour
 
         // we have played locally, now serialize game and send to the server
         StringMessage clientMapJson = new StringMessage(GameToJson());
+        if (clientNetworkManager == null)
+            clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
         clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
+    }
+
+    public void SetupNextTurnClient()
+    {
+        EventManager.selectionManager.SelectedObject = null;
+        grid.SetupNewTurn(GetCurrentPlayer());
+        GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
     }
 
     public void NextTurnServer()
@@ -883,7 +910,7 @@ public class GameController : NetworkBehaviour
                 Debug.Log("Built " + spaceshipPrefab.name);
 
                 spaceships.Add(spaceship);
-                NetworkServer.Spawn(spaceship);
+                // NetworkServer.Spawn(spaceship);
             }
         }
     }
