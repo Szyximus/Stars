@@ -20,9 +20,9 @@ public class Scout : Spaceship
         MaxActionPoints = 7;
         RadarRange = 25;
 
-        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals;
-        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation;
-        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower;
+        neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals;
+        neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation;
+        neededSolarPower = gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower;
 
         spaceshipStatistics.healthPoints = 150;
         spaceshipStatistics.attack = 10;

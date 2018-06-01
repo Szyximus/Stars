@@ -204,30 +204,30 @@ public class SideMenu : MonoBehaviour
                                      "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
 
-        scoutCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
+        scoutCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation.ToString();
 
-        minerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower.ToString() +
+        minerCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation.ToString();
 
-        warshipCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower.ToString() +
+        warshipCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation.ToString();
 
 
-        colonizerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower.ToString() +
+        colonizerCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation.ToString();
 
 
 
@@ -285,7 +285,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()))// if owed Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() == gameController.GetCurrentPlayer()))// if owed Spaceship
         {
             ShowNamePanel();
             ShowShipPanel();
@@ -293,7 +293,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()))// if enemy Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != gameController.GetCurrentPlayer()))// if enemy Spaceship
         {
             ShowNamePanel();
             ShowEnemySpaceshipPanels();
@@ -309,7 +309,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()) // if owned planet
+            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == gameController.GetCurrentPlayer()) // if owned planet
         {
             ShowNamePanel();
             ShowOwnedPlanetPanels();
@@ -317,7 +317,7 @@ public class SideMenu : MonoBehaviour
 
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()) //Free Planet
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer()) //Free Planet
         {
             ShowNamePanel();
             ShowFreePlanetPanels();

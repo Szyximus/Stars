@@ -38,6 +38,7 @@ GameObject:
   - component: {fileID: 114355351963314956}
   - component: {fileID: 135154375807238712}
   - component: {fileID: 82194229024275852}
+  - component: {fileID: 114974188912881118}
   m_Layer: 0
   m_Name: Colonizer
   m_TagString: Unit
@@ -658,6 +659,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: -3
+--- !u!114 &114974188912881118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1108593213390482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 216
+    i1: 202
+    i2: 75
+    i3: 252
+    i4: 206
+    i5: 46
+    i6: 156
+    i7: 68
+    i8: 75
+    i9: 122
+    i10: 246
+    i11: 132
+    i12: 82
+    i13: 80
+    i14: 228
+    i15: 187
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!135 &135154375807238712
 SphereCollider:
   m_ObjectHideFlags: 1

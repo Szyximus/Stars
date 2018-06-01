@@ -247,6 +247,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startMapsPath: 
   savedGamesPath: 
+  PlayerPrefab: {fileID: 1513614362586978, guid: dd6dd88c1a2c22f42b91efba75d7763b,
+    type: 2}
+  PlanetPrefab: {fileID: 1583324355466894, guid: 39e340af0bac1d542804a82df705647b,
+    type: 2}
+  StartPrefab: {fileID: 1533931309970648, guid: a2570eb8f60004743aea0e2be5f3e31f,
+    type: 2}
+  ScoutPrefab: {fileID: 1661768486814866, guid: 3810b9e8805d13949a898579129c3153,
+    type: 2}
+  ColonizerPrefab: {fileID: 1108593213390482, guid: d8ca4bfcce2e9c444b7af6845250e4bb,
+    type: 2}
+  MinerPrefab: {fileID: 1272119975188878, guid: 12fd37dd8982e6345bdd2ea398c51b9d,
+    type: 2}
+  WarshipPrefab: {fileID: 1644412067872902, guid: 2a4c852f013f8eb4c8e317e08ab04469,
+    type: 2}
+  ExplosionPrefab: {fileID: 1273484570534140, guid: acf39d9f4addf294d93fa56fa373961b,
+    type: 2}
+  AttackPrefab: {fileID: 1208074420609426, guid: 96730f8640590934eacb6f860058e7f9,
+    type: 2}
+  HitPrefab: {fileID: 1000013462590818, guid: ecdd96beb7f93494880c052dfccf9dc1, type: 2}
 --- !u!4 &199018551
 Transform:
   m_ObjectHideFlags: 0

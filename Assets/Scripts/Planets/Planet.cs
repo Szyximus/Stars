@@ -9,6 +9,8 @@ using System.IO;
 using Newtonsoft.Json;
 using Assets.Scripts.HexLogic;
 using System.Linq;
+using UnityEngine.Networking;
+
 
 public class Planet : Ownable
 {
@@ -30,23 +32,25 @@ public class Planet : Ownable
         public int minerals;
     }
 
+    [SyncVar]
     public PlanetCharacteristics characteristics;
+    [SyncVar]
     public PlanetResources resources;
+    [SyncVar]
     public bool mayBeHome;
 
+    [SyncVar]
     private int maxHealthPoints;
 
     private UIHoverListener uiListener;
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    private GameController gameController;
-
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         RadarRange = 40f;
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
@@ -85,7 +89,7 @@ public class Planet : Ownable
      */
     public bool Colonize()
     {
-        this.Colonize(GameController.GetCurrentPlayer());
+        this.Colonize(gameController.GetCurrentPlayer());
         return true;
         //   Destroy(gameObject);
     }
@@ -129,7 +133,7 @@ public class Planet : Ownable
 
     public bool IsPossibleBuildSpaceship(Spaceship spaceship)
     {
-        if (owner == GameController.GetCurrentPlayer())
+        if (owner == gameController.GetCurrentPlayer())
             if (spaceship.neededMinerals <= GetOwner().minerals &&
             spaceship.neededPopulation <= GetOwner().population &&
             spaceship.neededSolarPower <= GetOwner().solarPower)

@@ -19,34 +19,24 @@ using UnityEngine.Networking.NetworkSystem;
  */
 public class GameController : NetworkBehaviour
 {
-    private static List<GameObject> players;
-    public GameObject PlayerPrefab;
-    private static int currentPlayerIndex;
+    private List<GameObject> players;
+
+    [SyncVar]
+    public int currentPlayerIndex;
 
     private List<GameObject> planets;
     private List<GameObject> stars;
     public List<GameObject> spaceships;
 
-    public GameObject PlanetPrefab;
-    public GameObject StartPrefab;
-    public GameObject ScoutPrefab;
-    public GameObject ColonizerPrefab;
-    public GameObject MinerPrefab;
-    public GameObject WarshipPrefab;
-
-    public GameObject ExplosionPrefab;
-    public GameObject AttackPrefab;
-    public GameObject HitPrefab;
-
     // current year in the game
-    private int year;
-
+    [SyncVar]
+    public int year;
 
     private HexGrid grid;
     TurnScreen turnScreen;
 
-    private GameApp gameApp;
-    private LevelLoader levelLoader;
+    public GameApp gameApp;
+    public LevelLoader levelLoader;
 
     // one of this is initialized from corresponding networkManagers
     public ClientNetworkManager clientNetworkManager;
@@ -157,10 +147,6 @@ public class GameController : NetworkBehaviour
     public void ServerNextTurnGame(string savedGameContent)
     {
         Debug.Log("ServerLoadGame");
-        if (!isServer)
-        {
-            throw new Exception("ServerLoadGame not a server, return");
-        }
 
         GameFromJson(savedGameContent);
 
@@ -217,7 +203,7 @@ public class GameController : NetworkBehaviour
     /*
      *  Make json with: info(year, currentPlayer), players and map(planets, stars, spaceships)
      */
-    private string GameToJson()
+    public string GameToJson()
     {
         StringBuilder sb = new StringBuilder();
         StringWriter sw = new StringWriter(sb);
@@ -496,7 +482,7 @@ public class GameController : NetworkBehaviour
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
         {
             // init
-            GameObject playerGameObject = Instantiate(PlayerPrefab);
+            GameObject playerGameObject = Instantiate(gameApp.PlayerPrefab);
             Player player = playerGameObject.GetComponent<Player>();
 
             // general
@@ -506,6 +492,7 @@ public class GameController : NetworkBehaviour
             player.local = playerMenu.local.Equals("Y");
 
             players.Add(playerGameObject);
+            NetworkServer.Spawn(playerGameObject);
         }
     }
 
@@ -514,13 +501,14 @@ public class GameController : NetworkBehaviour
         foreach (JObject playerJson in playersJson)
         {
             // init
-            GameObject player = Instantiate(PlayerPrefab);
+            GameObject player = Instantiate(gameApp.PlayerPrefab);
             JsonUtility.FromJsonOverwrite(playerJson["playerMain"].ToString(), player.GetComponent<Player>());
 
             // general
             player.name = (string)playerJson["name"];
 
             players.Add(player);
+            NetworkServer.Spawn(player);
         }
     }
 
@@ -551,6 +539,7 @@ public class GameController : NetworkBehaviour
             spaceship.GetComponent<Spaceship>().Owned(player);
 
             spaceships.Add(spaceship);
+            NetworkServer.Spawn(spaceship);
         }
     }
 
@@ -591,10 +580,11 @@ public class GameController : NetworkBehaviour
         foreach (JObject planetJson in planetsJson)
         {
             // init
-            GameObject planet = Instantiate(original: PlanetPrefab, position: new Vector3(
+            GameObject planet = Instantiate(original: gameApp.PlanetPrefab, position: new Vector3(
                 (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
+            NetworkServer.Spawn(planet);
 
             // general
             planet.name = planetJson["name"].ToString();
@@ -625,6 +615,7 @@ public class GameController : NetworkBehaviour
             }
 
             planets.Add(planet);
+            NetworkServer.Spawn(planet);
         }
     }
 
@@ -633,10 +624,11 @@ public class GameController : NetworkBehaviour
         foreach (JObject starJson in starsJson)
         {
             // init
-            GameObject star = Instantiate(original: StartPrefab, position: new Vector3(
+            GameObject star = Instantiate(original: gameApp.StartPrefab, position: new Vector3(
                 (float)starJson["position"][0], (float)starJson["position"][1], (float)starJson["position"][2]), rotation: Quaternion.identity
             );
             JsonUtility.FromJsonOverwrite(starJson["starMain"].ToString(), star.GetComponent<Star>());
+            NetworkServer.Spawn(star);
 
             // general
             star.name = starJson["name"].ToString();
@@ -659,6 +651,7 @@ public class GameController : NetworkBehaviour
             }
 
             stars.Add(star);
+            NetworkServer.Spawn(star);
         }
     }
 
@@ -688,7 +681,7 @@ public class GameController : NetworkBehaviour
 
         // we have played locally, now serialize game and send to the server
         StringMessage clientMapJson = new StringMessage(GameToJson());
-        clientNetworkManager.networkClient.Send(GameApp.connMapJsonId, clientMapJson);
+        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
     }
 
     public void NextTurnServer()
@@ -741,8 +734,8 @@ public class GameController : NetworkBehaviour
             if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
             {
                 NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                NetworkServer.SetClientReady(connection);
-                NetworkServer.SendToClient(connection.connectionId, GameApp.connClientReadyId, new EmptyMessage());
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(1));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
             }
 
             // if client is not connected, we should have some "skip turn" button on the server
@@ -771,7 +764,7 @@ public class GameController : NetworkBehaviour
 
 
     // getters for basic info
-    public static Player GetCurrentPlayer()
+    public Player GetCurrentPlayer()
     {
         if (players.Count == 0 || currentPlayerIndex >= players.Count || currentPlayerIndex < 0)
             return null;
@@ -789,11 +782,11 @@ public class GameController : NetworkBehaviour
     {
         switch (prefabName)
         {
-            case "Scout": return ScoutPrefab;
-            case "Miner": return MinerPrefab;
-            case "Warship": return WarshipPrefab;
-            case "Colonizer": return ColonizerPrefab;
-            default: return ScoutPrefab;
+            case "Scout": return gameApp.ScoutPrefab;
+            case "Miner": return gameApp.MinerPrefab;
+            case "Warship": return gameApp.WarshipPrefab;
+            case "Colonizer": return gameApp.ColonizerPrefab;
+            default: return gameApp.ScoutPrefab;
         }
     }
 
@@ -890,6 +883,7 @@ public class GameController : NetworkBehaviour
                 Debug.Log("Built " + spaceshipPrefab.name);
 
                 spaceships.Add(spaceship);
+                NetworkServer.Spawn(spaceship);
             }
         }
     }

@@ -16,7 +16,6 @@ public class Spaceship : Ownable
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
-    GameController GameController;
 
     private UIHoverListener uiListener;
     private AudioSource engineSound;
@@ -47,8 +46,9 @@ public class Spaceship : Ownable
 
     public int maxHealthPoints;
 
-    protected void Awake()
+    protected new void Awake()
     {
+        base.Awake();
         model = null;
         Flying = false;
         RadarRange = 26f;
@@ -58,7 +58,6 @@ public class Spaceship : Ownable
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
-        GameController = GameObject.Find("GameController").GetComponent<GameController>();
         burster = gameObject.GetComponentsInChildren<ParticleSystem>().Last();
         bursterLight = gameObject.GetComponentInChildren<Light>();
         engineSound = gameObject.GetComponent<AudioSource>();
@@ -174,7 +173,7 @@ public class Spaceship : Ownable
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        GameController.LockInput();
+        gameController.LockInput();
         TurnEnginesOn();
         //while (Coordinates != dest && actionPoints > 0)
         //{
@@ -207,7 +206,7 @@ public class Spaceship : Ownable
         Flying = false;
         TurnEnginesOff();
         Debug.Log("Flying done, ActionPoints: " + actionPoints);
-        GameController.UnlockInput();
+        gameController.UnlockInput();
     }
 
 
@@ -257,19 +256,19 @@ public class Spaceship : Ownable
         {
             Debug.Log("Nie ma planet");
         }
-        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == GameController.GetCurrentPlayer() &&
-               (planetToAttack == null || planetToAttack.GetOwner() == GameController.GetCurrentPlayer()))
+        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == gameController.GetCurrentPlayer() &&
+               (planetToAttack == null || planetToAttack.GetOwner() == gameController.GetCurrentPlayer()))
         {
             Debug.Log("Cannot find planet or planet belong to you");
             return false;
         }
-        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != gameController.GetCurrentPlayer())
         {
             if (GetActionPoints() > 0)
             {
 
-                GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
-                GameObject TargetFire = Instantiate(GameController.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
+                GameObject SourceFire = Instantiate(gameController.gameApp.AttackPrefab, transform.position, transform.rotation);
+                GameObject TargetFire = Instantiate(gameController.gameApp.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
 
                 spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
 
@@ -280,7 +279,7 @@ public class Spaceship : Ownable
             Debug.Log("You dont have enough movement points");
             return false;
         }
-        else if (planetToAttack != null || planetToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        else if (planetToAttack != null || planetToAttack.GetOwner() != gameController.GetCurrentPlayer())
         {
             if (GetActionPoints() > 0)
             {
@@ -297,13 +296,13 @@ public class Spaceship : Ownable
     {
         if ((this.spaceshipStatistics.healthPoints += healthPoints) <= 0)
         {
-            GameObject Explosion = Instantiate(GameController.ExplosionPrefab, transform.position, transform.rotation);
+            GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position, transform.rotation);
             this.GetOwner().Lose(this);
             grid.FromCoordinates(this.Coordinates).ClearObject();
-            GameController.GetCurrentPlayer().Lose(this);
+            gameController.GetCurrentPlayer().Lose(this);
             Destroy(Explosion, 2f);
             Destroy(this.gameObject);
-            GameController.spaceships.Remove(this.gameObject);
+            gameController.spaceships.Remove(this.gameObject);
             if (this.GetOwner() != null) Lose();
         }
         else

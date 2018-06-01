@@ -18,11 +18,25 @@ public class GameApp : MonoBehaviour
     public string savedGamesPath;
 
     // ids for network messaging
-    public static readonly short connMapJsonId = 1337;
-    public static readonly short connAssignPlayerId = 20001;
-    public static readonly short connAssignPlayerErrorId = 20002;
-    public static readonly short connAssignPlayerSuccessId = 20003;
-    public static readonly short connClientReadyId = 20004;
+    public readonly short connMapJsonId = 1337;
+    public readonly short connAssignPlayerId = 20001;
+    public readonly short connAssignPlayerErrorId = 20002;
+    public readonly short connAssignPlayerSuccessId = 20003;
+    public readonly short connSetupTurnId = 20004;
+    public readonly short connClientLoadGameId = 20005;
+
+    // all prefabs in one place
+    public GameObject PlayerPrefab;
+    public GameObject PlanetPrefab;
+    public GameObject StartPrefab;
+    public GameObject ScoutPrefab;
+    public GameObject ColonizerPrefab;
+    public GameObject MinerPrefab;
+    public GameObject WarshipPrefab;
+
+    public GameObject ExplosionPrefab;
+    public GameObject AttackPrefab;
+    public GameObject HitPrefab;
 
     // variables that will be available between scenes
     public Dictionary<string, string> Parameters;

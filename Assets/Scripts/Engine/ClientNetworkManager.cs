@@ -66,15 +66,13 @@ public class ClientNetworkManager : NetworkManager
 
     /*
      *  After connection to the server, scene should changed to "GameScene"
-     *  GameController should be available
+     *  After the change, server is informed that client is ready and he spawns objects
+     *  Then server calls 
      */
     public override void OnClientSceneChanged(NetworkConnection conn)
     {
         Debug.Log("OnClientSceneChanged: " + conn);
-        //base.OnClientSceneChanged(conn);
-
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        gameController.clientNetworkManager = this;
+        base.OnClientSceneChanged(conn);
     }
 
     /*
@@ -86,16 +84,28 @@ public class ClientNetworkManager : NetworkManager
         //base.OnClientConnect(conn);
         Debug.Log("OnClientConnect: Connected successfully to server");
 
-        networkClient.RegisterHandler(GameApp.connAssignPlayerErrorId, OnClientAssignPlayerError);
-        networkClient.RegisterHandler(GameApp.connAssignPlayerSuccessId, OnClientAssignPlayerSuccess);
-        networkClient.RegisterHandler(GameApp.connClientReadyId, OnClientReady);
+        ClientScene.RegisterPrefab(gameApp.PlayerPrefab);
+        ClientScene.RegisterPrefab(gameApp.PlanetPrefab);
+        ClientScene.RegisterPrefab(gameApp.StartPrefab);
+        ClientScene.RegisterPrefab(gameApp.ScoutPrefab);
+        ClientScene.RegisterPrefab(gameApp.ColonizerPrefab);
+        ClientScene.RegisterPrefab(gameApp.MinerPrefab);
+        ClientScene.RegisterPrefab(gameApp.WarshipPrefab);
+        ClientScene.RegisterPrefab(gameApp.ExplosionPrefab);
+        ClientScene.RegisterPrefab(gameApp.AttackPrefab);
+        ClientScene.RegisterPrefab(gameApp.HitPrefab);
+
+        networkClient.RegisterHandler(gameApp.connAssignPlayerErrorId, OnClientAssignPlayerError);
+        networkClient.RegisterHandler(gameApp.connAssignPlayerSuccessId, OnClientAssignPlayerSuccess);
+        networkClient.RegisterHandler(gameApp.connSetupTurnId, OnClientSetupTurn);
+        networkClient.RegisterHandler(gameApp.connClientLoadGameId, OnClientLoadGame);
 
         string playerName = gameApp.GetAndRemoveInputField("PlayerName");
         string password = gameApp.GetAndRemoveInputField("Password");
 
         Debug.Log("OnClientConnect: sending player name: " + playerName);
         StringMessage playerMsg = new StringMessage(playerName);
-        networkClient.Send(GameApp.connAssignPlayerId, playerMsg);
+        networkClient.Send(gameApp.connAssignPlayerId, playerMsg);
     }
 
 
@@ -117,24 +127,35 @@ public class ClientNetworkManager : NetworkManager
      */
     public void OnClientAssignPlayerSuccess(NetworkMessage netMsg)
     {
-        Debug.Log("OnClientAssignPlayerSuccess: " + netMsg.ReadMessage<StringMessage>());
-
-        if (gameController != null)
-            gameController.WaitForTurn();
+        Debug.Log("OnClientAssignPlayerSuccess: " + netMsg.ReadMessage<StringMessage>().value);
     }
 
+
     /*
-     *  Custom callback (on connClientReadyId)
+     *  Custom callback (on connSetupTurnId)
      *  Server invoke it when it is this client's turn
      *  Client set to "ready" state and start plays the game
      */
-    public void OnClientReady(NetworkMessage netMsg)
+    public void OnClientSetupTurn(NetworkMessage netMsg)
     {
-        Debug.Log("OnClientReady");
-        ClientScene.Ready(netMsg.conn);
+        Debug.Log("OnClientSetupTurn");
 
-        if(gameController != null)
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        bool playNow = netMsg.ReadMessage<IntegerMessage>().value == 1;
+        if (playNow)
             gameController.StopWaitForTurn();
+        else
+            gameController.WaitForTurn();
+    }
+
+    public void OnClientLoadGame(NetworkMessage netMsg)
+    {
+        Debug.Log("OnClientLoadGame");
+
+        string savedGame = netMsg.ReadMessage<StringMessage>().value;
+
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController.ServerLoadGame(savedGame);
     }
 
     /*
@@ -144,9 +165,7 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientNotReady(NetworkConnection conn)
     {
         Debug.Log("Server has set client to be not-ready (stop getting state updates): " + conn);
-
-        if (gameController != null)
-            gameController.WaitForTurn();
+        gameController.WaitForTurn();
     }
 
 

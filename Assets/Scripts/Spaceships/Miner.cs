@@ -23,9 +23,9 @@ public class Miner : Spaceship
         MaxActionPoints = 6;
         RadarRange = 15;
 
-        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals;
-        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation;
-        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower;
+        neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals;
+        neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation;
+        neededSolarPower = gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower;
         spaceshipStatistics.healthPoints = 80;
 
         spaceshipStatistics.attack = 5;
@@ -94,7 +94,7 @@ public class Miner : Spaceship
             Debug.Log("You dont have enough movement points");
             return false;
         }
-        else if (PlanetToMine != null || PlanetToMine.GetOwner() != GameController.GetCurrentPlayer())
+        else if (PlanetToMine != null || PlanetToMine.GetOwner() != gameController.GetCurrentPlayer())
         {
             if (GetActionPoints() > 0)
             {

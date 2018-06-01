@@ -202,7 +202,7 @@ public class ServerNetworkManager : NetworkManager
 
     /*
      *   Custom callback, invoked from "OnClientConnect", when the client connected to the server and want join the game.
-     *   Server validate player name etc. and send either connAssignPlayerErrorId, connAssignPlayerSuccessId or connClientReadyId
+     *   Server validate player name etc. and send either connAssignPlayerErrorId or connAssignPlayerSuccessId
      */
     public void OnServerClientAssignPlayer(NetworkMessage netMsg)
     {
@@ -210,7 +210,7 @@ public class ServerNetworkManager : NetworkManager
         if(clientPlayerNameMsg == null)
         {
             Debug.Log("OnServerClientAssignPlayer, clientPlayerNameMsg is null ");
-            netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("clientPlayerNameMsg is null"));
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("clientPlayerNameMsg is null"));
             return;
         }
 
@@ -221,32 +221,35 @@ public class ServerNetworkManager : NetworkManager
         if (connections.ContainsKey(clientPlayerName))
         {
             Debug.Log("OnServerClientAssignPlayer: player taken");
-            netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
         }
         else if (gameController.FindPlayer(clientPlayerName) == null)
         {
             Debug.Log("OnServerClientAssignPlayer: player name not found, " + clientPlayerName);
-            netMsg.conn.Send(GameApp.connAssignPlayerErrorId, new StringMessage("Player with name " + clientPlayerName + " not found"));
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player with name " + clientPlayerName + " not found"));
         }
         else
         {
             Debug.Log("OnServerClientAssignPlayer: player joined, " + clientPlayerName);
             connections.Add(clientPlayerName, netMsg.conn);
-
-            if (clientPlayerName.Equals(GameController.GetCurrentPlayer().name))
-            {
-                // client that just joined game shoud make turn now
-                Debug.Log("OnServerClientAssignPlayer, it is new client turn");
-                NetworkServer.SetClientReady(netMsg.conn);
-                NetworkServer.SendToClient(netMsg.conn.connectionId, GameApp.connClientReadyId, new EmptyMessage());
-            } else
-            {
-                // client should wait for his turn (one of this shoud be enough actually)
-                NetworkServer.SetClientNotReady(netMsg.conn);
-                netMsg.conn.Send(GameApp.connAssignPlayerSuccessId, new StringMessage("Player with name " + clientPlayerName + " assigned"));
-            }
+            netMsg.conn.Send(gameApp.connAssignPlayerSuccessId, new StringMessage("Player with name " + clientPlayerName + " assigned"));
         }
     }
+
+    private string FindPlayerByConnection(NetworkConnection conn)
+    {
+        string playerName = null;
+        foreach (var playerConnPair in connections)
+        {
+            if (playerConnPair.Value.Equals(conn))
+            {
+                playerName = playerConnPair.Key;
+                break;
+            }
+        }
+        return playerName;
+    }
+
 
     /*
      *  Custom callback, invoked from remote client at the and of the turn ("NextTurn" button)
@@ -266,25 +269,17 @@ public class ServerNetworkManager : NetworkManager
         string clientGameJson = clientGameJsonMsg.value;
         Debug.Log("OnServerClientNextTurnDone, game: " + clientGameJson);
 
-        string playerName = null;
-        foreach (var playerConnPair in connections)
-        {
-            if(playerConnPair.Value.Equals(netMsg.conn))
-            {
-                playerName = playerConnPair.Key;
-                break;
-            }
-        }
 
+        string playerName = FindPlayerByConnection(netMsg.conn);
         if (playerName == null)
         {
             Debug.Log("OnServerClientNextTurnDone: connection not found");
             return;
         }
 
-        if(!playerName.Equals(GameController.GetCurrentPlayer().name))
+        if(!playerName.Equals(gameController.GetCurrentPlayer().name))
         {
-            Debug.Log("OnServerClientNextTurnDone: current player is " + GameController.GetCurrentPlayer().name + ", not " + playerName);
+            Debug.Log("OnServerClientNextTurnDone: current player is " + gameController.GetCurrentPlayer().name + ", not " + playerName);
             return;
         }
 
@@ -308,10 +303,10 @@ public class ServerNetworkManager : NetworkManager
         Debug.Log("Server has started");
 
         // invoked when remote cliend made turn
-        NetworkServer.RegisterHandler(GameApp.connMapJsonId, OnServerClientNextTurnDone);
+        NetworkServer.RegisterHandler(gameApp.connMapJsonId, OnServerClientNextTurnDone);
 
         // invoked when remote client connected and wants join the game
-        NetworkServer.RegisterHandler(GameApp.connAssignPlayerId, OnServerClientAssignPlayer);
+        NetworkServer.RegisterHandler(gameApp.connAssignPlayerId, OnServerClientAssignPlayer);
     }
 
 
@@ -332,10 +327,35 @@ public class ServerNetworkManager : NetworkManager
         Debug.Log("A client disconnected from the server: " + conn);
     }
 
+    /*
+     *  Clients is ready, check if this is his turn and send msg
+     *  
+     */
     public override void OnServerReady(NetworkConnection conn)
     {
-        NetworkServer.SetClientReady(conn);
+        Debug.Log("OnServerReady");
+        base.OnServerReady(conn);
+        NetworkServer.SpawnObjects();
         Debug.Log("Client is set to the ready state (ready to receive state updates): " + conn);
+
+        string playerName = FindPlayerByConnection(conn);
+        if(playerName == null)
+        {
+            Debug.Log("OnServerReady: conn " + conn + " without player, disconnecting");
+            conn.Disconnect();
+            return;
+        }
+
+        if (gameController.GetCurrentPlayer().name.Equals(playerName)) {
+            Debug.Log("OnServerReady: connClientLoadGameId");
+            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(1));
+            conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
+        }
+        else
+        {
+            Debug.Log("OnServerReady: connSetupTurnId");
+            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(0));
+        }
     }
 
     /*

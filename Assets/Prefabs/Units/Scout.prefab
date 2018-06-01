@@ -71,6 +71,7 @@ GameObject:
   - component: {fileID: 135465678517273418}
   - component: {fileID: 82245447825814314}
   - component: {fileID: 114101080874467734}
+  - component: {fileID: 114975290848016082}
   m_Layer: 0
   m_Name: Scout
   m_TagString: Unit
@@ -557,6 +558,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 5
+--- !u!114 &114975290848016082
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1661768486814866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 56
+    i1: 16
+    i2: 185
+    i3: 232
+    i4: 128
+    i5: 93
+    i6: 19
+    i7: 148
+    i8: 154
+    i9: 137
+    i10: 133
+    i11: 121
+    i12: 18
+    i13: 156
+    i14: 49
+    i15: 83
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!135 &135465678517273418
 SphereCollider:
   m_ObjectHideFlags: 1

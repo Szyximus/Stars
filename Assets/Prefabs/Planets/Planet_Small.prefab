@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 4416502216280420}
   - component: {fileID: 135760052746903288}
   - component: {fileID: 114253664302091782}
+  - component: {fileID: 114031154860401696}
   m_Layer: 0
   m_Name: Planet_Small
   m_TagString: Planet
@@ -147,6 +148,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: d534810f4f95b67449e8e35a2e9b8300, type: 2}
   m_StaticBatchInfo:
@@ -181,6 +183,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 4cc3776563deda4498ac7256cd5300da, type: 2}
   m_StaticBatchInfo:
@@ -216,6 +219,38 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1702698155198684}
   m_Mesh: {fileID: 4300000, guid: c4fa67ec439b3a84f9274abc54ac4a5c, type: 3}
+--- !u!114 &114031154860401696
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1622567210660544}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 54
+    i1: 151
+    i2: 65
+    i3: 251
+    i4: 167
+    i5: 197
+    i6: 164
+    i7: 20
+    i8: 75
+    i9: 192
+    i10: 7
+    i11: 185
+    i12: 102
+    i13: 184
+    i14: 252
+    i15: 214
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114253664302091782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -227,6 +262,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f614f502096a944bd133686cd1e1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RadarRange: 0
+  characteristics:
+    habitability: 0
+    healthPoints: 0
+    temperature: 0
+    radiation: 0
+    oxygen: 0
+  resources:
+    minerals: 0
+  mayBeHome: 0
 --- !u!114 &114986900276833054
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -238,7 +283,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c912a32390b7f408686c70ec7f5254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
+  Speed: 5
 --- !u!135 &135760052746903288
 SphereCollider:
   m_ObjectHideFlags: 1
