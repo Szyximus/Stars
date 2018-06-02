@@ -18,6 +18,11 @@ public abstract class Ownable : NetworkBehaviour
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
+    protected bool CanMakeAction()
+    {
+        return gameController.GetCurrentPlayer().name.Equals(owner.name);
+    }
+
     public void Owned(Player newOwner)
     {
         if (this.owner != null)

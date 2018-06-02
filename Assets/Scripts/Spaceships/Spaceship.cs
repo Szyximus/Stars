@@ -98,6 +98,8 @@ public class Spaceship : Ownable
 
     public void Move(HexCell destination)
     {
+        if (!CanMakeAction())
+            return;
         var dx = Coordinates.X - destination.Coordinates.X;
         var dz = Coordinates.Z - destination.Coordinates.Z;
 
@@ -119,6 +121,9 @@ public class Spaceship : Ownable
 
     public void Move(EDirection direction)
     {
+        if (!CanMakeAction())
+            return;
+
         var r = HexMetrics.innerRadius;
         var r_sqrt3 = r * 1.7320508757f;
 
@@ -173,40 +178,43 @@ public class Spaceship : Ownable
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        gameController.LockInput();
-        TurnEnginesOn();
-        //while (Coordinates != dest && actionPoints > 0)
-        //{
-        //    Debug.Log("moving " + actionPoints);
-        //    actionPoints--;
-        //    if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
-        //        Move(EDirection.TopRight);
-        //    else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
-        //        Move(EDirection.TopLeft);
-        //    else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
-        //        Move(EDirection.BottomRight);
-        //    else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
-        //        Move(EDirection.BottomLeft);
-        //    else if (dest.X > Coordinates.X)
-        //        Move(EDirection.Right);
-        //    else if (dest.X < Coordinates.X)
-        //        Move(EDirection.Left);
-        //    yield return new WaitForSeconds(1.05f);
-
-        //}
-
-        path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
-        while (Coordinates != dest && actionPoints > 0)
+        if (CanMakeAction())
         {
-            Move(path.First());
-            path.RemoveAt(0);
-            actionPoints--;
-            yield return new WaitForSeconds(1.05f);
+            gameController.LockInput();
+            TurnEnginesOn();
+            //while (Coordinates != dest && actionPoints > 0)
+            //{
+            //    Debug.Log("moving " + actionPoints);
+            //    actionPoints--;
+            //    if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
+            //        Move(EDirection.TopRight);
+            //    else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
+            //        Move(EDirection.TopLeft);
+            //    else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
+            //        Move(EDirection.BottomRight);
+            //    else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
+            //        Move(EDirection.BottomLeft);
+            //    else if (dest.X > Coordinates.X)
+            //        Move(EDirection.Right);
+            //    else if (dest.X < Coordinates.X)
+            //        Move(EDirection.Left);
+            //    yield return new WaitForSeconds(1.05f);
+
+            //}
+
+            path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
+            while (Coordinates != dest && actionPoints > 0)
+            {
+                Move(path.First());
+                path.RemoveAt(0);
+                actionPoints--;
+                yield return new WaitForSeconds(1.05f);
+            }
+            Flying = false;
+            TurnEnginesOff();
+            Debug.Log("Flying done, ActionPoints: " + actionPoints);
+            gameController.UnlockInput();
         }
-        Flying = false;
-        TurnEnginesOff();
-        Debug.Log("Flying done, ActionPoints: " + actionPoints);
-        gameController.UnlockInput();
     }
 
 
@@ -229,6 +237,9 @@ public class Spaceship : Ownable
 
     public bool Attack()
     {
+        if (!CanMakeAction())
+            return false;
+
         var gameObjectsInProximity =
                 Physics.OverlapSphere(transform.position, 10)
                 .Except(new[] { GetComponent<Collider>() })
