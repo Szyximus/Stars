@@ -29,7 +29,6 @@ public class Star : MonoBehaviour
     private void Start()
     {
         Debug.Log("star start: " + name);
-        Debug.Log(JsonUtility.ToJson(this));
     }
     void UpdateCoordinates()
     {

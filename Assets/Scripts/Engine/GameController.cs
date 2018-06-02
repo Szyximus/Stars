@@ -77,7 +77,7 @@ public class GameController : NetworkBehaviour
      *  Called from ServerNetworkManager
      *  Starts new game, player names from the "NewGameScene" inputs, maps loaded is "map1"
      */
-    public void ServerStartNewGame(List<GameApp.PlayerMenu> PlayerMenuList)
+    public void ServerStartNewGame()
     {
         Debug.Log("ServerStartNewGame");
         if (!isServer)
@@ -85,34 +85,15 @@ public class GameController : NetworkBehaviour
             throw new Exception("ServerStartNewGame not a server, return");
         }
 
-        string path = gameApp.startMapsPath + "map1";
-        Debug.Log("ServerStartNewGame reading " + path);
+        string path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
 
-        TextAsset mapAsset = Resources.Load(path) as TextAsset;
-        if(mapAsset == null)
-        {
-            throw new Exception("mapAsset is null");
-        }
+        JObject newGameJson = gameApp.ReadJsonFile(path);
 
-        string newGameContent = mapAsset.text;
+        List<GameApp.PlayerMenu> PlayerMenuList = gameApp.GetAllPlayersFromMenu();
 
-        if (newGameContent == null || "".Equals(newGameContent))
-        {
-            throw new Exception("savedGameContent is null, path: " + path);
-        }
-
-        // replace player names
-        newGameContent = PreparseStartMap(newGameContent, PlayerMenuList);
-
-        JObject newGameJson = JObject.Parse(newGameContent);
-        if (newGameJson == null)
-        {
-            throw new Exception("Error loading json");
-        }
-
-        PlayersFromMenu(PlayerMenuList);
-        MapFromJson((JObject)newGameJson["map"]);
-        InfoFromJson((JObject)newGameJson["info"]);
+        PlayersFromMenu(newGameJson, PlayerMenuList);
+        MapFromJson((JObject)newGameJson["map"], true);
+        InfoFromJson((JObject)newGameJson["info"], true);
 
         // because "NextTurn" will increment
         currentPlayerIndex -= 1;
@@ -213,9 +194,9 @@ public class GameController : NetworkBehaviour
         string path = gameApp.savedGamesPath + "/" + SaveGameFile + ".json";
         Debug.Log("Saving to file: " + path);
 
-        StreamWriter StreamWriter = new StreamWriter(path);
-        StreamWriter.Write(GameToJson());
-        StreamWriter.Close();
+        StreamWriter streamWriter = new StreamWriter(path);
+        streamWriter.Write(GameToJson());
+        streamWriter.Close();
     }
 
     /*
@@ -439,20 +420,6 @@ public class GameController : NetworkBehaviour
 
 
     // game deserialization
-    /*
-     *  When creating new game, json with the game contains strings like "{{player1}}", "{{player3}}" etc
-     *  They should be replaced with correct player names, indicating who own what and current player (first player)
-     */
-    string PreparseStartMap(string newGameContent, List<GameApp.PlayerMenu> PlayerMenuList)
-    {
-        int playerCounter = 1;
-        foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
-        {
-            newGameContent = newGameContent.Replace("{{player" + playerCounter + "}}", playerMenu.name);
-            playerCounter += 1;
-        }
-        return newGameContent;
-    }
 
     /*
      *  Setup variables in GameController, create objects on the map etc.
@@ -469,34 +436,42 @@ public class GameController : NetworkBehaviour
         }
 
         PlayersFromJson((JArray)savedGameJson["players"]);
-        InfoFromJson((JObject)savedGameJson["info"]);
-        MapFromJson((JObject)savedGameJson["map"]);
+        InfoFromJson((JObject)savedGameJson["info"], false);
+        MapFromJson((JObject)savedGameJson["map"], false);
     }
 
-    void InfoFromJson(JObject infoJson)
+    void InfoFromJson(JObject infoJson, bool isNewGame)
     {
         Debug.Log("InfoFromJson");
         year = (int)infoJson["year"];
-        string currentPlayerName = (string)infoJson["currentPlayer"];
-        if(FindPlayer(currentPlayerName))
+
+        currentPlayerIndex = 0;
+        if (isNewGame)
         {
-            currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
+            currentPlayerIndex = (int)infoJson["currentPlayer"];
         }
         else
         {
-            currentPlayerIndex = 0;
+            string currentPlayerName = (string)infoJson["currentPlayer"];
+            if (FindPlayer(currentPlayerName))
+            {
+                currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
+            }
         }
     }
 
-    void MapFromJson(JObject mapJson)
+    void MapFromJson(JObject mapJson, bool isNewGame)
     {
-        PlanetsFromJson((JArray)mapJson["planets"]);
+        PlanetsFromJson((JArray)mapJson["planets"], isNewGame);
         StarsFromJson((JArray)mapJson["stars"]);
-        SpaceshipsFromJson((JArray)mapJson["spaceships"]);
+        SpaceshipsFromJson((JArray)mapJson["spaceships"], isNewGame);
     }
 
-    void PlayersFromMenu(List<GameApp.PlayerMenu> PlayerMenuList)
+    void PlayersFromMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList)
     {
+        if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
+            throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
         {
             // init
@@ -506,8 +481,8 @@ public class GameController : NetworkBehaviour
             // general
             player.name = playerMenu.name;
             player.password = playerMenu.password;
-            player.human = playerMenu.isHuman;
-            player.local = playerMenu.local.Equals("Y");
+            player.human = !playerMenu.playerType.Equals("A");
+            player.local = !playerMenu.playerType.Equals("R");
 
             players.Add(playerGameObject);
             // NetworkServer.Spawn(playerGameObject);
@@ -530,7 +505,7 @@ public class GameController : NetworkBehaviour
         }
     }
 
-    void SpaceshipsFromJson(JArray spaceshipsJson)
+    void SpaceshipsFromJson(JArray spaceshipsJson, bool isNewGame)
     {
         int counter = 0;
         foreach (JObject spaceshipJson in spaceshipsJson)
@@ -540,7 +515,22 @@ public class GameController : NetworkBehaviour
             // spaceship must have owner, check it first
             if (spaceshipJson["owner"] == null)
                 continue;
-            Player player = FindPlayer((string)spaceshipJson["owner"]);
+
+            Player player = null;
+            if (isNewGame)
+            {
+                // in new game, owner will contain number (from zero)
+                if ((int)spaceshipJson["owner"] >= 0 && (int)spaceshipJson["owner"] < players.Count)
+                {
+                    player = players[(int)spaceshipJson["owner"]].GetComponent<Player>();
+                }
+            }
+            else
+            {
+                // in saved game files, owner will contain player's name
+                player = FindPlayer((string)spaceshipJson["owner"]);
+            }
+            
             if (player == null)
                 continue;
 
@@ -593,7 +583,7 @@ public class GameController : NetworkBehaviour
         return null;
     }
 
-    void PlanetsFromJson(JArray planetsJson)
+    void PlanetsFromJson(JArray planetsJson, bool isNewGame)
     {
         foreach (JObject planetJson in planetsJson)
         {
@@ -608,12 +598,27 @@ public class GameController : NetworkBehaviour
             planet.name = planetJson["name"].ToString();
 
             // references and owner
-            if (planetJson["owner"] != null && !"".Equals(planetJson["owner"]))
+            if(isNewGame)
             {
-                Player player = FindPlayer((string)planetJson["owner"]);
-                if(player != null)
-                    planet.GetComponent<Planet>().Colonize(player);
+                // in new game, owner will contain number (from zero)
+                if (planetJson["owner"] != null && (int)planetJson["owner"] >= 0 && (int)planetJson["owner"] < players.Count)
+                {
+                    Player player = players[(int)planetJson["owner"]].GetComponent<Player>();
+                    if (player != null)
+                        planet.GetComponent<Planet>().Colonize(player);
+                }
             }
+            else
+            {
+                // in saved game files, owner will contain player's name
+                if (planetJson["owner"] != null && !"".Equals(planetJson["owner"]))
+                {
+                    Player player = FindPlayer((string)planetJson["owner"]);
+                    if (player != null)
+                        planet.GetComponent<Planet>().Colonize(player);
+                }
+            }
+            
 
             // mesh properties
             float radius = (float)planetJson["radius"];

@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine.UI;
 using System.Collections.Generic;
+using System.IO;
+using System;
+using Newtonsoft.Json.Linq;
 
 /*
  *  Class for global configuration and persistance data between scenes
@@ -12,6 +15,7 @@ using System.Collections.Generic;
 public class GameApp : MonoBehaviour
 {
     private static bool created = false;
+    private LevelLoader levelLoader;
 
     // base path for saved games files and new game files
     public string startMapsPath;
@@ -38,8 +42,11 @@ public class GameApp : MonoBehaviour
     public GameObject AttackPrefab;
     public GameObject HitPrefab;
 
+    public GameObject PlayerMenuPrefab;
+
     // variables that will be available between scenes
     public Dictionary<string, string> Parameters;
+    List<PlayerMenu> playerMenuList;
 
     // data that will be saved, based on scene name
     // Dictionary<scene name, List<{saved value name, path to input filed in editor}>>
@@ -47,20 +54,6 @@ public class GameApp : MonoBehaviour
     {
         {"GameScene",  new List<ParameterMapping> {
                 new ParameterMapping { name="SavedGameFile", inputField = "MenuCanvas/SavedGameFileInput" }
-            }
-        },
-        {"NewGameScene",  new List<ParameterMapping> {
-                new ParameterMapping { name="Address", inputField = "MenuCanvas/AddressInput" },
-                new ParameterMapping { name="Port", inputField = "MenuCanvas/PortInput" },
-                new ParameterMapping { name="PlayerName1", inputField = "MenuCanvas/PlayerName1Input" },
-                new ParameterMapping { name="PlayerName2", inputField = "MenuCanvas/PlayerName2Input" },
-                new ParameterMapping { name="PlayerName3", inputField = "MenuCanvas/PlayerName3Input" },
-                new ParameterMapping { name="PlayerPass1", inputField = "MenuCanvas/PlayerPass1Input" },
-                new ParameterMapping { name="PlayerPass2", inputField = "MenuCanvas/PlayerPass2Input" },
-                new ParameterMapping { name="PlayerPass3", inputField = "MenuCanvas/PlayerPass3Input" },
-                new ParameterMapping { name="PlayerIsLocal1", inputField = "MenuCanvas/PlayerLocal1Input" },
-                new ParameterMapping { name="PlayerIsLocal2", inputField = "MenuCanvas/PlayerLocal2Input" },
-                new ParameterMapping { name="PlayerIsLocal3", inputField = "MenuCanvas/PlayerLocal3Input" }
             }
         },
         {"LoadGameScene",  new List<ParameterMapping> {
@@ -74,7 +67,17 @@ public class GameApp : MonoBehaviour
                 new ParameterMapping { name="PlayerName", inputField = "MenuCanvas/PlayerNameInput" },
                 new ParameterMapping { name="Password", inputField = "MenuCanvas/PasswordInput" }
             }
+        },
+        {"NewGameMapScene",  new List<ParameterMapping> {
+                new ParameterMapping { name="ServerAddress", inputField = "MenuCanvas/ServerAddressInput" },
+                new ParameterMapping { name="ServerPort", inputField = "MenuCanvas/ServerPortInput" },
+                new ParameterMapping { name="MapToLoad", inputField = "MenuCanvas/DropdownCanvas/MapToLoadDropdown" },
+            }
         }
+    };
+
+    private List<string> startMapsList = new List<string> {
+        "map1", "map2"
     };
 
     // Scripts can receive inputs by "name". Inputs are found by object name ("inputField") in editor 
@@ -88,29 +91,77 @@ public class GameApp : MonoBehaviour
     {
         public string name;
         public string password;
-        public string local;
-        public bool isHuman;
+        public string race;
+        public string playerType;
     }
-    
+
+    public JObject ReadJsonFile(string path)
+    {
+        Debug.Log("GameApp ReadJsonFile: " + path);
+
+        StreamReader reader = new StreamReader(path);
+        string fileReaded = reader.ReadToEnd();
+        reader.Close();
+
+        if (fileReaded == null || "".Equals(fileReaded))
+        {
+            throw new Exception("fileReaded is null, path: " + path);
+        }
+
+        JObject fileParsed = JObject.Parse(fileReaded);
+        if (fileParsed == null)
+        {
+            throw new Exception("Error loading json");
+        }
+
+        return fileParsed;
+    }
 
     void Awake()
     {
         if (!created)
         {
-            Parameters = new Dictionary<string, string>();
+            Debug.Log("Awake GameApp");
 
-            // path to Assets/Configs/Resources/StartMaps/, included in build
-            startMapsPath = "StartMaps/";
+            Parameters = new Dictionary<string, string>();
+            playerMenuList = new List<PlayerMenu>();
+
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+
+            // path to (on win10) <User>/AppData/LocalLow/Informatyka/Stars!/Configs/StartMaps
+            startMapsPath = Application.persistentDataPath + "/Configs/StartMaps/";
             Debug.Log("GameApp startMapsPath: " + startMapsPath);
 
-            // path to (on win10) <User>/AppData/LocalLow/Informatyka/Stars!/Configs/
-            savedGamesPath = Application.persistentDataPath + "/Configs/";
+            // path to (on win10) <User>/AppData/LocalLow/Informatyka/Stars!/Configs/SavedGames
+            savedGamesPath = Application.persistentDataPath + "/Configs/SavedGames/";
             Debug.Log("GameApp savedGamesPath: " + savedGamesPath);
+
+            // move files from asset do persistent data path
+            // path to Assets/Configs/Resources/StartMaps/, included in build
+            string savedGamesAssetPath = "StartMaps/";
+
+            if (!Directory.Exists(savedGamesPath))
+                Directory.CreateDirectory(savedGamesPath);
+
+            if (!Directory.Exists(startMapsPath))
+                Directory.CreateDirectory(startMapsPath);
+
+            foreach (string mapToSave in startMapsList)
+            {
+                TextAsset mapAsset = Resources.Load(savedGamesAssetPath + mapToSave) as TextAsset;
+                if (mapAsset != null)
+                {
+                    string path = startMapsPath + "/" + mapToSave + ".json";
+                    Debug.Log("Saving map from assert to file: " + path);
+
+                    StreamWriter streamWriter = new StreamWriter(path);
+                    streamWriter.Write(mapAsset.text);
+                    streamWriter.Close();
+                }
+            }
 
             DontDestroyOnLoad(this.gameObject);
             created = true;
-
-            Debug.Log("Awake: " + this.gameObject);
         }
     }
 
@@ -119,35 +170,29 @@ public class GameApp : MonoBehaviour
      */
     public List<PlayerMenu> GetAllPlayersFromMenu()
     {
-        List<PlayerMenu> playerMenuList = new List<PlayerMenu>();
-        playerMenuList.Add(new PlayerMenu
-        {
-            name = GetAndRemoveInputField("PlayerName1"),
-            password = GetAndRemoveInputField("PlayerPass1"),
-            local = GetAndRemoveInputField("PlayerIsLocal1"),
-            isHuman = true
-        });
-        playerMenuList.Add(new PlayerMenu
-        {
-            name = GetAndRemoveInputField("PlayerName2"),
-            password = GetAndRemoveInputField("PlayerPass2"),
-            local = GetAndRemoveInputField("PlayerIsLocal2"),
-            isHuman = true
-        });
-        playerMenuList.Add(new PlayerMenu
-        {
-            name = GetAndRemoveInputField("PlayerName3"),
-            password = GetAndRemoveInputField("PlayerPass3"),
-            local = GetAndRemoveInputField("PlayerIsLocal3"),
-            isHuman = true
-        });
         return playerMenuList;
     }
 
+    public void SavePlayersFromMenu(List<PlayerMenu> playerMenuList)
+    {
+        this.playerMenuList = playerMenuList;
+    }
 
+    // scene inputs persistance
     public void RemoveAllParameters()
     {
         Parameters.Clear();
+    }
+
+    public void RemoveAllParameters(string scene)
+    {
+        if (parametersToPersist.ContainsKey(scene))
+        {
+            foreach (ParameterMapping parameterMapping in parametersToPersist[scene])
+            {
+                Parameters.Remove(parameterMapping.name);
+            }
+        }
     }
 
     /*
@@ -162,16 +207,34 @@ public class GameApp : MonoBehaviour
                 PersistInputField(parameterMapping.name, parameterMapping.inputField);
             }
         }
+
+        Debug.Log("PersistAllParameters done:");
+        foreach (string param in Parameters.Keys)
+        {
+            Debug.Log(param + " - " + Parameters[param]);
+        }
     }
 
     private string FindInputFiled(string inputFieldName)
     {
         if (GameObject.Find(inputFieldName) != null)
         {
-            InputField inputField = GameObject.Find(inputFieldName).GetComponent<InputField>();
-            if (inputField != null)
+            if (inputFieldName.Contains("Dropdown"))
             {
-                return inputField.text;
+                Dropdown inputField = GameObject.Find(inputFieldName).GetComponent<Dropdown>();
+                if (inputField != null)
+                {
+                    // that .json cause dropdown are used only for files
+                    return inputField.options[inputField.value].text + ".json";
+                }
+            }
+            else
+            {
+                InputField inputField = GameObject.Find(inputFieldName).GetComponent<InputField>();
+                if (inputField != null)
+                {
+                    return inputField.text;
+                }
             }
         }
         return null;
@@ -181,7 +244,11 @@ public class GameApp : MonoBehaviour
     {
         string value = FindInputFiled(inputFieldName);
         if (value != null)
+        {
+            if (Parameters.ContainsKey(key))
+                Parameters.Remove(key);
             Parameters.Add(key, value);
+        }
     }
 
     public void RemoveInputField(string key)
@@ -197,6 +264,15 @@ public class GameApp : MonoBehaviour
             string toReturn = Parameters[key];
             Parameters.Remove(key);
             return toReturn;
+        }
+        return null;
+    }
+
+    public string GetInputField(string key)
+    {
+        if (Parameters.ContainsKey(key))
+        {
+            return Parameters[key];
         }
         return null;
     }

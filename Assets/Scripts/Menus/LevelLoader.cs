@@ -30,7 +30,6 @@ public class LevelLoader : MonoBehaviour {
 
     public void Back(string scene)
     {
-        gameApp.RemoveAllParameters();
 
         GameObject serverNetworkManager = GameObject.Find("ServerNetworkManager");
         if (serverNetworkManager != null)
@@ -49,6 +48,7 @@ public class LevelLoader : MonoBehaviour {
     {
         if (slider != null)
             slider.SetActive(true);
+
         StartCoroutine(LoadAsynchronously(scene));
     }
 
@@ -61,7 +61,7 @@ public class LevelLoader : MonoBehaviour {
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
             if (slider != null) slider.GetComponent<Slider>().value = progress;
             yield return null;
-        }
+        } 
     }
 
     public void Quit()

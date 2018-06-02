@@ -1,12 +1,12 @@
 {
 	"info": {
-	    "maxPlayers": 4,
+	    "maxPlayers": 2,
 		"currentPlayer": 1,
-		"year": 2400
+		"year": 3400
 	},
 	"map": {
 		"planets": [{
-				"name": "Korriban",
+				"name": "Korriban X",
 				"planetMain": {
 					"characteristics": {
 						"temperature": 54,
@@ -54,7 +54,7 @@
 					0,
 					280
 				],
-				"owner": 2
+				"owner": 1
 			},
 			{
 				"name": "Nova",
@@ -79,7 +79,7 @@
 					0,
 					316
 				],
-				"owner": 3
+				"owner": 1
 			},
 			{
 				"name": "Moon",
@@ -104,8 +104,7 @@
 					311.8,
 					0,
 					300
-				],
-				"owner": 4
+				]
 			}
 		],
 		"stars": [{
@@ -190,7 +189,7 @@
 			},
 			{
 				"model": "Warship",
-				"owner": 1,
+				"owner": 0,
 				"position": [410, 0, 277.5],
 				"spaceshipMain": {
 					"RadarRange": 25.0,
@@ -208,7 +207,7 @@
 			},
 			{
 				"model": "Colonizer",
-				"owner": 2,
+				"owner": 0,
 				"position": [402.7, 0, 260.5],
 				"spaceshipMain": {
 					"RadarRange": 20.0,

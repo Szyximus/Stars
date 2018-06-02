@@ -58,15 +58,11 @@ public class ServerNetworkManager : NetworkManager
 
         try
         {
-            // persists config data from menu scene
-            gameApp.PersistAllParameters("NewGameScene");
-
-            this.networkAddress = gameApp.GetAndRemoveInputField("Address");
-            this.networkPort = int.Parse(gameApp.GetAndRemoveInputField("Port"));
+            this.networkAddress = gameApp.GetInputField("ServerAddress");
+            this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
         } catch(Exception e)
         {
             Debug.Log("SetupNewGame error: " + e.Message);
-            gameApp.RemoveAllParameters();
             return;
         }
 
@@ -89,15 +85,11 @@ public class ServerNetworkManager : NetworkManager
 
         try
         {
-            // persists config data from menu scene
-            gameApp.PersistAllParameters("LoadGameScene");
-
-            this.networkAddress = gameApp.GetAndRemoveInputField("Address");
-            this.networkPort = int.Parse(gameApp.GetAndRemoveInputField("Port"));
+            this.networkAddress = gameApp.GetInputField("Address");
+            this.networkPort = int.Parse(gameApp.GetInputField("Port"));
         } catch(Exception e)
         {
             Debug.Log("SetupLoadGame error: " + e.Message);
-            gameApp.RemoveAllParameters();
             return;
         }
 
@@ -141,16 +133,14 @@ public class ServerNetworkManager : NetworkManager
 
         if (isNewGame)
         {
-            // create new game
-            List<GameApp.PlayerMenu> PlayerMenuList = gameApp.GetAllPlayersFromMenu();
-
             try
             {
-                gameController.ServerStartNewGame(PlayerMenuList);
+                gameController.ServerStartNewGame();
             }
             catch (Exception e)
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
+                Debug.Log(e.StackTrace);
                 this.StopServer();
             }
         }
