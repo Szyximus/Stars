@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
+
+/*
+ *  It is used for blocking input between turns
+ */
 public class TurnScreen : MonoBehaviour
 {
 
@@ -10,9 +14,9 @@ public class TurnScreen : MonoBehaviour
     RawImage background;
     AudioSource sound;
 
-    // Controls the fading in and out of Big turn counter
-    void Start()
+    public void Start()
     {
+        Debug.Log("TurnScreen Start");
         label = gameObject.GetComponentInChildren<Text>();
         background = gameObject.GetComponent<RawImage>();
         sound = gameObject.GetComponent<AudioSource>();
@@ -20,21 +24,33 @@ public class TurnScreen : MonoBehaviour
         background.color = new Vector4(0, 0, 0, 0);
     }
 
-    public void Play()
+
+    public void Play(string value)
+    {
+        gameObject.SetActive(true);
+        label.text = value;
+        sound.Play();
+        StartCoroutine(FadeIn(true));
+    }
+
+    public void Show(string value)
+    {
+        gameObject.SetActive(true);
+        label.text = value;
+        sound.Play();
+        StartCoroutine(FadeIn(false));
+    }
+
+    public void Hide()
     {
         sound.Play();
+        StartCoroutine(FadeOut());
+    }
+
+    IEnumerator FadeIn(bool autoFadeOut)
+    {
+        Debug.Log("TurnScreen: fade in");
         gameObject.SetActive(true);
-        StartCoroutine(FadeIn());
-    }
-
-    public void Update()
-    {
-        label.text = "year " + (GameController.GetYear() + 2400).ToString();
-    }
-
-    IEnumerator FadeIn()
-    {
-
         float startTime = Time.time;
 
         while (Time.time - startTime < 1) // takes exactly 1 s. regardless of framerate
@@ -46,15 +62,17 @@ public class TurnScreen : MonoBehaviour
         }
         label.color = new Vector4(1, 1, 1, 1);
         background.color = new Vector4(0, 0, 0, 0.83f);
-        StartCoroutine(FadeOut());
+
+        if (autoFadeOut)
+            StartCoroutine(FadeOut());
     }
 
     IEnumerator FadeOut()
     {
-
+        Debug.Log("TurnScreen: fade out");
         float startTime = Time.time;
 
-        while (Time.time - startTime < 2) // takes exactly 2 s. regardless of framerate
+        while (Time.time - startTime < 1) // takes exactly 2 s. regardless of framerate
         {
             float passedTime = Time.time - startTime;
             label.color = new Vector4(1, 1, 1, 1f- passedTime / 2f);

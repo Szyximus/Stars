@@ -16,8 +16,12 @@ public class UpperPanel : MonoBehaviour
 
     Text playerLabel;
 
-    void Start()
+    private GameController gameController;
+    private bool initialized = false;
+
+    public void Init()
     {
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
         powerLabel = GameObject.Find("Power").GetComponentInChildren<Text>();
         populationLabel = GameObject.Find("Population").GetComponentInChildren<Text>();
         mineralsLabel = GameObject.Find("Resources").GetComponentInChildren<Text>();
@@ -28,11 +32,19 @@ public class UpperPanel : MonoBehaviour
         radarsLabel = GameObject.Find("Radars").GetComponentInChildren<Text>();
 
         playerLabel = GameObject.Find("PlayerName").GetComponentInChildren<Text>();
+
+        initialized = true;
     }
 
     private void Update()
     {
-        Player currentPlayer = GameController.GetCurrentPlayer();
+        if (initialized == false)
+            return;
+
+        Player currentPlayer = gameController.GetCurrentPlayer();
+        if (currentPlayer == null)
+            return;
+
         playerLabel.text = currentPlayer.ToString();
         if (currentPlayer != null)
         {

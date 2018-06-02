@@ -9,7 +9,6 @@ namespace Assets.Scripts
 {
     public class SelectionManager
     {
-        private GameObject targetObject = null;
         private GameObject selectedObject;
         /// <summary>
         /// Storing reference to selected object
@@ -27,26 +26,6 @@ namespace Assets.Scripts
                     selectedObject = value;
                 else
                     selectedObject = null;
-
-                //Debug.Log(String.Format("Selected grid cell: {0}",
-                //    _selectedObject != null ? _selectedObject.tag : "no object selected")
-                //    );
-
-
-            }
-        }
-        public GameObject TargetObject
-        {
-            get
-            {
-                return targetObject;
-            }
-            set
-            {
-                if (targetObject != value)   //clicking second time disables selection
-                    targetObject = value;
-                else
-                    targetObject = null;
 
                 //Debug.Log(String.Format("Selected grid cell: {0}",
                 //    _selectedObject != null ? _selectedObject.tag : "no object selected")

@@ -8,7 +8,8 @@ public class SideMenu : MonoBehaviour
 {
     bool shown, animating = false;
 
-    GameController GameController;
+    GameController gameController;
+    private bool initialized = false;
 
     RectTransform rectTransform;
     GameObject NamePanel;
@@ -37,14 +38,13 @@ public class SideMenu : MonoBehaviour
 
     Button colonizeButton;
     Button mineButton;
-    Button attackButton;
 
     Image icon;
 
     // Use this for initialization
-    void Start()
+    public void Init()
     {
-        GameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
 
         transform.position += new Vector3(256, 0, 0);
 
@@ -68,7 +68,6 @@ public class SideMenu : MonoBehaviour
         //shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
-        attackButton = ShipPanel.GetComponentsInChildren<Button>()[2];
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
 
         scoutCosts = BuildPanel.GetComponentsInChildren<Text>()[1];
@@ -78,7 +77,7 @@ public class SideMenu : MonoBehaviour
 
         icon = NamePanel.GetComponentsInChildren<Image>().Last();
 
-
+        initialized = true;
     }
     void ShowNamePanel()
     {
@@ -147,13 +146,9 @@ public class SideMenu : MonoBehaviour
                                      "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
                                      "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
 
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null &&
-            EventManager.selectionManager.TargetObject != null && EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
         {
-            if (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Planet>()))
-                colonizeButton.gameObject.SetActive(true);
-            else
-                colonizeButton.gameObject.SetActive(false);
+            colonizeButton.gameObject.SetActive(true);
         }
         else
         {
@@ -161,33 +156,13 @@ public class SideMenu : MonoBehaviour
         }
 
 
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null &&
-             EventManager.selectionManager.TargetObject != null && (EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null ||
-             (EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)))
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null)
         {
-            if (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Planet>()) ||
-              (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Star>())))
-                mineButton.gameObject.SetActive(true);
-            else
-                mineButton.gameObject.SetActive(false);
+            mineButton.gameObject.SetActive(true);
         }
         else
         {
             mineButton.gameObject.SetActive(false);
-        }
-
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Warship>() as Warship) != null &&
-            EventManager.selectionManager.TargetObject != null && ((EventManager.selectionManager.TargetObject.GetComponent<Spaceship>() != null) ||
-            (EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)))
-        {
-            if (EventManager.selectionManager.SelectedObject.GetComponent<Warship>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Ownable>()))
-                attackButton.gameObject.SetActive(true);
-            else
-                attackButton.gameObject.SetActive(false);
-        }
-        else
-        {
-            attackButton.gameObject.SetActive(false);
         }
     }
 
@@ -229,30 +204,30 @@ public class SideMenu : MonoBehaviour
                                      "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
 
-        scoutCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
+        scoutCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededPopulation.ToString();
 
-        minerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower.ToString() +
+        minerCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededPopulation.ToString();
 
-        warshipCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower.ToString() +
+        warshipCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation.ToString();
 
 
-        colonizerCosts.text = '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower.ToString() +
+        colonizerCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals.ToString() +
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals.ToString() +
             "     " +
-            '-' + GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation.ToString();
+            '-' + gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation.ToString();
 
 
 
@@ -285,6 +260,8 @@ public class SideMenu : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (initialized == false)
+            return;
 
         if (EventManager.selectionManager.SelectedObject == null && shown && !animating) // No selection
         {
@@ -308,7 +285,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()))// if owed Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() == gameController.GetCurrentPlayer()))// if owed Spaceship
         {
             ShowNamePanel();
             ShowShipPanel();
@@ -316,7 +293,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship) != null) &&
-            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()))// if enemy Spaceship
+            ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Ownable).GetOwner() != gameController.GetCurrentPlayer()))// if enemy Spaceship
         {
             ShowNamePanel();
             ShowEnemySpaceshipPanels();
@@ -332,7 +309,7 @@ public class SideMenu : MonoBehaviour
 
         if (EventManager.selectionManager.SelectedObject != null &&
             (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == GameController.GetCurrentPlayer()) // if owned planet
+            (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == gameController.GetCurrentPlayer()) // if owned planet
         {
             ShowNamePanel();
             ShowOwnedPlanetPanels();
@@ -340,7 +317,7 @@ public class SideMenu : MonoBehaviour
 
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != GameController.GetCurrentPlayer()) //Free Planet
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer()) //Free Planet
         {
             ShowNamePanel();
             ShowFreePlanetPanels();

@@ -20,6 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4325186246791778}
   - component: {fileID: 114174229503428196}
+  - component: {fileID: 114140980772012014}
   m_Layer: 0
   m_Name: PlayerPref
   m_TagString: Untagged
@@ -40,6 +41,38 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114140980772012014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1513614362586978}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 221
+    i1: 109
+    i2: 216
+    i3: 140
+    i4: 26
+    i5: 44
+    i6: 34
+    i7: 244
+    i8: 43
+    i9: 145
+    i10: 239
+    i11: 186
+    i12: 117
+    i13: 215
+    i14: 118
+    i15: 59
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114174229503428196
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -51,5 +84,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfeedf02672a56149a81c8aeeeda3c45, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  name: 
+  password: 
+  local: 0
+  clientConnected: 0
   human: 0
+  minerals: 0
+  population: 0
+  solarPower: 0
+  terraforming: 0
+  attack: 0
+  engines: 0
+  radars: 0
+  spaceshipsCosts:
+    scoutNeededMinerals: 0
+    scoutNeededPopulation: 0
+    scoutNeededSolarPower: 0
+    minerNeededMinerals: 0
+    minerNeededPopulation: 0
+    minerNeededSolarPower: 0
+    warshipNeededMinerals: 0
+    warshipNeededPopulation: 0
+    warshipNeededSolarPower: 0
+    colonizerNeededMinerals: 0
+    colonizerNeededPopulation: 0
+    colonizerNeededSolarPower: 0

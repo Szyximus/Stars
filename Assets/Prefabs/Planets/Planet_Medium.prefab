@@ -53,6 +53,7 @@ GameObject:
   - component: {fileID: 4904643740293466}
   - component: {fileID: 135955126677111454}
   - component: {fileID: 114725756780413840}
+  - component: {fileID: 114450218839709388}
   m_Layer: 0
   m_Name: Planet_Medium
   m_TagString: Planet
@@ -187,6 +188,38 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Speed: 5
+--- !u!114 &114450218839709388
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1583324355466894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 57
+    i1: 227
+    i2: 64
+    i3: 175
+    i4: 11
+    i5: 172
+    i6: 29
+    i7: 84
+    i8: 40
+    i9: 4
+    i10: 168
+    i11: 45
+    i12: 247
+    i13: 5
+    i14: 100
+    i15: 123
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!114 &114725756780413840
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -207,6 +240,7 @@ MonoBehaviour:
     oxygen: 0
   resources:
     minerals: 0
+  mayBeHome: 0
 --- !u!135 &135955126677111454
 SphereCollider:
   m_ObjectHideFlags: 1

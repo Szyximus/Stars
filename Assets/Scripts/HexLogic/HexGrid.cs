@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class HexGrid : MonoBehaviour
@@ -35,6 +34,8 @@ public class HexGrid : MonoBehaviour
 
         CreateChunks();
         CreateCells();
+
+        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
     }
 
     void CreateCells()
@@ -98,12 +99,6 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    void Start()
-    {
-
-        uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
-    }
-
     void Update()
     {
         if (Input.GetButtonUp("MouseLeft"))
@@ -114,24 +109,8 @@ public class HexGrid : MonoBehaviour
 
         if (Input.GetButtonUp("MouseRight"))
         {
-
-            Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(inputRay, out hit))
-            {
-                if (EventManager.selectionManager.SelectedObject != null && hit.collider.gameObject.GetComponent<Ownable>() == null &&
-                   EventManager.selectionManager.TargetObject == null && hit.collider.gameObject.GetComponent<Star>() == null)
-                {
-                    EventManager.selectionManager.SelectedObject = null;
-                }
-                if (EventManager.selectionManager.TargetObject != null && hit.collider.gameObject.GetComponent<Ownable>() == null &&
-                     hit.collider.gameObject.GetComponent<Star>() == null)
-                {
-                    EventManager.selectionManager.TargetObject = null;
-                }
-
-            }
-            Thread.Sleep(100);
+            if (!uiListener.IsUIOverride) EventManager.selectionManager.SelectedObject = null;
+            Thread.Sleep(100);  
         }
 
     }
@@ -153,7 +132,7 @@ public class HexGrid : MonoBehaviour
         else return null;
     }
 
-    public HexCell FromCoordinates(int x, int z)
+    public HexCell FromCoordinates( int x, int z )
     {
         var a = cells.Where(c => c.Coordinates.X == x && c.Coordinates.Z == z);
         if (a.Any())
@@ -180,8 +159,7 @@ public class HexGrid : MonoBehaviour
             }
         if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
             FromCoordinates(coordinates); //it's only one match, First() used to change type
-                                          //Debug.Log("touched at " + coordinates);
-
+        //Debug.Log("touched at " + coordinates);
     }
 
     public void SetupNewTurn(Player currentPlayer)
@@ -194,11 +172,10 @@ public class HexGrid : MonoBehaviour
     {
         foreach (HexCell cell in cells)
         {
-            if (cell.IsDiscoveredBy(currentPlayer))
+            if(cell.IsDiscoveredBy(currentPlayer))
             {
                 cell.Hide();
-            }
-            else
+            } else
             {
                 cell.UnDiscover();
             }
@@ -243,7 +220,7 @@ public class HexGrid : MonoBehaviour
     }
 
     void ShowAllInRadarRange(Player player)
-    {
+    { 
         foreach (Ownable owned in player.GetOwned())
         {
             ShowAllInRadarRange(owned);

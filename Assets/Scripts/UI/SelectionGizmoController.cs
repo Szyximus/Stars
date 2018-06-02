@@ -11,6 +11,11 @@ public class SelectionGizmoController : MonoBehaviour
     Vector3 offset = new Vector3(0, 0.01f, 0);
     private AudioSource sound;
 
+    void Awake()
+    {
+        main = this;
+    }
+
     // Use this for initialization
     void Start()
     {
@@ -33,16 +38,11 @@ public class SelectionGizmoController : MonoBehaviour
         {
             sound.Play();
             transform.hasChanged = false;
-            Debug.Log("click");
         }
 
         transform.Rotate(Vector3.up * 20 * Time.deltaTime);
         transform.hasChanged = false;
 
     }
-    void Awake()
-    {
-        main = this;
-
-    }
+    
 }

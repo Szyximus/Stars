@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading;
 
+[System.Serializable]
 public class Star : MonoBehaviour
 {
     [System.Serializable]
@@ -12,20 +13,23 @@ public class Star : MonoBehaviour
         public int solarPower;
     }
 
-    StarResources starResources;
+    public StarResources resources;
 
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
     private UIHoverListener uiListener;
-    Vector3 targetMenuPosition;
-    // Use this for initialization
-    void Start()
+
+    void Awake()
     {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
-        UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
+        UpdateCoordinates();
     }
 
+    private void Start()
+    {
+        Debug.Log("star start: " + name);
+    }
     void UpdateCoordinates()
     {
         Coordinates = HexCoordinates.FromPosition(gameObject.transform.position);
@@ -47,32 +51,14 @@ public class Star : MonoBehaviour
 
     private int GetSolarPower(int solarPowerCount)
     {
-        if (starResources.solarPower >= solarPowerCount)
-            starResources.solarPower -= solarPowerCount;
+        if (resources.solarPower >= solarPowerCount)
+            resources.solarPower -= solarPowerCount;
 
         return solarPowerCount;
     }
-    public bool GiveSolarPower(Player player, int solarPowerCount)
+    public bool GiveSolarPower(Player player,int solarPowerCount)
     {
         player.solarPower += (GetSolarPower(solarPowerCount));
         return true;
     }
-
-    private void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
-            EventManager.selectionManager.SelectedObject != null &&
-            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
-        {
-            Debug.Log("cel");
-            EventManager.selectionManager.TargetObject = this.gameObject;
-            Thread.Sleep(150);
-        }
-        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
-        {
-            Debug.Log("tu nie");
-            EventManager.selectionManager.TargetObject = null;
-        }
-    }
-
 }

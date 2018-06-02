@@ -9,10 +9,13 @@ using System.IO;
 using Newtonsoft.Json;
 using Assets.Scripts.HexLogic;
 using System.Linq;
+using UnityEngine.Networking;
+
 
 public class Planet : Ownable
 {
-    Random rnd = new Random();
+    Random random = new Random();
+
     [System.Serializable]
     public struct PlanetCharacteristics
     {
@@ -29,81 +32,35 @@ public class Planet : Ownable
         public int minerals;
     }
 
-    bool targetMenuVisible = false;
-    Vector3 targetMenuPosition;
-
-
-
+    [SyncVar]
     public PlanetCharacteristics characteristics;
+    [SyncVar]
     public PlanetResources resources;
+    [SyncVar]
+    public bool mayBeHome;
 
+    [SyncVar]
     private int maxHealthPoints;
 
     private UIHoverListener uiListener;
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
         RadarRange = 40f;
 
-    }
-
-    void Start()
-    {
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         maxHealthPoints = characteristics.healthPoints;
         UpdateCoordinates();
 
-        Debug.Log("Start planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
+        Debug.Log("Awake planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
     }
 
-    string ToJson()
-    {
-        StringBuilder sb = new StringBuilder();
-        StringWriter sw = new StringWriter(sb);
-        using (JsonWriter writer = new JsonTextWriter(sw))
-        {
-            writer.Formatting = Formatting.Indented;
-            writer.WriteStartObject();
-
-            writer.WritePropertyName("planetMain");
-            writer.WriteRawValue(JsonUtility.ToJson(this));
-
-            writer.WritePropertyName("radius");
-            writer.WriteValue(this.GetComponent<SphereCollider>().radius);
-
-            writer.WritePropertyName("material");
-            writer.WriteValue(this.GetComponentsInChildren<MeshRenderer>()[0].material);
-
-            writer.WritePropertyName("position");
-            writer.WriteStartArray();
-            writer.WriteRawValue(this.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
-            writer.WriteEndArray();
-
-            writer.WriteEndObject();
-        }
-        return sb.ToString();
-    }
-
-    void FromJson(string json)
-    {
-        //JsonTextReader reader = new JsonTextReader(new StringReader(json));
-        //while (reader.Read())
-        //{
-        //    if (reader.Value != null)
-        //    {
-        //        switch reader.
-        //    }
-        //    else
-        //    {
-        //        Console.WriteLine("Token: {0}", reader.TokenType);
-        //    }
-        //}
-    }
 
     void UpdateCoordinates()
     {
@@ -113,35 +70,10 @@ public class Planet : Ownable
         //Debug.Log(grid.FromCoordinates(Coordinates).transform.localPosition.ToString() + '\n' + Coordinates.ToString());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
- 
-
-
     private void OnMouseUpAsButton()
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
-    private void OnMouseOver()
-    {
-        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled && GameController.GetCurrentPlayer() != this.GetOwner() &&
-            EventManager.selectionManager.SelectedObject != null &&
-            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
-        {
-            Debug.Log("cel");
-            EventManager.selectionManager.TargetObject = this.gameObject;
-            Thread.Sleep(150);
-        }
-        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
-        {
-            Debug.Log("tu nie");
-            EventManager.selectionManager.TargetObject = null;
-        }
-    }
-
 
     override
     public void SetupNewTurn()
@@ -157,7 +89,7 @@ public class Planet : Ownable
      */
     public bool Colonize()
     {
-        this.Colonize(GameController.GetCurrentPlayer());
+        this.Colonize(gameController.GetCurrentPlayer());
         return true;
         //   Destroy(gameObject);
     }
@@ -167,6 +99,7 @@ public class Planet : Ownable
         this.Owned(newOnwer);
         //   Destroy(gameObject);
     }
+
     public GameObject BuildSpaceship(GameObject spaceshipPrefab)
     {
         HexCoordinates homePlanetCoordinates = HexCoordinates.FromPosition(gameObject.transform.position);
@@ -182,46 +115,25 @@ public class Planet : Ownable
         }
         return null;
     }
+
     HexCell EmptyCell(HexCoordinates startCooridantes)
     {
         // serch for empty hexCell
         HexCell cell;
-        for (int X = -1; X <= 1; X += 2)
-        {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + X, startCooridantes.Z);
-            cell = grid.FromCoordinates(newCoordinates);
-            if (cell != null && cell.IsEmpty())
-                return cell;
-        }
-        //TODO to refactor. has been did only for demo
-        if (true)
-        {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X - 1, startCooridantes.Z + 1);
-            cell = grid.FromCoordinates(newCoordinates);
-            if (cell != null && cell.IsEmpty())
-                return cell;
-        }
-        if (true)
-        {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + 1, startCooridantes.Z - 1);
-            cell = grid.FromCoordinates(newCoordinates);
-            if (cell != null && cell.IsEmpty())
-                return cell;
-        }
-        //
 
-        for (int Z = -1; Z <= 1; Z += 2)
+        foreach (HexCoordinates offset in HexCoordinates.NeighboursOffsets)
         {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X, startCooridantes.Z + Z);
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + offset.X, startCooridantes.Z + offset.Z);
             cell = grid.FromCoordinates(newCoordinates);
             if (cell != null && cell.IsEmpty())
                 return cell;
         }
         return null;
     }
+
     public bool IsPossibleBuildSpaceship(Spaceship spaceship)
     {
-        if (owner == GameController.GetCurrentPlayer())
+        if (owner == gameController.GetCurrentPlayer())
             if (spaceship.neededMinerals <= GetOwner().minerals &&
             spaceship.neededPopulation <= GetOwner().population &&
             spaceship.neededSolarPower <= GetOwner().solarPower)
@@ -234,6 +146,7 @@ public class Planet : Ownable
         Debug.Log("You have not the required amount of resources");
         return false;
     }
+
     private void FindStarsNear()
     {
         List<GameObject> list;
@@ -314,6 +227,7 @@ public class Planet : Ownable
         }
 
     }
+
     private int GetMinerals(int mineralsCount)
     {
         if (resources.minerals >= mineralsCount)
@@ -321,6 +235,7 @@ public class Planet : Ownable
 
         return mineralsCount;
     }
+
     public bool GiveMineralsTo(Player player, int mineralsCount)
     {
         player.minerals += (GetMinerals(mineralsCount));

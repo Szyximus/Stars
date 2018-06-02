@@ -72,6 +72,7 @@ GameObject:
   - component: {fileID: 135777127890119852}
   - component: {fileID: 82197398955818604}
   - component: {fileID: 114346740623221658}
+  - component: {fileID: 114934910962466298}
   m_Layer: 0
   m_Name: Warship
   m_TagString: Unit
@@ -471,9 +472,51 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RadarRange: 0
-  buildCost: 0
+  neededMinerals: 0
+  neededPopulation: 0
+  neededSolarPower: 0
+  spaceshipStatistics:
+    healthPoints: 0
+    attack: 0
+    defense: 0
+    speed: 0
   Flying: 0
   MaxActionPoints: 0
+  planetToAttack: {fileID: 0}
+  spaceshipsToAttack: {fileID: 0}
+  maxHealthPoints: 0
+--- !u!114 &114934910962466298
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1644412067872902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 42
+    i1: 76
+    i2: 133
+    i3: 47
+    i4: 1
+    i5: 63
+    i6: 142
+    i7: 180
+    i8: 200
+    i9: 227
+    i10: 23
+    i11: 224
+    i12: 138
+    i13: 176
+    i14: 68
+    i15: 105
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!135 &135777127890119852
 SphereCollider:
   m_ObjectHideFlags: 1
