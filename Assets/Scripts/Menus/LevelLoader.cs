@@ -41,6 +41,7 @@ public class LevelLoader : MonoBehaviour {
 
         if (slider != null)
             slider.SetActive(true);
+
         StartCoroutine(LoadAsynchronously(scene));
     }
 

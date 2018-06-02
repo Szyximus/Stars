@@ -25,7 +25,7 @@ public class NewGameMapSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.LoadLevel("mainMenuScene");
+        levelLoader.Back("mainMenuScene");
     }
 
     public void Next()

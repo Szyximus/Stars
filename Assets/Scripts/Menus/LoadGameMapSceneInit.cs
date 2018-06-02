@@ -27,7 +27,7 @@ public class LoadGameMapSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.LoadLevel("mainMenuScene");
+        levelLoader.Back("mainMenuScene");
     }
 
     public void Next()

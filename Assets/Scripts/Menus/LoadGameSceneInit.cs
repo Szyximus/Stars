@@ -76,7 +76,7 @@ public class LoadGameSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.LoadLevel("LoadGameMapScene");
+        levelLoader.Back("LoadGameMapScene");
     }
 
     public void Create()

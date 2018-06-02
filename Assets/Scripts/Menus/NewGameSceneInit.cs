@@ -54,7 +54,7 @@ public class NewGameSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.LoadLevel("NewGameMapScene");
+        levelLoader.Back("NewGameMapScene");
     }
 
     public void Create()

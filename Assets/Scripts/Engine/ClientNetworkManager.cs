@@ -50,16 +50,16 @@ public class ClientNetworkManager : NetworkManager
 
             this.networkAddress = gameApp.GetAndRemoveInputField("ServerAddress");
             this.networkPort = int.Parse(gameApp.GetAndRemoveInputField("ServerPort"));
+
+            // uncomment for testing
+            //this.networkAddress = "127.0.0.1";
+            //this.networkPort = 7777;
+            this.StartClient();
         } catch(Exception e)
         {
             Debug.Log("SetupClient error: " + e.Message);
-            gameApp.RemoveAllParameters();
             return;
         }
-
-        this.networkAddress = "127.0.0.1";
-        this.networkPort = 7777;
-        this.StartClient();
     }
 
     // Client callbacks

@@ -58,18 +58,21 @@ public class ServerNetworkManager : NetworkManager
 
         try
         {
-            this.networkAddress = gameApp.GetInputField("ServerAddress");
+            this.serverBindAddress = gameApp.GetInputField("ServerAddress");
+            this.serverBindToIP = true;
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
+
+            // uncomment for testing
+            //this.networkAddress = "127.0.0.1";
+            //this.networkPort = 7777;
+            if (!this.StartServer())
+                throw new Exception("Starting server error!");
+            this.ServerChangeScene("GameScene");
         } catch(Exception e)
         {
             Debug.Log("SetupNewGame error: " + e.Message);
             return;
         }
-
-        this.networkAddress = "127.0.0.1";
-        this.networkPort = 7777;
-        this.StartServer();
-        this.ServerChangeScene("GameScene");
     }
 
     /*
@@ -85,18 +88,21 @@ public class ServerNetworkManager : NetworkManager
 
         try
         {
-            this.networkAddress = gameApp.GetInputField("ServerAddress");
+            this.serverBindAddress = gameApp.GetInputField("ServerAddress");
+            this.serverBindToIP = true;
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
+
+            // uncomment for testing
+            //this.networkAddress = "127.0.0.1";
+            //this.networkPort = 7777;
+            if(!this.StartServer())
+                throw new Exception("Starting server error!");
+            this.ServerChangeScene("GameScene");
         } catch(Exception e)
         {
             Debug.Log("SetupLoadGame error: " + e.Message);
             return;
         }
-
-        this.networkAddress = "192.168.1.10";
-        this.networkPort = 7777;
-        this.StartServer();
-        this.ServerChangeScene("GameScene");
     }
 
     /*
