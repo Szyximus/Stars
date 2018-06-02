@@ -3,6 +3,9 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 
+/*
+ *  Class used in NewGameMapScene
+ */
 public class NewGameMapSceneInit : MonoBehaviour
 {
     private GameApp gameApp;
@@ -15,6 +18,7 @@ public class NewGameMapSceneInit : MonoBehaviour
         gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
 
+        // find and put files to dropdown list
         Dropdown mapToLoadDropdown = GameObject.Find("MenuCanvas/DropdownCanvas/MapToLoadDropdown").GetComponent<Dropdown>();
         string[] foundFiles = Directory.GetFiles(gameApp.startMapsPath, "*.json");
         foreach (string foundFile in foundFiles)

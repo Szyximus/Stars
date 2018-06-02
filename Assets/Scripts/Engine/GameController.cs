@@ -74,7 +74,7 @@ public class GameController : NetworkBehaviour
     /*
      *  Server only
      *  Called from ServerNetworkManager
-     *  Starts new game, player names from the "NewGameScene" inputs, maps loaded is "map1"
+     *  Starts new game or loads game from file
      */
     public void ServerStartNewGame(bool isNewGame)
     {
@@ -105,7 +105,7 @@ public class GameController : NetworkBehaviour
     /*
     *  Server only
     *  Called from ServerNetworkManager
-    *  Load game from json (as string)
+    *  Load game from json (as string) from remote client (after his next turn)
     */
     public void ServerNextTurnGame(string savedGameContent)
     {
@@ -121,6 +121,11 @@ public class GameController : NetworkBehaviour
         NextTurn();
     }
 
+    /*
+     *  Client only
+     *  Called from ClientNetworkmanager
+     *  Setup game locally from json received from server
+     */
     public void ClientNextTurnGame(string savedGameContent)
     {
         Debug.Log("ClientNextTurnGame");
@@ -154,8 +159,7 @@ public class GameController : NetworkBehaviour
 
 
     /*
-     * Server only
-     *  Called from "Save" button
+     *  Called from "Save" button in "GameScene"
      */
     public void SaveGame()
     {
@@ -179,7 +183,9 @@ public class GameController : NetworkBehaviour
     }
 
     /*
-     *  Make json with: info(year, currentPlayer), players and map(planets, stars, spaceships)
+     *  Make json with: info(year, currentPlayer, maxPlayers), players and map(planets, stars, spaceships)
+     *  maxPlayers - in new games its max players, in loading saved game it is actual number of players
+     *  "owned" property in planets/spaceships - in new games it is number (from zero to maxPlayers), in saved games its user name as string
      */
     public string GameToJson()
     {
@@ -698,6 +704,10 @@ public class GameController : NetworkBehaviour
             NextTurnClient();
     }
 
+    /*
+     *  After "NextTurn" button on clients
+     *  Serialize game and send to the server
+     */
     public void NextTurnClient()
     {
         Debug.Log("NextTurnClient");
@@ -707,13 +717,15 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        // we have played locally, now serialize game and send to the server
         StringMessage clientMapJson = new StringMessage(GameToJson());
         if (clientNetworkManager == null)
             clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
         clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
     }
 
+    /*
+     *  Called after receiving and loading game from server's json
+     */
     public void SetupNextTurnClient()
     {
         EventManager.selectionManager.SelectedObject = null;
@@ -721,6 +733,9 @@ public class GameController : NetworkBehaviour
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
     }
 
+    /*
+     *  After "NextTurn" button on server
+     */
     public void NextTurnServer()
     {
         Debug.Log("NextTurnServer");
@@ -780,7 +795,6 @@ public class GameController : NetworkBehaviour
     }
 
 
-    // client game logic
     /*
      *  Called from clientNetworkManager, when the client should wait
      */

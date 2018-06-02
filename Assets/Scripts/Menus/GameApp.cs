@@ -77,6 +77,7 @@ public class GameApp : MonoBehaviour
         }
     };
 
+    // this files should be in Assets/Configs/Resources/StartMaps
     private List<string> startMapsList = new List<string> {
         "map1", "map2"
     };
@@ -96,6 +97,9 @@ public class GameApp : MonoBehaviour
         public string playerType;
     }
 
+    /*
+     *  Read json file given path
+     */
     public JObject ReadJsonFile(string path)
     {
         Debug.Log("GameApp ReadJsonFile: " + path);
@@ -179,7 +183,9 @@ public class GameApp : MonoBehaviour
         this.playerMenuList = playerMenuList;
     }
 
+
     // scene inputs persistance
+
     public void RemoveAllParameters()
     {
         Parameters.Clear();

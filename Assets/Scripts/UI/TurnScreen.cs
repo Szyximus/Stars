@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
+
+/*
+ *  It is used for blocking input between turns
+ */
 public class TurnScreen : MonoBehaviour
 {
 

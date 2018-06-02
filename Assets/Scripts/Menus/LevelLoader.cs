@@ -8,7 +8,7 @@ using UnityEngine.UI;
  *  Class for pretty scene changing, menu navigation buttons
  *  Singleton, created at "MainMenuScene", should be available all the time
  *  
- *  It clears gameApp.Parameters and destroy networkManagers on "Back"
+ *  It destroys networkManagers on "Back"
  */
 public class LevelLoader : MonoBehaviour {
 

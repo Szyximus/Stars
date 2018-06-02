@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 using System;
 using UnityEngine.UI;
 
+/*
+ *  Class used in LoadGameScene
+ */
 public class LoadGameSceneInit : MonoBehaviour
 {
     private GameApp gameApp;
@@ -22,6 +25,7 @@ public class LoadGameSceneInit : MonoBehaviour
 
         playersToAddToGame = new List<GameObject>();
 
+        // gat and parse saved json file
         string path = gameApp.savedGamesPath + gameApp.GetInputField("GameToLoad");
         JObject gameParsed = null;
         try
@@ -61,6 +65,7 @@ public class LoadGameSceneInit : MonoBehaviour
             return;
         }
 
+        // players' names and races shouldn't change between sessions
         foreach (JObject playerJson in playersJson)
         {
             GameObject newPlayer = Instantiate(gameApp.PlayerMenuPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;

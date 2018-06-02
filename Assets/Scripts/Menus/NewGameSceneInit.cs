@@ -5,6 +5,9 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
 
+/*
+ *  Class used in NewGameScene
+ */
 public class NewGameSceneInit : MonoBehaviour
 {
     private GameApp gameApp;
@@ -23,6 +26,7 @@ public class NewGameSceneInit : MonoBehaviour
 
         playersToAddToGame = new List<GameObject>();
 
+        // get and parse map to load
         string path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
         JObject gameParsed = null;
         try
@@ -57,6 +61,10 @@ public class NewGameSceneInit : MonoBehaviour
         levelLoader.Back("NewGameMapScene");
     }
 
+    /*
+     *  Get players' data from the menu input fields and pass to the gameApp
+     *  So the data can be read by gameController afterwards
+     */
     public void Create()
     {
         List<GameApp.PlayerMenu> playerMenuList = new List<GameApp.PlayerMenu>();
@@ -76,6 +84,9 @@ public class NewGameSceneInit : MonoBehaviour
         serverNetworkManager.SetupNewGame();
     }
 
+    /*
+     *  Add input for a player to the menu
+     */
     public void AddPlayer()
     {
         if(playersToAddToGame.Count >= maxPlayers)
@@ -88,6 +99,9 @@ public class NewGameSceneInit : MonoBehaviour
         playersToAddToGame.Add(newPlayer);
     }
 
+    /*
+     *  Remove player from the menu
+     */
     public void RemovePlayer()
     {
         if(playersToAddToGame.Count <= 0)

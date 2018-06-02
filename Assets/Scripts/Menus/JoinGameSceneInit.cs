@@ -1,6 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+/*
+ *  Class used in JoinGameScene
+ */
 public class JoinGameSceneInit : MonoBehaviour
 {
 

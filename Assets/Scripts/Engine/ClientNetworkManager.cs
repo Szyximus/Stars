@@ -139,8 +139,8 @@ public class ClientNetworkManager : NetworkManager
 
     /*
      *  Custom callback (on connSetupTurnId)
-     *  Server invoke it when it is this client's turn
-     *  Client set to "ready" state and start plays the game
+     *  Server invoke it from "OnServerReady" when the client finished loading scene
+     *  netMsg contains number: 0 - wait, 1 - your turn, play
      */
     public void OnClientSetupTurn(NetworkMessage netMsg)
     {
@@ -154,6 +154,11 @@ public class ClientNetworkManager : NetworkManager
             gameController.WaitForTurn();
     }
 
+    /*
+     *   Custom callback (on connClientLoadGameId)
+     *   Server invoke it from "OnServerReady" just after connSetupTurnId
+     *   Client should load game from the server
+     */
     public void OnClientLoadGame(NetworkMessage netMsg)
     {
         Debug.Log("OnClientLoadGame");

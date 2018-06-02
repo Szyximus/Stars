@@ -3,6 +3,10 @@ using System.Collections;
 using UnityEngine.UI;
 using System.IO;
 
+
+/*
+ *  Class used in LoadGameMapScene
+ */
 public class LoadGameMapSceneInit : MonoBehaviour
 {
 
@@ -16,6 +20,7 @@ public class LoadGameMapSceneInit : MonoBehaviour
         gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
 
+        // find and put files to dropdown list
         Dropdown mapToLoadDropdown = GameObject.Find("MenuCanvas/DropdownCanvas/GameToLoadDropdown").GetComponent<Dropdown>();
         string[] foundFiles = Directory.GetFiles(gameApp.savedGamesPath, "*.json");
         foreach (string foundFile in foundFiles)

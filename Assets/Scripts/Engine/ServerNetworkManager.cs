@@ -12,7 +12,7 @@ using System.Linq;
 /*
  *  This is singleton object
  *  Created at "NewGameScene" or "LoadGameScene"
- *  Destroyed at game exit (in GameController.Exit) or "Back" button in "NewGameScene" and "LoadGameScene" (in LevelLoader.Back)
+ *  Destroyed at game exit (in GameController.Exit) or "Back" button
  */
 public class ServerNetworkManager : NetworkManager
 {
@@ -78,7 +78,6 @@ public class ServerNetworkManager : NetworkManager
     /*
      *   After "Load" button in "LoadGameScene"
      *   Setup bind address and port, start server, change scene
-     *   
      */
     public void SetupLoadGame()
     {
@@ -127,7 +126,7 @@ public class ServerNetworkManager : NetworkManager
     /*
      *  After server was started or received next turn from remote client
      *  Scene should have been changed to "GameScene", GameController should be available
-     *  Calls initialization function from GameController
+     *  Calls initialization functions from GameController
      */
     public override void OnServerSceneChanged(string sceneName)
     {
@@ -139,6 +138,7 @@ public class ServerNetworkManager : NetworkManager
 
         if (isNewGame || isLoadGame)
         {
+            // load game, path to file etc. are saved by GameApp
             try
             {
                 gameController.ServerStartNewGame(isNewGame);
@@ -152,9 +152,9 @@ public class ServerNetworkManager : NetworkManager
         }
         else
         {
+            // next turn from remote client
             try
             {
-                // next turn from remote client
                 gameController.ServerNextTurnGame(nextTurnGameJson);
                 nextTurnGameJson = null;
             } catch(Exception e)
@@ -235,7 +235,7 @@ public class ServerNetworkManager : NetworkManager
 
     /*
      *  Custom callback, invoked from remote client at the and of the turn ("NextTurn" button)
-     *  Contains message with serialized map (as json)
+     *  Contains message with serialized game (as json)
      *  Validate the message and setup new turn if valid
      */
     public void OnServerClientNextTurnDone(NetworkMessage netMsg)
@@ -313,7 +313,7 @@ public class ServerNetworkManager : NetworkManager
     }
 
     /*
-     *  Clients is ready, check if this is his turn and send msg
+     *  Clients are ready, check if this is some client's turn and send msgs
      *  
      */
     public override void OnServerReady(NetworkConnection conn)
@@ -332,12 +332,14 @@ public class ServerNetworkManager : NetworkManager
         }
 
         if (gameController.GetCurrentPlayer().name.Equals(playerName)) {
+            // now is turn of this player
             Debug.Log("OnServerReady: connClientLoadGameId");
             conn.Send(gameApp.connSetupTurnId, new IntegerMessage(1));
             conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
         }
         else
         {
+            // all other players should wait
             Debug.Log("OnServerReady: connSetupTurnId");
             conn.Send(gameApp.connSetupTurnId, new IntegerMessage(0));
         }
