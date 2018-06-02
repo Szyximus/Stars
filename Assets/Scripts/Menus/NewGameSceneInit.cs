@@ -24,9 +24,18 @@ public class NewGameSceneInit : MonoBehaviour
         playersToAddToGame = new List<GameObject>();
 
         string path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
-        JObject gameParsed = gameApp.ReadJsonFile(path);
+        JObject gameParsed = null;
+        try
+        {
+            gameParsed = gameApp.ReadJsonFile(path);
+        }
+        catch (Exception e)
+        {
+            Debug.Log("NewGameSceneInit error: " + e.Message);
+            Back();
+        }
 
-        if(gameParsed == null)
+        if (gameParsed == null)
         {
             Debug.Log("NewGameSceneInit gameParsed is null");
             Back();

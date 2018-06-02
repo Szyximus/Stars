@@ -104,7 +104,13 @@ public class ClientNetworkManager : NetworkManager
         string password = gameApp.GetAndRemoveInputField("Password");
 
         Debug.Log("OnClientConnect: sending player name: " + playerName);
-        StringMessage playerMsg = new StringMessage(playerName);
+
+        string playerJson = JsonUtility.ToJson(new GameApp.PlayerMenu
+        {
+            name = playerName,
+            password = password
+        });
+        StringMessage playerMsg = new StringMessage(playerJson);
         networkClient.Send(gameApp.connAssignPlayerId, playerMsg);
     }
 

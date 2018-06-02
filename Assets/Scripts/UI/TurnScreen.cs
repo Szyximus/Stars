@@ -10,25 +10,16 @@ public class TurnScreen : MonoBehaviour
     RawImage background;
     AudioSource sound;
 
-    private GameController gameController;
-    private bool showed;
-
     public void Start()
     {
-        Debug.Log("TurnScreen start");
-    }
-    // Controls the fading in and out of Big turn counter
-    public void Init()
-    {
-        Debug.Log("TurnScreen init");
+        Debug.Log("TurnScreen Start");
         label = gameObject.GetComponentInChildren<Text>();
         background = gameObject.GetComponent<RawImage>();
         sound = gameObject.GetComponent<AudioSource>();
         label.color = new Vector4(255, 255, 255, 0);
         background.color = new Vector4(0, 0, 0, 0);
-
-        Hide();
     }
+
 
     public void Play(string value)
     {
@@ -55,7 +46,6 @@ public class TurnScreen : MonoBehaviour
     IEnumerator FadeIn(bool autoFadeOut)
     {
         Debug.Log("TurnScreen: fade in");
-        showed = true;
         gameObject.SetActive(true);
         float startTime = Time.time;
 
@@ -89,6 +79,5 @@ public class TurnScreen : MonoBehaviour
         label.color = new Vector4(1, 1, 1, 0);
         background.color = new Vector4(0, 0, 0, 0);
         gameObject.SetActive(false);
-        showed = false;
     }
 }

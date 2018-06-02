@@ -131,50 +131,17 @@ public class ServerNetworkManager : NetworkManager
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.serverNetworkManager = this;
 
-        if (isNewGame)
+        if (isNewGame || isLoadGame)
         {
             try
             {
-                gameController.ServerStartNewGame();
+                gameController.ServerStartNewGame(isNewGame);
             }
             catch (Exception e)
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
                 Debug.Log(e.StackTrace);
                 this.StopServer();
-            }
-        }
-        else if(isLoadGame)
-        {
-            // load game from json file. Read it here, so we can use ServerLoadGame as in nextTurn from remote client
-            string savedGameFile = gameApp.GetAndRemoveInputField("SavedGameFile");
-            if (savedGameFile == null || savedGameFile.Equals(""))
-            {
-                Debug.Log("savedGameFile empty");
-                this.StopServer();
-                return;
-            }
-
-            string path = gameApp.savedGamesPath + "/" + savedGameFile + ".json";
-            StreamReader reader = new StreamReader(path);
-            string savedGameContent = reader.ReadToEnd();
-            reader.Close();
-
-            if (savedGameContent == null || "".Equals(savedGameContent))
-            {
-                Debug.Log("savedGameContent is null, path: " + path);
-                this.StopServer();
-                return;
-            }
-
-            try
-            {
-                gameController.ServerLoadGame(savedGameContent);
-            } catch(Exception e)
-            {
-                Debug.Log("OnServerSceneChanged gameController.ServerLoadGame error: " + e.Message);
-                this.StopServer();
-                return;
             }
         }
         else
@@ -205,19 +172,37 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-        string clientPlayerName = clientPlayerNameMsg.value;
-        Debug.Log("OnServerClientAssignPlayer, player name: " + clientPlayerName);
+        string clientPlayerData = clientPlayerNameMsg.value;
+        Debug.Log("OnServerClientAssignPlayer, player data: " + clientPlayerData);
 
-
-        if (connections.ContainsKey(clientPlayerName))
+        string clientPlayerName;
+        string clientPassword;
+        try
         {
-            Debug.Log("OnServerClientAssignPlayer: player taken");
-            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
+            GameApp.PlayerMenu clinetPlayerDataMenu = JsonUtility.FromJson<GameApp.PlayerMenu>(clientPlayerData);
+            clientPlayerName = clinetPlayerDataMenu.name;
+            clientPassword = clinetPlayerDataMenu.password;
+        } catch(Exception e)
+        {
+            Debug.Log("OnServerClientAssignPlayer: wrong json data sent, " + e.Message);
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Wrong json data sent"));
+            return;
         }
-        else if (gameController.FindPlayer(clientPlayerName) == null)
+ 
+        if (gameController.FindPlayer(clientPlayerName) == null)
         {
             Debug.Log("OnServerClientAssignPlayer: player name not found, " + clientPlayerName);
             netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player with name " + clientPlayerName + " not found"));
+        }
+        else if (!gameController.FindPlayer(clientPlayerName).password.Equals(clientPassword))
+        {
+            Debug.Log("OnServerClientAssignPlayer: player wrong password" + clientPlayerName);
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player with name " + clientPlayerName + " - wrong password"));
+        }
+        else if (connections.ContainsKey(clientPlayerName))
+        {
+            Debug.Log("OnServerClientAssignPlayer: player taken");
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
         }
         else
         {

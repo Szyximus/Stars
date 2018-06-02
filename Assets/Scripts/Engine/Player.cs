@@ -12,6 +12,8 @@ public class Player : NetworkBehaviour
     [SyncVar]
     public bool human;
     [SyncVar]
+    public string race;
+    [SyncVar]
     public int minerals;
     [SyncVar]
     public int population;

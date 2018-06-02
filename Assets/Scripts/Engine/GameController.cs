@@ -56,7 +56,6 @@ public class GameController : NetworkBehaviour
         // init it here, because they depends on GameController, which is started after MonoBehaviour scripts
         GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
         GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
-        turnScreen.Init();
 
         players = new List<GameObject>();
         planets = new List<GameObject>();
@@ -77,7 +76,7 @@ public class GameController : NetworkBehaviour
      *  Called from ServerNetworkManager
      *  Starts new game, player names from the "NewGameScene" inputs, maps loaded is "map1"
      */
-    public void ServerStartNewGame()
+    public void ServerStartNewGame(bool isNewGame)
     {
         Debug.Log("ServerStartNewGame");
         if (!isServer)
@@ -85,35 +84,18 @@ public class GameController : NetworkBehaviour
             throw new Exception("ServerStartNewGame not a server, return");
         }
 
-        string path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
-
+        string path = null;
+        if (isNewGame)
+            path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
+        else
+            path = gameApp.savedGamesPath + gameApp.GetInputField("GameToLoad");
         JObject newGameJson = gameApp.ReadJsonFile(path);
 
         List<GameApp.PlayerMenu> PlayerMenuList = gameApp.GetAllPlayersFromMenu();
 
-        PlayersFromMenu(newGameJson, PlayerMenuList);
-        MapFromJson((JObject)newGameJson["map"], true);
-        InfoFromJson((JObject)newGameJson["info"], true);
-
-        // because "NextTurn" will increment
-        currentPlayerIndex -= 1;
-        NextTurn();
-    }
-
-    /*
-     *  Server only
-     *  Called from ServerNetworkManager
-     *  Load game from json (as string)
-     */
-    public void ServerLoadGame(string savedGameContent)
-    {
-        Debug.Log("ServerLoadGame");
-        if (!isServer)
-        {
-            throw new Exception("ServerLoadGame not a server, return");
-        }
-
-        GameFromJson(savedGameContent);
+        PlayersFromJsonAndMenu(newGameJson, PlayerMenuList, isNewGame);
+        MapFromJson((JObject)newGameJson["map"], isNewGame);
+        InfoFromJson((JObject)newGameJson["info"], isNewGame);
 
         // because "NextTurn" will increment
         currentPlayerIndex -= 1;
@@ -178,12 +160,7 @@ public class GameController : NetworkBehaviour
     public void SaveGame()
     {
         Debug.Log("SaveGame");
-        if (!isServer)
-        {
-            Debug.Log("Client can't save the game");
-            return;
-        }
-
+ 
         string SaveGameFile = SaveGameFileInput.text;
         if (SaveGameFile == null || "".Equals(SaveGameFile))
         {
@@ -191,7 +168,9 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        string path = gameApp.savedGamesPath + "/" + SaveGameFile + ".json";
+        string path = gameApp.savedGamesPath + "/" + SaveGameFile;
+        if (!path.EndsWith(".json"))
+            path += ".json";
         Debug.Log("Saving to file: " + path);
 
         StreamWriter streamWriter = new StreamWriter(path);
@@ -239,6 +218,9 @@ public class GameController : NetworkBehaviour
 
             writer.WritePropertyName("year");
             writer.WriteValue(year);
+
+            writer.WritePropertyName("maxPlayers");
+            writer.WriteValue(players.Count);
 
             writer.WriteEndObject();
         }
@@ -467,19 +449,38 @@ public class GameController : NetworkBehaviour
         SpaceshipsFromJson((JArray)mapJson["spaceships"], isNewGame);
     }
 
-    void PlayersFromMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList)
+    void PlayersFromJsonAndMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList, bool isNewGame)
     {
-        if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
-            throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+        JObject playerJson = null;
 
+        if (!isNewGame)
+        {
+            if ((int)gameJson["info"]["maxPlayers"] != PlayerMenuList.Count)
+                throw new Exception("Wrong number of players, should be " + (int)gameJson["info"]["maxPlayers"]);
+            playerJson = (JObject)gameJson["players"];
+        }
+        else
+        {
+            if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
+                throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+        }
+        
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
         {
             // init
             GameObject playerGameObject = Instantiate(gameApp.PlayerPrefab);
             Player player = playerGameObject.GetComponent<Player>();
+            if (!isNewGame)
+            {
+                JsonUtility.FromJsonOverwrite(playerJson["playerMain"].ToString(), player.GetComponent<Player>());
+                player.name = (string)playerJson["name"];
+            }
+            else
+            {
+                player.name = playerMenu.name;
+                player.race = playerMenu.race;
+            }
 
-            // general
-            player.name = playerMenu.name;
             player.password = playerMenu.password;
             player.human = !playerMenu.playerType.Equals("A");
             player.local = !playerMenu.playerType.Equals("R");

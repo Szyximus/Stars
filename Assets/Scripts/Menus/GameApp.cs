@@ -56,9 +56,10 @@ public class GameApp : MonoBehaviour
                 new ParameterMapping { name="SavedGameFile", inputField = "MenuCanvas/SavedGameFileInput" }
             }
         },
-        {"LoadGameScene",  new List<ParameterMapping> {
-                new ParameterMapping { name="Address", inputField = "MenuCanvas/AddressInput" },
-                new ParameterMapping { name="Port", inputField = "MenuCanvas/PortInput" },
+        {"LoadGameMapScene",  new List<ParameterMapping> {
+                new ParameterMapping { name="ServerAddress", inputField = "MenuCanvas/ServerAddressInput" },
+                new ParameterMapping { name="ServerPort", inputField = "MenuCanvas/ServerPortInput" },
+                new ParameterMapping { name="GameToLoad", inputField = "MenuCanvas/DropdownCanvas/GameToLoadDropdown" },
             }
         },
         {"JoinGameScene",  new List<ParameterMapping> {
@@ -222,7 +223,7 @@ public class GameApp : MonoBehaviour
             if (inputFieldName.Contains("Dropdown"))
             {
                 Dropdown inputField = GameObject.Find(inputFieldName).GetComponent<Dropdown>();
-                if (inputField != null)
+                if (inputField != null && inputField.value < inputField.options.Count)
                 {
                     // that .json cause dropdown are used only for files
                     return inputField.options[inputField.value].text + ".json";
