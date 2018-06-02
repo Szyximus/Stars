@@ -864,46 +864,40 @@ public class GameController : NetworkBehaviour
     public void Colonize()
     {
         var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
-        Planet planetToColonize = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
-        if (colonizer != null && planetToColonize != null)
+        if (colonizer != null)
         {
-            if (colonizer.Colonize(planetToColonize))
+            if (colonizer.ColonizePlanet())
             {
                 grid.FromCoordinates(colonizer.Coordinates).ClearObject();
-                GameController.GetCurrentPlayer().Lose(colonizer);
+                GetCurrentPlayer().Lose(colonizer);
                 Destroy(colonizer.gameObject);
+
             }
         }
+
     }
 
     public void Mine()
     {
         var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
-        if (EventManager.selectionManager.TargetObject != null &&
-            EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
+        if (miner != null && miner.GetActionPoints() > 0)
         {
-            Planet planetToMine = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
-            miner.MinePlanet(planetToMine);
-
+            if (miner.MineResources())
+                miner.SetActionPoints(-1);
+            else
+            {
+                Debug.Log("Cannot mine");
+            }
         }
-        else if (EventManager.selectionManager.TargetObject != null &&
-             EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)
-        {
-            Star starToMine = EventManager.selectionManager.TargetObject.GetComponent<Star>();
-            miner.MineStar(starToMine);
-        }
-
-
     }
+
     public void Attack()
     {
         var spaceship = EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>();
-        Ownable target = EventManager.selectionManager.TargetObject.GetComponent<Ownable>();
 
-        if (spaceship != null && spaceship.GetActionPoints() > 0 && target != null)
+        if (spaceship != null && spaceship.GetActionPoints() > 0)
         {
-
-            if (spaceship.Attack(target))
+            if (spaceship.Attack())
             {
                 Debug.Log("You attacked");
                 spaceship.SetActionPoints(-1);
