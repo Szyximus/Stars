@@ -21,7 +21,7 @@ public class ClickableText : MonoBehaviour
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        GetComponent<Transform>().localScale = new Vector3(1.05f, 1.05f, 1.05f);
+        GetComponent<Transform>().localScale = new Vector3(1.05f, 1.1f, 1.05f);
         shadow.effectDistance = new Vector2(0,0);
    
     }
