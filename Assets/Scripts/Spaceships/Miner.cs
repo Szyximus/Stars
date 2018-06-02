@@ -33,78 +33,50 @@ public class Miner : Spaceship
         spaceshipStatistics.speed = 6;
     }
 
-    public bool MinePlanet()
-    {
-        return true;
-    }
 
-    public bool MineStar()
-    {
-        return true;
-    }
     private bool CheckCanBeMined(Planet planet)
     {
         return true;
     }
-
-    /**
-     * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
-     */
-    public bool MineResources()
+    private bool CheckCanBeMined(Star star)
     {
-        var gameObjectsInProximity =
-                Physics.OverlapSphere(transform.position, 10)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-        var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
-        var stars = gameObjectsInProximity.Where(o => o.tag == "Star");
-
-        try
-        {
-            PlanetToMine = planets.FirstOrDefault().GetComponent<Planet>() as Planet;
-            Debug.Log("Jest planeta");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma planety");
-        }
-        try
-        {
-            StarToMine = stars.FirstOrDefault().GetComponent<Star>() as Star;
-            Debug.Log("Jest gwiazda");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma gwiazdy");
-        }
-        if (StarToMine == null )
-        {
-            Debug.Log("Cannot find star/planet or planet belong to you");
-            return false;
-        }
-        else if (StarToMine != null)
-        {
-            if (GetActionPoints() > 0)
-            {
-                StarToMine.GiveSolarPower(GetOwner(), 1);
-                return true;
-            }
-            Debug.Log("You dont have enough movement points");
-            return false;
-        }
-        else if (PlanetToMine != null || PlanetToMine.GetOwner() != gameController.GetCurrentPlayer())
-        {
-            if (GetActionPoints() > 0)
-            {
-                PlanetToMine.GiveMineralsTo(GetOwner(),1);
-                return true;
-            }
-            Debug.Log("You dont have enough movement points");
-            return false;
-        }
-        return false;
-
+        return true;
     }
+    public void MinePlanet(Planet planetToMine)
+    {
+        var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
+        if (miner != null && miner.GetActionPoints() > 0)
+        {
+            if (EventManager.selectionManager.TargetObject != null &&
+                EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
+                if (miner.CheckCanBeMined(planetToMine))
+                {
+                    planetToMine.GiveMineralsTo(GetOwner(), 1);
+                    miner.SetActionPoints(-1);
+                }
+                else
+                {
+                    Debug.Log("Cannot mine");
+                }
+        }
+    }
+    public void MineStar(Star startToMine)
+    {
+        var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
+        if (miner != null && miner.GetActionPoints() > 0)
+        {
+            if (EventManager.selectionManager.TargetObject != null &&
+                EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)
+                if (miner.CheckCanBeMined(startToMine))
+                {
+                    startToMine.GiveSolarPower(GetOwner(), 1);
+                    miner.SetActionPoints(-1);
+                }
+                else
+                {
+                    Debug.Log("Cannot mine");
+                }
+        }
+    }
+
 }

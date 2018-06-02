@@ -10,7 +10,7 @@ using System.Linq;
 public class Spaceship : Ownable
 {
     private List<HexCell> path;
-    private HexGrid grid;
+    public HexGrid grid;
     private ParticleSystem burster;
     private Light bursterLight;
     public HexCoordinates Coordinates { get; set; }
@@ -88,14 +88,28 @@ public class Spaceship : Ownable
     void Update()
     {
 
-
     }
 
     private void OnMouseUpAsButton()
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
-
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled && GameController.GetCurrentPlayer() != this.GetOwner() &&
+            EventManager.selectionManager.SelectedObject != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
+        {
+            Debug.Log("cel");
+            EventManager.selectionManager.TargetObject = this.gameObject;
+            Thread.Sleep(150);
+        }
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        {
+            Debug.Log("tu nie");
+            EventManager.selectionManager.TargetObject = null;
+        }
+    }
     public void Move(HexCell destination)
     {
         if (!CanMakeAction())
@@ -235,72 +249,46 @@ public class Spaceship : Ownable
         this.actionPoints += actionPoints;
     }
 
-    public bool Attack()
+    public bool Attack(Ownable target)
     {
-        if (!CanMakeAction())
-            return false;
-
-        var gameObjectsInProximity =
-                Physics.OverlapSphere(transform.position, 10)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-        var spaceships = gameObjectsInProximity.Where(o => o.tag == "Unit");
-        var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
-        // try catch to taki hacks narazie tylko na demo
-        try
+        if (EventManager.selectionManager.TargetObject != null)
         {
-            spaceshipsToAttack = spaceships.FirstOrDefault().GetComponent<Spaceship>() as Spaceship;
-            Debug.Log("Jest statek");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma statkow");
-        }
-        try
-        {
-            planetToAttack = planets.FirstOrDefault().GetComponent<Planet>() as Planet;
-            Debug.Log("Jest planeta");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma planet");
-        }
-        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == gameController.GetCurrentPlayer() &&
-               (planetToAttack == null || planetToAttack.GetOwner() == gameController.GetCurrentPlayer()))
-        {
-            Debug.Log("Cannot find planet or planet belong to you");
-            return false;
-        }
-        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != gameController.GetCurrentPlayer())
-        {
-            if (GetActionPoints() > 0)
+            Debug.Log("weszlo");
+            if (target == null || target.GetOwner() == GameController.GetCurrentPlayer())
             {
-
-                GameObject SourceFire = Instantiate(gameController.gameApp.AttackPrefab, transform.position, transform.rotation);
-                GameObject TargetFire = Instantiate(gameController.gameApp.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
-
-                spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
-
-                Destroy(SourceFire, 1f);
-                Destroy(TargetFire, 1f);
-                return true;
+                Debug.Log("Cannot find planet or planet belong to you");
+                return false;
             }
-            Debug.Log("You dont have enough movement points");
-            return false;
-        }
-        else if (planetToAttack != null || planetToAttack.GetOwner() != gameController.GetCurrentPlayer())
-        {
-            if (GetActionPoints() > 0)
+            else if (target != null && target.GetOwner() != GameController.GetCurrentPlayer() && target.GetComponent<Spaceship>() != null)
             {
-                planetToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
-                return true;
+                if (GetActionPoints() > 0)
+                {
+
+                    GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
+                    GameObject TargetFire = Instantiate(GameController.HitPrefab, target.transform.position, target.transform.rotation);
+
+                    target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
+
+                    Destroy(SourceFire, 1f);
+                    Destroy(TargetFire, 1f);
+                    return true;
+                }
+                Debug.Log("You dont have enough movement points");
+                return false;
             }
-            Debug.Log("You dont have enough movement points");
-            return false;
+            else if (target != null || target.GetOwner() != GameController.GetCurrentPlayer() && target.GetComponent<Planet>() != null)
+            {
+                if (GetActionPoints() > 0)
+                {
+                    target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                    return true;
+                }
+                Debug.Log("You dont have enough movement points");
+                return false;
+            }
         }
         return false;
+
     }
 
     private void AddHealthPoints(int healthPoints)
@@ -319,7 +307,7 @@ public class Spaceship : Ownable
         else
         {
             this.spaceshipStatistics.healthPoints += healthPoints;
-            
+
         }
     }
 
@@ -346,10 +334,37 @@ public class Spaceship : Ownable
             engineSound.Play();
         }
     }
-
-    public string getModel()
+    public bool CheckDistance(Ownable target)
     {
-        return this.model;
+        //var gameObjectsInProximity =
+        //           Physics.OverlapSphere(transform.position, 10)
+        //           .Except(new[] { GetComponent<Collider>() })
+        //           .Select(c => c.gameObject)
+        //           .ToArray();
+        //var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
+        // PlanetToColonize = (planets.FirstOrDefault().GetComponent<Planet>() as Planet);
+        if (target != null)
+        {
+            float distance = Vector3.Distance(target.transform.position, this.transform.position);
+            return distance < 10.0 ? true : false;
+        }
+        return false;
+    }
+    public bool CheckDistance(Star target)
+    {
+        //var gameObjectsInProximity =
+        //           Physics.OverlapSphere(transform.position, 10)
+        //           .Except(new[] { GetComponent<Collider>() })
+        //           .Select(c => c.gameObject)
+        //           .ToArray();
+        //var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
+        // PlanetToColonize = (planets.FirstOrDefault().GetComponent<Planet>() as Planet);
+        if (target != null)
+        {
+            float distance = Vector3.Distance(target.transform.position, this.transform.position);
+            return distance < 10.0 ? true : false;
+        }
+        return false;
     }
 }
 
