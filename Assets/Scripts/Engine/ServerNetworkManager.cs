@@ -85,8 +85,8 @@ public class ServerNetworkManager : NetworkManager
 
         try
         {
-            this.networkAddress = gameApp.GetInputField("Address");
-            this.networkPort = int.Parse(gameApp.GetInputField("Port"));
+            this.networkAddress = gameApp.GetInputField("ServerAddress");
+            this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
         } catch(Exception e)
         {
             Debug.Log("SetupLoadGame error: " + e.Message);

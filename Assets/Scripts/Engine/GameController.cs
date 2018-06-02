@@ -451,20 +451,23 @@ public class GameController : NetworkBehaviour
 
     void PlayersFromJsonAndMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList, bool isNewGame)
     {
-        JObject playerJson = null;
+        JArray playersJson = null;
 
         if (!isNewGame)
         {
             if ((int)gameJson["info"]["maxPlayers"] != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players, should be " + (int)gameJson["info"]["maxPlayers"]);
-            playerJson = (JObject)gameJson["players"];
+            playersJson = (JArray)gameJson["players"];
+            if(playersJson.Count != PlayerMenuList.Count)
+                throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
         }
         else
         {
             if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
                 throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
         }
-        
+
+        int i = 0;
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
         {
             // init
@@ -472,8 +475,8 @@ public class GameController : NetworkBehaviour
             Player player = playerGameObject.GetComponent<Player>();
             if (!isNewGame)
             {
-                JsonUtility.FromJsonOverwrite(playerJson["playerMain"].ToString(), player.GetComponent<Player>());
-                player.name = (string)playerJson["name"];
+                JsonUtility.FromJsonOverwrite(playersJson[i]["playerMain"].ToString(), player.GetComponent<Player>());
+                player.name = (string)playersJson[i]["name"];
             }
             else
             {
@@ -487,6 +490,7 @@ public class GameController : NetworkBehaviour
 
             players.Add(playerGameObject);
             // NetworkServer.Spawn(playerGameObject);
+            i++;
         }
     }
 

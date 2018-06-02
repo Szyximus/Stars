@@ -68,7 +68,7 @@ public class LoadGameSceneInit : MonoBehaviour
             newPlayer.transform.Find("PlayerNameInput").GetComponent<InputField>().text = (string)playerJson["name"];
             newPlayer.transform.Find("PlayerNameInput").GetComponent<InputField>().enabled = false;
 
-            newPlayer.transform.Find("PlayerNameInput").GetComponent<InputField>().text = (string)playerJson["race"];
+            newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().text = (string)playerJson["playerMain"]["race"];
             newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().enabled = false;
             playersToAddToGame.Add(newPlayer);
         }
