@@ -72,6 +72,7 @@ GameObject:
   - component: {fileID: 4000011428506136}
   - component: {fileID: 198000012942003240}
   - component: {fileID: 199000010939959374}
+  - component: {fileID: 114050584582961618}
   m_Layer: 0
   m_Name: SmallExplosionEffect
   m_TagString: Untagged
@@ -134,6 +135,38 @@ Transform:
   m_Father: {fileID: 4000011428506136}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114050584582961618
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013462590818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 372142912, guid: dc443db3e92b4983b9738c1131f555cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SceneId:
+    m_Value: 0
+  m_AssetId:
+    i0: 236
+    i1: 221
+    i2: 150
+    i3: 190
+    i4: 183
+    i5: 249
+    i6: 52
+    i7: 148
+    i8: 136
+    i9: 12
+    i10: 5
+    i11: 45
+    i12: 252
+    i13: 207
+    i14: 157
+    i15: 193
+  m_ServerOnly: 0
+  m_LocalPlayerAuthority: 1
 --- !u!198 &198000010217891986
 ParticleSystem:
   m_ObjectHideFlags: 1

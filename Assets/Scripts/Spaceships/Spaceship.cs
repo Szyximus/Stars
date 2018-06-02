@@ -6,6 +6,7 @@ using UnityEngine;
 using System.Threading;
 using System.Linq;
 
+[System.Serializable]
 public class Spaceship : Ownable
 {
     private List<HexCell> path;
@@ -15,16 +16,16 @@ public class Spaceship : Ownable
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
-    GameController GameController;
 
     private UIHoverListener uiListener;
     private AudioSource engineSound;
+
+    protected string model;
 
     public int neededMinerals;
     public int neededPopulation;
     public int neededSolarPower;
 
-    public SpaceshipStatistics spaceshipStatistics;
     [System.Serializable]
     public struct SpaceshipStatistics
     {
@@ -34,46 +35,36 @@ public class Spaceship : Ownable
         public int speed;
     }
 
+    public SpaceshipStatistics spaceshipStatistics;
+
     public bool Flying;
     public int MaxActionPoints;
-    private int actionPoints;
+    public int actionPoints;
 
     public Planet planetToAttack;
     public Spaceship spaceshipsToAttack;
 
-
-    int i = 0; //for the movement test, remove later
-    private bool initialized = false;
-
     public int maxHealthPoints;
 
-    private void Awake()
+    protected new void Awake()
     {
+        base.Awake();
+        model = null;
         Flying = false;
         RadarRange = 26f;
         MaxActionPoints = 7;
         maxHealthPoints = spaceshipStatistics.healthPoints;
-    }
 
-    void Start()
-    {
-        if (!initialized)
-            Init();
-    }
-
-    public void Init()
-    {
-        initialized = true;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
-        // StartCoroutine(DelayedUpdate()); //Need to update coordinates after Hexes initialization is finished
         UpdateCoordinates();
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
-        GameController = GameObject.Find("GameController").GetComponent<GameController>();
         burster = gameObject.GetComponentsInChildren<ParticleSystem>().Last();
         bursterLight = gameObject.GetComponentInChildren<Light>();
         engineSound = gameObject.GetComponent<AudioSource>();
 
         TurnEnginesOff();
+
+        Debug.Log("Awake spaceship");
     }
 
     override
@@ -107,6 +98,8 @@ public class Spaceship : Ownable
 
     public void Move(HexCell destination)
     {
+        if (!CanMakeAction())
+            return;
         var dx = Coordinates.X - destination.Coordinates.X;
         var dz = Coordinates.Z - destination.Coordinates.Z;
 
@@ -128,6 +121,9 @@ public class Spaceship : Ownable
 
     public void Move(EDirection direction)
     {
+        if (!CanMakeAction())
+            return;
+
         var r = HexMetrics.innerRadius;
         var r_sqrt3 = r * 1.7320508757f;
 
@@ -182,40 +178,43 @@ public class Spaceship : Ownable
      */
     public IEnumerator MoveTo(HexCoordinates dest)
     {
-        GameController.LockInput();
-        TurnEnginesOn();
-        //while (Coordinates != dest && actionPoints > 0)
-        //{
-        //    Debug.Log("moving " + actionPoints);
-        //    actionPoints--;
-        //    if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
-        //        Move(EDirection.TopRight);
-        //    else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
-        //        Move(EDirection.TopLeft);
-        //    else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
-        //        Move(EDirection.BottomRight);
-        //    else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
-        //        Move(EDirection.BottomLeft);
-        //    else if (dest.X > Coordinates.X)
-        //        Move(EDirection.Right);
-        //    else if (dest.X < Coordinates.X)
-        //        Move(EDirection.Left);
-        //    yield return new WaitForSeconds(1.05f);
-
-        //}
-
-        path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
-        while (Coordinates != dest && actionPoints > 0)
+        if (CanMakeAction())
         {
-            Move(path.First());
-            path.RemoveAt(0);
-            actionPoints--;
-            yield return new WaitForSeconds(1.05f);
+            gameController.LockInput();
+            TurnEnginesOn();
+            //while (Coordinates != dest && actionPoints > 0)
+            //{
+            //    Debug.Log("moving " + actionPoints);
+            //    actionPoints--;
+            //    if (dest.Z > Coordinates.Z && dest.X >= Coordinates.X)
+            //        Move(EDirection.TopRight);
+            //    else if (dest.Z > Coordinates.Z && dest.X < Coordinates.X)
+            //        Move(EDirection.TopLeft);
+            //    else if (dest.Z < Coordinates.Z && dest.X > Coordinates.X)
+            //        Move(EDirection.BottomRight);
+            //    else if (dest.Z < Coordinates.Z && dest.X <= Coordinates.X)
+            //        Move(EDirection.BottomLeft);
+            //    else if (dest.X > Coordinates.X)
+            //        Move(EDirection.Right);
+            //    else if (dest.X < Coordinates.X)
+            //        Move(EDirection.Left);
+            //    yield return new WaitForSeconds(1.05f);
+
+            //}
+
+            path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
+            while (Coordinates != dest && actionPoints > 0)
+            {
+                Move(path.First());
+                path.RemoveAt(0);
+                actionPoints--;
+                yield return new WaitForSeconds(1.05f);
+            }
+            Flying = false;
+            TurnEnginesOff();
+            Debug.Log("Flying done, ActionPoints: " + actionPoints);
+            gameController.UnlockInput();
         }
-        Flying = false;
-        TurnEnginesOff();
-        Debug.Log("Flying done, ActionPoints: " + actionPoints);
-        GameController.UnlockInput();
     }
 
 
@@ -226,17 +225,6 @@ public class Spaceship : Ownable
         UpdateCoordinates();
     }
 
-    public void DoTestStuff()
-    {
-        if (EventManager.selectionManager.SelectedObject.tag == "Unit")
-        {
-            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Move((EDirection)i);
-            i++;
-            if (i > 5) i = 0;
-
-            Debug.Log(string.Format("Destination: {0}", Destination));
-        }
-    }
 
     public int GetActionPoints()
     {
@@ -249,6 +237,9 @@ public class Spaceship : Ownable
 
     public bool Attack()
     {
+        if (!CanMakeAction())
+            return false;
+
         var gameObjectsInProximity =
                 Physics.OverlapSphere(transform.position, 10)
                 .Except(new[] { GetComponent<Collider>() })
@@ -276,19 +267,19 @@ public class Spaceship : Ownable
         {
             Debug.Log("Nie ma planet");
         }
-        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == GameController.GetCurrentPlayer() &&
-               (planetToAttack == null || planetToAttack.GetOwner() == GameController.GetCurrentPlayer()))
+        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == gameController.GetCurrentPlayer() &&
+               (planetToAttack == null || planetToAttack.GetOwner() == gameController.GetCurrentPlayer()))
         {
             Debug.Log("Cannot find planet or planet belong to you");
             return false;
         }
-        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != gameController.GetCurrentPlayer())
         {
             if (GetActionPoints() > 0)
             {
 
-                GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
-                GameObject TargetFire = Instantiate(GameController.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
+                GameObject SourceFire = Instantiate(gameController.gameApp.AttackPrefab, transform.position, transform.rotation);
+                GameObject TargetFire = Instantiate(gameController.gameApp.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
 
                 spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
 
@@ -299,7 +290,7 @@ public class Spaceship : Ownable
             Debug.Log("You dont have enough movement points");
             return false;
         }
-        else if (planetToAttack != null || planetToAttack.GetOwner() != GameController.GetCurrentPlayer())
+        else if (planetToAttack != null || planetToAttack.GetOwner() != gameController.GetCurrentPlayer())
         {
             if (GetActionPoints() > 0)
             {
@@ -316,12 +307,13 @@ public class Spaceship : Ownable
     {
         if ((this.spaceshipStatistics.healthPoints += healthPoints) <= 0)
         {
-            GameObject Explosion = Instantiate(GameController.ExplosionPrefab, transform.position, transform.rotation);
+            GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position, transform.rotation);
             this.GetOwner().Lose(this);
             grid.FromCoordinates(this.Coordinates).ClearObject();
-            GameController.GetCurrentPlayer().Lose(this);
+            gameController.GetCurrentPlayer().Lose(this);
             Destroy(Explosion, 2f);
             Destroy(this.gameObject);
+            gameController.spaceships.Remove(this.gameObject);
             if (this.GetOwner() != null) Lose();
         }
         else
@@ -353,6 +345,11 @@ public class Spaceship : Ownable
         {
             engineSound.Play();
         }
+    }
+
+    public string getModel()
+    {
+        return this.model;
     }
 }
 

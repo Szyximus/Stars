@@ -9,18 +9,24 @@ public class TurnCounter : MonoBehaviour
     Text label;
     Text _Text;
 
-    // Use this for initialization
-    void Start()
+    private GameController gameController;
+
+    void Awake()
     {
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+
         //RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
         label = gameObject.GetComponent<Text>();
-
-
     }
 
     // Update is called once per frame
     void Update()
     {
-        label.text = "Year: " + (GameController.GetYear() + 2400).ToString();
+        if(gameController == null)
+        {
+            return;
+        }
+
+        label.text = "Year: " + (gameController.GetYear() + 2400).ToString();
     }
 }

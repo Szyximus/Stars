@@ -1,10 +1,20 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [System.Serializable]
 public struct HexCoordinates
 {
     [SerializeField]
     private int x, z;
+
+    public static List<HexCoordinates> NeighboursOffsets = new List<HexCoordinates> {
+        new HexCoordinates(-1, 0),
+        new HexCoordinates(-1, 1),
+        new HexCoordinates(0, 1),
+        new HexCoordinates(1, 0),
+        new HexCoordinates(1, -1),
+        new HexCoordinates(0, -1),
+    };
 
     public int X
     {

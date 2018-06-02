@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
+using System;
 
 public class MiniMapController : MonoBehaviour
     , IPointerDownHandler
@@ -56,7 +57,13 @@ public class MiniMapController : MonoBehaviour
 
     public void SetupNewTurn(Player currentPlayer)
     {
-        controller.transform.position = currentPlayer.GetPlanets().Cast<Planet>().First().transform.position;
+        try
+        {
+            controller.transform.position = currentPlayer.GetPlanets().Cast<Planet>().First().transform.position;
+        }
+        catch (Exception e) {
+            Debug.Log("MiniMapController Error: " + e.Message);
+        }
     }
 
     void Update()

@@ -14,13 +14,16 @@ public class Colonizer : Spaceship
     public Planet PlanetToColonize;
     public Text Test;
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
+
+        model = "Colonizer";
         MaxActionPoints = 4;
         RadarRange = 20;
-        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals;
-        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation;
-        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower;
+        neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals;
+        neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation;
+        neededSolarPower = gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededSolarPower;
         spaceshipStatistics.healthPoints = 600;
 
 
@@ -43,7 +46,7 @@ public class Colonizer : Spaceship
         var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
 
         PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        if (PlanetToColonize == null || PlanetToColonize.GetOwner() == GameController.GetCurrentPlayer()) return false;
+        if (PlanetToColonize == null || PlanetToColonize.GetOwner() == gameController.GetCurrentPlayer()) return false;
         else
         if (CheckCanBeColonizate(PlanetToColonize) && PlanetToColonize.GetOwner() == null && GetActionPoints() > 0)
         {
@@ -74,4 +77,5 @@ public class Colonizer : Spaceship
     {
         return (planet.characteristics.healthPoints <= 0);
     }
+
 }

@@ -12,14 +12,17 @@ using System.Linq;
 public class Warship : Spaceship
 {
 
-    private void Awake()
+    private new void Awake()
     {
+        base.Awake();
+
+        model = "Warship";
         MaxActionPoints = 5;
         RadarRange = 25;
 
-        neededMinerals = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals;
-        neededPopulation = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation;
-        neededSolarPower = GameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower;
+        neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals;
+        neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation;
+        neededSolarPower = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower;
 
         spaceshipStatistics.healthPoints = 300;
         spaceshipStatistics.attack = 35;

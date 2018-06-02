@@ -1,21 +1,37 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public class Player : MonoBehaviour
+[System.Serializable]
+public class Player : NetworkBehaviour
 {
+    public string password;
+    public bool local;
+    public bool clientConnected;
+
+    [SyncVar]
     public bool human;
+    [SyncVar]
+    public string race;
+    [SyncVar]
     public int minerals;
+    [SyncVar]
     public int population;
+    [SyncVar]
     public int solarPower;
+    [SyncVar]
     public int terraforming;
+    [SyncVar]
     public int attack;
+    [SyncVar]
     public int engines;
+    [SyncVar]
     public int radars;
+
     private ArrayList spaceships;
     private ArrayList planets;
 
-    public SpaceshipsCosts spaceshipsCosts;
-
+    [System.Serializable]
     public struct SpaceshipsCosts
     {
         public int scoutNeededMinerals;
@@ -34,6 +50,9 @@ public class Player : MonoBehaviour
         public int colonizerNeededPopulation;
         public int colonizerNeededSolarPower;
     }
+
+    [SyncVar]
+    public SpaceshipsCosts spaceshipsCosts;
 
     // Use this for initialization
     void Awake()

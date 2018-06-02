@@ -7,116 +7,558 @@ using System;
 using System.Linq;
 using Assets.Scripts;
 using System.Collections.Generic;
+using UnityEngine.UI;
+using System.Text;
+using UnityEditor;
+using UnityEngine.Networking;
+using UnityEngine.Networking.NetworkSystem;
 
-public class GameController : MonoBehaviour
+/*
+ *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
+ *  Except starting game and "NextTurn" functions, which are different on server and clients
+ */
+public class GameController : NetworkBehaviour
 {
-    private static List<GameObject> players;
-    public GameObject PlayerPrefab;
-    private static int currentPlayerIndex;
+    private List<GameObject> players;
 
-    public GameObject PlanetPrefab;
-    public GameObject StartPrefab;
-    public GameObject ScoutPrefab;
-    public GameObject ColonizerPrefab;
-    public GameObject MinerPrefab;
-    public GameObject WarshipPrefab;
+    [SyncVar]
+    public int currentPlayerIndex;
 
-    public GameObject ExplosionPrefab;
-    public GameObject AttackPrefab;
-    public GameObject HitPrefab;
+    private List<GameObject> planets;
+    private List<GameObject> stars;
+    public List<GameObject> spaceships;
 
-    private static int year;
+    // current year in the game
+    [SyncVar]
+    public int year;
 
     private HexGrid grid;
     TurnScreen turnScreen;
 
-    // Use this for initialization
-    void Start()
-    {
-        StartCoroutine(DelayedStart());
-    }
+    public GameApp gameApp;
+    public LevelLoader levelLoader;
 
-    IEnumerator DelayedStart()
+    // one of this is initialized from corresponding networkManagers
+    public ClientNetworkManager clientNetworkManager;
+    public ServerNetworkManager serverNetworkManager;
+
+    public InputField SaveGameFileInput;
+
+    void Awake()
     {
+        Debug.Log("GameContoller Awake");
+
         grid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
+        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
-        turnScreen.gameObject.SetActive(false);
 
-        InitPlayers();
-        InitMap();
-        yield return new WaitForSeconds(0.1f);  // spaceships after hex grid
-        InitSpaceships();
+        // init it here, because they depends on GameController, which is started after MonoBehaviour scripts
+        GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
+        GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
 
-        yield return new WaitForSeconds(0.25f); // start after all the rest
-        StartGame();
-    }
-
-    public void LockInput()
-    {
-        turnScreen.gameObject.SetActive(true);
-    }
-
-    public void UnlockInput()
-    {
-        turnScreen.gameObject.SetActive(false);
-    }
-
-    void InitPlayers()
-    {
-        // Create players from prefab.
         players = new List<GameObject>();
-        players.Add(Instantiate(PlayerPrefab));
-        players[0].GetComponent<Player>().human = true;
-        players[0].name = "Player0";
-
-        for (int i = 1; i <= 1; i++)
-        {
-            players.Add(Instantiate(PlayerPrefab));
-            players[i].GetComponent<Player>().human = true;
-            players[i].name = "Player" + i;
-        }
+        planets = new List<GameObject>();
+        stars = new List<GameObject>();
+        spaceships = new List<GameObject>();
 
         currentPlayerIndex = 0;
     }
 
-    void InitSpaceships()
+    private void Start()
     {
-        GameObject spaceship;
-        foreach (GameObject player in players)
+        Debug.Log("GameContoller Start");
+    }
+
+    // start game
+    /*
+     *  Server only
+     *  Called from ServerNetworkManager
+     *  Starts new game or loads game from file
+     */
+    public void ServerStartNewGame(bool isNewGame)
+    {
+        Debug.Log("ServerStartNewGame");
+        if (!isServer)
         {
-            Planet homePlanet = player.GetComponent<Player>().GetPlanets().Cast<Planet>().First();
+            throw new Exception("ServerStartNewGame not a server, return");
+        }
 
-            // 1x scout
-            for (int i = 0; i < 1; i++)
+        string path = null;
+        if (isNewGame)
+            path = gameApp.startMapsPath + gameApp.GetInputField("MapToLoad");
+        else
+            path = gameApp.savedGamesPath + gameApp.GetInputField("GameToLoad");
+        JObject newGameJson = gameApp.ReadJsonFile(path);
+
+        List<GameApp.PlayerMenu> PlayerMenuList = gameApp.GetAllPlayersFromMenu();
+
+        PlayersFromJsonAndMenu(newGameJson, PlayerMenuList, isNewGame);
+        MapFromJson((JObject)newGameJson["map"], isNewGame);
+        InfoFromJson((JObject)newGameJson["info"], isNewGame);
+
+        // because "NextTurn" will increment
+        currentPlayerIndex -= 1;
+        NextTurn();
+    }
+    
+    /*
+    *  Server only
+    *  Called from ServerNetworkManager
+    *  Load game from json (as string) from remote client (after his next turn)
+    */
+    public void ServerNextTurnGame(string savedGameContent)
+    {
+        Debug.Log("ServerLoadGame");
+        if (!isServer)
+        {
+            throw new Exception("ServerNextTurnGame not a server, return");
+        }
+
+        GameFromJson(savedGameContent);
+
+        // just make new turn, do not decrement currentPlayerId
+        NextTurn();
+    }
+
+    /*
+     *  Client only
+     *  Called from ClientNetworkmanager
+     *  Setup game locally from json received from server
+     */
+    public void ClientNextTurnGame(string savedGameContent)
+    {
+        Debug.Log("ClientNextTurnGame");
+        if (!isClient)
+        {
+            throw new Exception("ClientNextTurnGame not a client, return");
+        }
+
+        GameFromJson(savedGameContent);
+
+        // just make new turn, do not decrement currentPlayerId
+        SetupNextTurnClient();
+    }
+
+    /*
+     *  "Exit" button in the game, do clean up
+     */
+    public void Exit()
+    {
+        Debug.Log("Exit");
+
+        if (isServer)
+            Destroy(serverNetworkManager);
+        else if (isClient)
+            Destroy(clientNetworkManager);
+        else
+            Debug.Log("wtf we are?");
+
+        levelLoader.LoadLevel("MainMenuScene");
+    }
+
+
+    /*
+     *  Called from "Save" button in "GameScene"
+     */
+    public void SaveGame()
+    {
+        Debug.Log("SaveGame");
+ 
+        string SaveGameFile = SaveGameFileInput.text;
+        if (SaveGameFile == null || "".Equals(SaveGameFile))
+        {
+            Debug.Log("SaveGameFile null or empty");
+            return;
+        }
+
+        string path = gameApp.savedGamesPath + "/" + SaveGameFile;
+        if (!path.EndsWith(".json"))
+            path += ".json";
+        Debug.Log("Saving to file: " + path);
+
+        StreamWriter streamWriter = new StreamWriter(path);
+        streamWriter.Write(GameToJson());
+        streamWriter.Close();
+    }
+
+    /*
+     *  Make json with: info(year, currentPlayer, maxPlayers), players and map(planets, stars, spaceships)
+     *  maxPlayers - in new games its max players, in loading saved game it is actual number of players
+     *  "owned" property in planets/spaceships - in new games it is number (from zero to maxPlayers), in saved games its user name as string
+     */
+    public string GameToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("players");
+            writer.WriteRawValue(PlayersToJson());
+
+            writer.WritePropertyName("info");
+            writer.WriteRawValue(InfoToJson());
+
+            writer.WritePropertyName("map");
+            writer.WriteRawValue(MapToJson());
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+    
+    private string InfoToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("currentPlayer");
+            writer.WriteValue(GetCurrentPlayer().name);
+
+            writer.WritePropertyName("year");
+            writer.WriteValue(year);
+
+            writer.WritePropertyName("maxPlayers");
+            writer.WriteValue(players.Count);
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+
+    private string MapToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("planets");
+            writer.WriteRawValue(PlanetsToJson());
+
+            writer.WritePropertyName("stars");
+            writer.WriteRawValue(StarsToJson());
+
+            writer.WritePropertyName("spaceships");
+            writer.WriteRawValue(SpaceshipsToJson());
+
+            writer.WriteEndObject();
+        }
+        return sb.ToString();
+    }
+
+    private string PlayersToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (GameObject playerGameObject in players)
             {
-                spaceship = SpaceshipFromPref(ScoutPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
-                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+                Player player = playerGameObject.GetComponent<Player>();
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(playerGameObject.name);
+
+                writer.WritePropertyName("playerMain");
+                writer.WriteRawValue(JsonUtility.ToJson(player));
+
+                writer.WriteEndObject();
             }
 
-            // 0x miner
-            for (int i = 0; i < 0; i++)
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
+    }
+
+    private string PlanetsToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (GameObject planetGameObject in planets)
             {
-                spaceship = SpaceshipFromPref(MinerPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
-                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+
+                Planet planet = planetGameObject.GetComponent<Planet>();
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(planetGameObject.name);
+
+                writer.WritePropertyName("owner");
+                writer.WriteValue(planet.GetOwnerName());
+
+                writer.WritePropertyName("planetMain");
+                writer.WriteRawValue(JsonUtility.ToJson(planet));
+
+                writer.WritePropertyName("radius");
+                writer.WriteValue(planet.transform.localScale.x);
+
+                writer.WritePropertyName("material");
+                writer.WriteValue(planetGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(planetGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
             }
 
-            // 0x warship
-            for (int i = 0; i < 0; i++)
+            writer.WriteEndArray();
+        }
+
+        return sb.ToString();
+    }
+
+    private string StarsToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (GameObject starGameObject in stars)
             {
-                spaceship = SpaceshipFromPref(WarshipPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
-                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+                Star star = starGameObject.GetComponent<Star>();
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(starGameObject.name);
+
+                writer.WritePropertyName("starMain");
+                writer.WriteRawValue(JsonUtility.ToJson(star));
+
+                writer.WritePropertyName("radius");
+                writer.WriteValue(star.transform.localScale.x);
+
+                writer.WritePropertyName("material");
+                writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)",""));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(starGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
             }
 
-            // 0x colonizer
-            for (int i = 0; i < 0; i++)
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
+    }
+
+    private string SpaceshipsToJson()
+    {
+        StringBuilder sb = new StringBuilder();
+        StringWriter sw = new StringWriter(sb);
+        using (JsonWriter writer = new JsonTextWriter(sw))
+        {
+            writer.Formatting = Formatting.Indented;
+            writer.WriteStartArray();
+
+            foreach (GameObject spaceshipGameObject in spaceships)
             {
-                spaceship = SpaceshipFromPref(ColonizerPrefab, homePlanet);
-                spaceship.GetComponent<Spaceship>().Init();
-                spaceship.GetComponent<Spaceship>().Owned(player.GetComponent<Player>());
+                Spaceship spaceship = spaceshipGameObject.GetComponent<Spaceship>();
+                writer.WriteStartObject();
+
+                writer.WritePropertyName("name");
+                writer.WriteValue(spaceshipGameObject.name);
+
+                writer.WritePropertyName("model");
+                writer.WriteValue(spaceship.getModel());
+
+                writer.WritePropertyName("owner");
+                writer.WriteValue(spaceship.GetOwnerName());
+
+                writer.WritePropertyName("spaceshipMain");
+                writer.WriteRawValue(JsonUtility.ToJson(spaceship));
+
+                writer.WritePropertyName("position");
+                writer.WriteStartArray();
+                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteEndArray();
+
+                writer.WriteEndObject();
             }
+
+            writer.WriteEndArray();
+        }
+        return sb.ToString();
+    }
+
+
+    // game deserialization
+
+    /*
+     *  Setup variables in GameController, create objects on the map etc.
+     */
+    void GameFromJson(string savedGameContent)
+    {
+        // todo: w jsonach nie moze byc utf8
+
+        JObject savedGameJson = JObject.Parse(savedGameContent);
+        if(savedGameJson == null)
+        {
+            Debug.Log("Error loading json");
+            return;
+        }
+
+        PlayersFromJson((JArray)savedGameJson["players"]);
+        InfoFromJson((JObject)savedGameJson["info"], false);
+        MapFromJson((JObject)savedGameJson["map"], false);
+    }
+
+    void InfoFromJson(JObject infoJson, bool isNewGame)
+    {
+        Debug.Log("InfoFromJson");
+        year = (int)infoJson["year"];
+
+        currentPlayerIndex = 0;
+        if (isNewGame)
+        {
+            currentPlayerIndex = (int)infoJson["currentPlayer"];
+        }
+        else
+        {
+            string currentPlayerName = (string)infoJson["currentPlayer"];
+            if (FindPlayer(currentPlayerName))
+            {
+                currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
+            }
+        }
+    }
+
+    void MapFromJson(JObject mapJson, bool isNewGame)
+    {
+        PlanetsFromJson((JArray)mapJson["planets"], isNewGame);
+        StarsFromJson((JArray)mapJson["stars"]);
+        SpaceshipsFromJson((JArray)mapJson["spaceships"], isNewGame);
+    }
+
+    void PlayersFromJsonAndMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList, bool isNewGame)
+    {
+        JArray playersJson = null;
+
+        if (!isNewGame)
+        {
+            if ((int)gameJson["info"]["maxPlayers"] != PlayerMenuList.Count)
+                throw new Exception("Wrong number of players, should be " + (int)gameJson["info"]["maxPlayers"]);
+            playersJson = (JArray)gameJson["players"];
+            if(playersJson.Count != PlayerMenuList.Count)
+                throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
+        }
+        else
+        {
+            if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
+                throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+        }
+
+        int i = 0;
+        foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
+        {
+            // init
+            GameObject playerGameObject = Instantiate(gameApp.PlayerPrefab);
+            Player player = playerGameObject.GetComponent<Player>();
+            if (!isNewGame)
+            {
+                JsonUtility.FromJsonOverwrite(playersJson[i]["playerMain"].ToString(), player.GetComponent<Player>());
+                player.name = (string)playersJson[i]["name"];
+            }
+            else
+            {
+                player.name = playerMenu.name;
+                player.race = playerMenu.race;
+            }
+
+            player.password = playerMenu.password;
+            player.human = !playerMenu.playerType.Equals("A");
+            player.local = !playerMenu.playerType.Equals("R");
+
+            players.Add(playerGameObject);
+            // NetworkServer.Spawn(playerGameObject);
+            i++;
+        }
+    }
+
+    void PlayersFromJson(JArray playersJson)
+    {
+        foreach (JObject playerJson in playersJson)
+        {
+            // init
+            GameObject player = Instantiate(gameApp.PlayerPrefab);
+            JsonUtility.FromJsonOverwrite(playerJson["playerMain"].ToString(), player.GetComponent<Player>());
+
+            // general
+            player.name = (string)playerJson["name"];
+
+            players.Add(player);
+            // NetworkServer.Spawn(player);
+        }
+    }
+
+    void SpaceshipsFromJson(JArray spaceshipsJson, bool isNewGame)
+    {
+        int counter = 0;
+        foreach (JObject spaceshipJson in spaceshipsJson)
+        {
+            counter += 1;
+
+            // spaceship must have owner, check it first
+            if (spaceshipJson["owner"] == null)
+                continue;
+
+            Player player = null;
+            if (isNewGame)
+            {
+                // in new game, owner will contain number (from zero)
+                if ((int)spaceshipJson["owner"] >= 0 && (int)spaceshipJson["owner"] < players.Count)
+                {
+                    player = players[(int)spaceshipJson["owner"]].GetComponent<Player>();
+                }
+            }
+            else
+            {
+                // in saved game files, owner will contain player's name
+                player = FindPlayer((string)spaceshipJson["owner"]);
+            }
+            
+            if (player == null)
+                continue;
+
+            // init
+            GameObject spaceship = Instantiate(original: FindPrefab((string)spaceshipJson["model"]), position: new Vector3(
+                (float)spaceshipJson["position"][0], (float)spaceshipJson["position"][1], (float)spaceshipJson["position"][2]), rotation: Quaternion.identity
+            );
+            JsonUtility.FromJsonOverwrite(spaceshipJson["spaceshipMain"].ToString(), spaceship.GetComponent<Spaceship>());
+
+            // general
+            spaceship.name = spaceshipJson["model"] + "-" + counter;
+
+            // references and owner
+            spaceship.GetComponent<Spaceship>().Owned(player);
+
+            spaceships.Add(spaceship);
+            // NetworkServer.Spawn(spaceship);
         }
     }
 
@@ -124,19 +566,13 @@ public class GameController : MonoBehaviour
     {
         // serch for empty hexCell
         HexCell cell;
-        for (int X = -1; X <= 1; X += 2)
+        
+        foreach (HexCoordinates offset in HexCoordinates.NeighboursOffsets)
         {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + X, startCooridantes.Z);
-            cell = grid.FromCoordinates(newCoordinates);
-            if (cell != null && cell.IsEmpty())
-                return cell;
-        }
-        for (int Z = -1; Z <= 1; Z += 2)
-        {
-            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X, startCooridantes.Z + Z);
-            cell = grid.FromCoordinates(newCoordinates);
-            if (cell != null && cell.IsEmpty())
-                return cell;
+                HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + offset.X, startCooridantes.Z + offset.Z);
+                cell = grid.FromCoordinates(newCoordinates);
+                if (cell != null && cell.IsEmpty())
+                    return cell;
         }
         return null;
     }
@@ -158,92 +594,158 @@ public class GameController : MonoBehaviour
         return null;
     }
 
-    void InitMap()
+    void PlanetsFromJson(JArray planetsJson, bool isNewGame)
     {
-        // Create map from file / random.
-        // todo: in main menu we should decide if map is from file or random and set parameters
-        // todo: move json deserialization to Planet's FromJson method
-        // serializacje w unity ssie, trzeba bedzie doprawcowac (potrzebne bedzie do save/load i pewnie networkingu...)
-        // todo: w jsonach nie moze byc utf8
-
-        JObject o = JObject.Parse(Resources.Load("map1").ToString());
-        InitPlanets((JArray)o["planets"]);
-        InitStars((JArray)o["stars"]);
-    }
-
-    void InitPlanets(JArray jPlanetsCollection)
-    {
-        int playersWithHomePLanet = 0;
-
-        foreach (JObject jPlanetSerialized in jPlanetsCollection)
+        foreach (JObject planetJson in planetsJson)
         {
-            GameObject planet = Instantiate(original: PlanetPrefab, position: new Vector3(
-                (float)jPlanetSerialized["position"][0], (float)jPlanetSerialized["position"][1], (float)jPlanetSerialized["position"][2]), rotation: Quaternion.identity
+            // init
+            GameObject planet = Instantiate(original: gameApp.PlanetPrefab, position: new Vector3(
+                (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
-            JsonUtility.FromJsonOverwrite(jPlanetSerialized["planetMain"].ToString(), planet.GetComponent<Planet>());
-            planet.name = jPlanetSerialized["name"].ToString();
+            JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
+            // NetworkServer.Spawn(planet);
 
+            // general
+            planet.name = planetJson["name"].ToString();
 
-            float radius = (float)jPlanetSerialized["radius"];
-            //planet.GetComponent<SphereCollider>().radius = radius;
+            // references and owner
+            if(isNewGame)
+            {
+                // in new game, owner will contain number (from zero)
+                if (planetJson["owner"] != null && (int)planetJson["owner"] >= 0 && (int)planetJson["owner"] < players.Count)
+                {
+                    Player player = players[(int)planetJson["owner"]].GetComponent<Player>();
+                    if (player != null)
+                        planet.GetComponent<Planet>().Colonize(player);
+                }
+            }
+            else
+            {
+                // in saved game files, owner will contain player's name
+                if (planetJson["owner"] != null && !"".Equals(planetJson["owner"]))
+                {
+                    Player player = FindPlayer((string)planetJson["owner"]);
+                    if (player != null)
+                        planet.GetComponent<Planet>().Colonize(player);
+                }
+            }
+            
+
+            // mesh properties
+            float radius = (float)planetJson["radius"];
+            if(radius >= 1)
+                planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
 
-            string materialString = (string)jPlanetSerialized["material"];
+            string materialString = (string)planetJson["material"];
             if (materialString != null)
             {
-                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                Material newMaterial = Resources.Load(materialString.Replace(" (Instance)", ""), typeof(Material)) as Material;
                 if (materialString != null)
+                {
                     planet.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+                    planet.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
+                }
             }
 
-            if ((bool)jPlanetSerialized["mayBeHome"] == true && playersWithHomePLanet < players.Count())
-            {
-                planet.GetComponent<Planet>().Colonize(players[playersWithHomePLanet].GetComponent<Player>());
-                playersWithHomePLanet++;
-            }
-        }
-
-        if (playersWithHomePLanet < players.Count())
-        {
-            throw new Exception("Not enough planets for players");
+            planets.Add(planet);
+            // NetworkServer.Spawn(planet);
         }
     }
 
-    void InitStars(JArray jStarsCollection)
+    void StarsFromJson(JArray starsJson)
     {
-        foreach (JObject jStarSerialized in jStarsCollection)
+        foreach (JObject starJson in starsJson)
         {
-            GameObject star = Instantiate(original: StartPrefab, position: new Vector3(
-                (float)jStarSerialized["position"][0], (float)jStarSerialized["position"][1], (float)jStarSerialized["position"][2]), rotation: Quaternion.identity
+            // init
+            GameObject star = Instantiate(original: gameApp.StartPrefab, position: new Vector3(
+                (float)starJson["position"][0], (float)starJson["position"][1], (float)starJson["position"][2]), rotation: Quaternion.identity
             );
-            star.name = jStarSerialized["name"].ToString();
+            JsonUtility.FromJsonOverwrite(starJson["starMain"].ToString(), star.GetComponent<Star>());
+            // NetworkServer.Spawn(star);
 
-            float radius = (float)jStarSerialized["radius"];
-            star.GetComponent<SphereCollider>().radius = radius;
+            // general
+            star.name = starJson["name"].ToString();
+
+            // mesh properties
+            float radius = (float)starJson["radius"];
+            if (radius >= 1)
+                star.GetComponent<SphereCollider>().radius = radius;
             star.transform.localScale = new Vector3(radius, radius, radius);
 
-            string materialString = (string)jStarSerialized["material"];
+            string materialString = (string)starJson["material"];
             if (materialString != null)
             {
-                Material newMaterial = Resources.Load(materialString, typeof(Material)) as Material;
+                Material newMaterial = Resources.Load(materialString.Replace(" (Instance)", ""), typeof(Material)) as Material;
                 if (materialString != null)
+                {
                     star.GetComponentsInChildren<MeshRenderer>()[0].material = newMaterial;
+                    star.GetComponentsInChildren<MeshRenderer>()[0].material.name = materialString;
+                }
             }
+
+            stars.Add(star);
+            // NetworkServer.Spawn(star);
         }
     }
 
-    void StartGame()
-    {
-        Debug.Log("Starting game");
-        currentPlayerIndex = players.Count() - 1; // NextTurn will wrap index to zero at the beginning
-        year = -1;  // NextTurn will increment Year at the beginning
-        NextTurn();
-    }
 
+    // game logic
+    /*
+     *  Make turns, different for server and remote clients
+     */
     public void NextTurn()
     {
-        turnScreen.gameObject.SetActive(true);
-        turnScreen.Play();
+        Debug.Log("NextTurn");
+
+        if (isServer)
+            NextTurnServer();
+        else
+            NextTurnClient();
+    }
+
+    /*
+     *  After "NextTurn" button on clients
+     *  Serialize game and send to the server
+     */
+    public void NextTurnClient()
+    {
+        Debug.Log("NextTurnClient");
+        if (!isClient)
+        {
+            Debug.Log("NextTurnClient not a client, return");
+            return;
+        }
+
+        StringMessage clientMapJson = new StringMessage(GameToJson());
+        if (clientNetworkManager == null)
+            clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
+        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
+    }
+
+    /*
+     *  Called after receiving and loading game from server's json
+     */
+    public void SetupNextTurnClient()
+    {
+        EventManager.selectionManager.SelectedObject = null;
+        grid.SetupNewTurn(GetCurrentPlayer());
+        GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
+    }
+
+    /*
+     *  After "NextTurn" button on server
+     */
+    public void NextTurnServer()
+    {
+        Debug.Log("NextTurnServer");
+        if (!isServer)
+        {
+            Debug.Log("NextTurnServer not a server, return");
+            return;
+        }
+
+        // change player
         currentPlayerIndex = (currentPlayerIndex + 1) % players.Count();
         if (currentPlayerIndex == 0)
         {
@@ -251,6 +753,7 @@ public class GameController : MonoBehaviour
             Debug.Log("New year: " + year);
         }
 
+        // update objects for new turn
         foreach (Ownable owned in GetCurrentPlayer().GetOwned())
         {
             owned.SetupNewTurn();
@@ -260,19 +763,104 @@ public class GameController : MonoBehaviour
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
-        Debug.Log("Next turn, player: " + GetCurrentPlayer().name);
+
+        Debug.Log("Next turn, player: " + GetCurrentPlayer().name + ", local: " + GetCurrentPlayer().local);
+
+        // set all clients to wait state
+        NetworkServer.SetAllClientsNotReady();
+
+        if (GetCurrentPlayer().local)
+        {
+            // local player turn, just play
+            Debug.Log("Next local turn on server");
+            turnScreen.Hide();
+            turnScreen.Play("year: " + year + " | player: " + GetCurrentPlayer().name);
+        }
+        else
+        {
+            // now remote player turn, wait on the server
+            Debug.Log("Next remote turn");
+            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name);
+
+            // if client for the player is connected, set him ready and invoke "OnClientReady" message
+            if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(1));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
+            }
+
+            // if client is not connected, we should have some "skip turn" button on the server
+        }
     }
 
-    public static Player GetCurrentPlayer()
+
+    /*
+     *  Called from clientNetworkManager, when the client should wait
+     */
+    public void WaitForTurn()
     {
+        Debug.Log("WaitForTurn");
+        turnScreen.Show("Waiting for our turn...");
+    }
+
+    /*
+     * Called from clientNetworkManager, when the client should play
+     */
+    public void StopWaitForTurn()
+    {
+        Debug.Log("StopWaitForTurn");
+        turnScreen.Hide();
+    }
+
+
+    // getters for basic info
+    public Player GetCurrentPlayer()
+    {
+        if (players.Count == 0 || currentPlayerIndex >= players.Count || currentPlayerIndex < 0)
+            return null;
         return players[currentPlayerIndex].GetComponent<Player>();
     }
 
-    public static int GetYear()
+    public int GetYear()
     {
         return year;
     }
 
+
+    // helpers
+    GameObject FindPrefab(string prefabName)
+    {
+        switch (prefabName)
+        {
+            case "Scout": return gameApp.ScoutPrefab;
+            case "Miner": return gameApp.MinerPrefab;
+            case "Warship": return gameApp.WarshipPrefab;
+            case "Colonizer": return gameApp.ColonizerPrefab;
+            default: return gameApp.ScoutPrefab;
+        }
+    }
+
+    public Player FindPlayer(string name)
+    {
+        GameObject player = players.Find(p => p.name == name);
+        if (player != null)
+            return player.GetComponent<Player>();
+        return null;
+    }
+
+    public void LockInput()
+    {
+        turnScreen.gameObject.SetActive(true);
+    }
+
+    public void UnlockInput()
+    {
+        turnScreen.gameObject.SetActive(false);
+    }
+
+
+    // local game stuff
     public void Colonize()
     {
         var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
@@ -316,6 +904,7 @@ public class GameController : MonoBehaviour
             }
         }
     }
+
     public void BuildSpaceship(GameObject spaceshipPrefab)
     {
         var planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
@@ -338,13 +927,14 @@ public class GameController : MonoBehaviour
                 GetCurrentPlayer().population -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededPopulation;
                 GetCurrentPlayer().solarPower -= (spaceship.GetComponent<Spaceship>() as Spaceship).neededSolarPower;
 
-                spaceship.GetComponent<Spaceship>().Init();
-
                 EventManager.selectionManager.SelectedObject = null;
                 grid.SetupNewTurn(GetCurrentPlayer());
                 GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
                 Debug.Log("Built " + spaceshipPrefab.name);
+
+                spaceships.Add(spaceship);
+                // NetworkServer.Spawn(spaceship);
             }
         }
     }
@@ -364,11 +954,5 @@ public class GameController : MonoBehaviour
     public void AddRadars()
     {
         if (GetCurrentPlayer().radars < 2) GetCurrentPlayer().radars++;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }

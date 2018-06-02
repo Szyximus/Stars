@@ -1,21 +1,26 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Networking;
 
-public abstract class Ownable : MonoBehaviour
+public abstract class Ownable : NetworkBehaviour
 {
+    [SyncVar]
+    public new string name;
+
     protected Player owner;
+    protected GameController gameController;
+
+    [SyncVar]
     public float RadarRange;
 
-    // Use this for initialization
-    void Start()
+    public void Awake()
     {
-
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
     }
 
-    // Update is called once per frame
-    void Update()
+    protected bool CanMakeAction()
     {
-
+        return gameController.GetCurrentPlayer().name.Equals(owner.name);
     }
 
     public void Owned(Player newOwner)
