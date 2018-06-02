@@ -21,7 +21,7 @@ public class LoadGameMapSceneInit : MonoBehaviour
         levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
 
         // find and put files to dropdown list
-        Dropdown mapToLoadDropdown = GameObject.Find("MenuCanvas/GameToLoadDropdown").GetComponent<Dropdown>();
+        Dropdown mapToLoadDropdown = GameObject.Find("MenuCanvas/DropdownCanvas/GameToLoadDropdown").GetComponent<Dropdown>();
         string[] foundFiles = Directory.GetFiles(gameApp.savedGamesPath, "*.json");
         foreach (string foundFile in foundFiles)
         {
