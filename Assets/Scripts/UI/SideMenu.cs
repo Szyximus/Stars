@@ -46,7 +46,7 @@ public class SideMenu : MonoBehaviour
     {
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
 
-        transform.position += new Vector3(256, 0, 0);
+        transform.position += new Vector3(384, 0, 0);
 
         NamePanel = GameObject.Find("NamePanel");
         PlanetCharacteristicsPanel = GameObject.Find("PlanetCharacteristicsPanel");
@@ -330,7 +330,7 @@ public class SideMenu : MonoBehaviour
 
         animating = true;
         float startTime = Time.time;
-        Vector3 direction = new Vector3(-256, 0, 0);
+        Vector3 direction = new Vector3(-384, 0, 0);
         var endPos = transform.position + direction;
 
         while (Time.time - startTime < 0.25) //the movement takes exactly 0,25 s. regardless of framerate
@@ -349,7 +349,7 @@ public class SideMenu : MonoBehaviour
 
         animating = true;
         float startTime = Time.time;
-        Vector3 direction = new Vector3(256, 0, 0);
+        Vector3 direction = new Vector3(384, 0, 0);
         var endPos = transform.position + direction;
 
         while (Time.time - startTime < 0.25) //the movement takes exactly 0,25 s. regardless of framerate

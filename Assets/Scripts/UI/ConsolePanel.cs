@@ -35,7 +35,7 @@ public class ConsolePanel : MonoBehaviour
     void OnGUI()
     {
         {
-            myLog = GUI.TextArea(new Rect(25, 25, Screen.width - 25, Screen.height - 25), myLog);
+            myLog = GUI.TextArea(new Rect(25, 25, 512 - 25, 512 - 25), myLog);
         }
     }
 }

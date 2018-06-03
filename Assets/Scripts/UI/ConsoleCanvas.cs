@@ -18,27 +18,28 @@ public class ConsoleCanvas : MonoBehaviour
             //gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
             panel = GetComponentInChildren<ConsolePanel>();
             DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(panel.gameObject);
             created = true;
         }
     }
 
     void Start()
     {
-        panel.enabled = false;
+        //panel.enabled = false;
         panel.gameObject.SetActive(false);
         Shown = true;
     }
 
     void Show()
     {
-        panel.enabled = true;
+        //panel.enabled = true;
         panel.gameObject.SetActive(true);
         Shown = true;
     }
 
     void Hide()
     {
-        panel.enabled = false;
+        //panel.enabled = false;
         panel.gameObject.SetActive(false);
         Shown = false;
     }
