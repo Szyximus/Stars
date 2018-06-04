@@ -288,6 +288,10 @@ public class SideMenu : MonoBehaviour
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
 
+        yeilds.text = ("+" + planet.GetPopulationGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetMineralsnGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetSolarPowerGrowth().ToString());
+
 
     }
 
