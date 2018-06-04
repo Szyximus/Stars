@@ -27,6 +27,6 @@ public class TurnCounter : MonoBehaviour
             return;
         }
 
-        label.text = "Year: " + (gameController.GetYear() + 2400).ToString();
+        label.text = "Year: " + (gameController.GetYear().ToString());
     }
 }

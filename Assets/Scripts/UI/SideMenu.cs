@@ -26,6 +26,7 @@ public class SideMenu : MonoBehaviour
     Text label;
     Text planetResources;
     Text planetCharacteristics;
+    Text yeilds;
     Text shipCharacteristics;
     Text energy;
     //Text shipHP;
@@ -64,6 +65,7 @@ public class SideMenu : MonoBehaviour
         planetResources = PlanetResourcesPanel.GetComponentsInChildren<Text>().Last();
 
         planetCharacteristics = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().First();
+        yeilds = PlanetCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
         shipCharacteristics = ShipCharacteristicsPanel.GetComponentsInChildren<Text>().Last();
         energy = ShipPanel.GetComponentInChildren<Text>();
         //shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
@@ -231,6 +233,10 @@ public class SideMenu : MonoBehaviour
                                      "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
                                      "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
                                      "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+
+        yeilds.text = ("+" + planet.GetPopulationGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetMineralsnGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetSolarPowerGrowth().ToString() );
 
         scoutCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
             "     " +
