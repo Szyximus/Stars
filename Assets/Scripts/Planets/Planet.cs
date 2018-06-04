@@ -294,7 +294,7 @@ public class Planet : Ownable
 
     public void AddHealthPoints(int healthPoints)
     {
-        if ((this.characteristics.healthPoints += healthPoints) <= 0)
+        if ((this.characteristics.healthPoints + healthPoints) <= 0)
         {
             this.characteristics.healthPoints = maxHealthPoints;
             if (this.GetOwner() != null) Lose();
