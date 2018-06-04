@@ -147,6 +147,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: 9c0cb8e74ac6d8d45bd76492ed9ab7d5, type: 2}
   m_StaticBatchInfo:
@@ -181,6 +182,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
   m_Materials:
   - {fileID: 2100000, guid: d534810f4f95b67449e8e35a2e9b8300, type: 2}
   m_StaticBatchInfo:
@@ -227,6 +229,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70f614f502096a944bd133686cd1e1c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: 
+  RadarRange: 0
+  characteristics:
+    habitability: 0
+    healthPoints: 0
+    temperature: 0
+    radiation: 0
+    oxygen: 0
+  resources:
+    minerals: 0
+  mayBeHome: 0
 --- !u!114 &114597122602952712
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -238,7 +251,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52c912a32390b7f408686c70ec7f5254, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 2
+  Speed: 5
 --- !u!135 &135592747572671118
 SphereCollider:
   m_ObjectHideFlags: 1
@@ -265,7 +278,7 @@ ReflectionProbe:
   m_TimeSlicingMode: 0
   m_Resolution: 128
   m_UpdateFrequency: 0
-  m_BoxSize: {x: 20, y: 20, z: 20}
+  m_BoxSize: {x: 64, y: 64, z: 64}
   m_BoxOffset: {x: 0, y: 0, z: 0}
   m_NearClip: 0.3
   m_FarClip: 1000

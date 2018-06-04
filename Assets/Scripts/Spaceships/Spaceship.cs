@@ -16,6 +16,7 @@ public class Spaceship : Ownable
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
+    public GameApp gameApp;
 
     private UIHoverListener uiListener;
     private AudioSource engineSound;
@@ -63,6 +64,8 @@ public class Spaceship : Ownable
         engineSound = gameObject.GetComponent<AudioSource>();
 
         TurnEnginesOff();
+
+        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
         Debug.Log("Awake spaceship");
     }
@@ -266,12 +269,19 @@ public class Spaceship : Ownable
             {
                 if (GetActionPoints() > 0)
                 {
-                 //   GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
-                 //   GameObject TargetFire = Instantiate(GameController.HitPrefab, target.transform.position, target.transform.rotation);
+                    var heading = target.transform.position - transform.position;
+                    var distance = heading.magnitude;
+                    var direction = heading / distance; // This is now the normalized direction.
+                    direction += new Vector3(0, 0.1f, 0);
+                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
+                    heading = transform.position - target.transform.position;
+                    distance = heading.magnitude;
+                    direction = heading / distance; // This is now the normalized direction.
+                    direction += new Vector3(0, 0.1f, 0);
+                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction, target.transform.rotation);
                     target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
-                 //   Destroy(SourceFire, 1f);
-                 //   Destroy(TargetFire, 1f);
-                 //   Destroy(TargetFire, 1f);
+                    Destroy(SourceFire, 1f);
+                    Destroy(TargetFire, 1f);
                     return true;
                 }
                 Debug.Log("You dont have enough movement points");
@@ -281,6 +291,18 @@ public class Spaceship : Ownable
                 && target.GetComponent<Planet>() != null)
                 if (GetActionPoints() > 0)
                 {
+                    var heading = target.transform.position - transform.position;
+                    var distance = heading.magnitude;
+                    var direction = heading / distance; // This is now the normalized direction.
+                    direction += new Vector3(0, 0.1f, 0);
+                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
+                    heading = transform.position - target.transform.position;
+                    distance = heading.magnitude;
+                    direction = heading / distance; // This is now the normalized direction.
+                    direction += new Vector3(0, 0.5f, 0);
+                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction*2.5f, target.transform.rotation);
+                    Destroy(SourceFire, 1f);
+                    Destroy(TargetFire, 1f);
                     target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
                     return true;
                 }
