@@ -45,7 +45,7 @@ public class UpperPanel : MonoBehaviour
         if (currentPlayer == null)
             return;
 
-        playerLabel.text = currentPlayer.ToString();
+        playerLabel.text = currentPlayer.ToString().Replace("(Player)", "");
         if (currentPlayer != null)
         {
             powerLabel.text = currentPlayer.solarPower.ToString();
