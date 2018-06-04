@@ -76,4 +76,8 @@ public class Star : MonoBehaviour
         player.solarPower += (GetSolarPower(solarPowerCount));
         return true;
     }
+    public int GetSolarPower()
+    {
+        return resources.solarPower;
+    }
 }

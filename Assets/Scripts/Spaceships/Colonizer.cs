@@ -46,6 +46,7 @@ public class Colonizer : Spaceship
         if (CheckCanBeColonizate(planetToColonize) && planetToColonize.GetOwner() == null && GetActionPoints() > 0)
         {
             planetToColonize.Colonize();
+            planetToColonize.GiveMineralsTo(GetOwner(), planetToColonize.GetMinerals());
             Debug.Log("You colonized planet " + planetToColonize.name);
             return true;
         }
@@ -56,6 +57,7 @@ public class Colonizer : Spaceship
             {
                 Debug.Log("You colonized " + planetToColonize.GetOwnerName() + "'s planet " + planetToColonize.name);
                 planetToColonize.Colonize();
+                planetToColonize.GiveMineralsTo(GetOwner(), planetToColonize.GetMinerals());
                 return true;
             }
             Debug.Log("Planet's health points are over 0");

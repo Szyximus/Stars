@@ -14,7 +14,7 @@ using UnityEngine.Networking;
 
 public class Planet : Ownable
 {
-    Random random = new Random();
+    private int solarPowerGrowth = 0;
 
     [System.Serializable]
     public struct PlanetCharacteristics
@@ -97,11 +97,36 @@ public class Planet : Ownable
     public void SetupNewTurn()
     {
         Player player = GetOwner();
-        FindStarsNear();
-        player.population += player.terraforming - characteristics.habitability + 2;
-        player.minerals += resources.minerals / 3;
+        if (player != null)
+        {
+            FindStarsNear();
+            player.population += player.terraforming - characteristics.habitability + 2;
+            player.minerals += resources.minerals / 3;
+            resources.minerals += characteristics.temperature / 10;
+        }
+        else
+        {
+            resources.minerals += characteristics.temperature / 14;
+        }
     }
 
+    public int GetPopulationGrowth()
+    {
+        return GetOwner() != null ? GetOwner().terraforming - characteristics.habitability + 2 : characteristics.habitability;
+    }
+    public int GetMineralsnGrowth()
+    {
+        return resources.minerals / 3;
+    }
+
+    public int GetSolarPowerGrowth()
+    {
+        return solarPowerGrowth;
+    }
+    public int GetMinerals()
+    {
+        return resources.minerals;
+    }
     /**
      * Simple method to colonize planet.Sets the planet's owner specified in the method argument. 
      */
@@ -234,14 +259,17 @@ public class Planet : Ownable
         if (starOneHex != null)
         {
             starOneHex.GiveSolarPower(GetOwner(), 3);
+            solarPowerGrowth = 3;
         }
         else if (starTwoHex != null)
         {
             starTwoHex.GiveSolarPower(GetOwner(), 2);
+            solarPowerGrowth = 2;
         }
         else if (starThreeHex != null)
         {
             starThreeHex.GiveSolarPower(GetOwner(), 1);
+            solarPowerGrowth = 1;
         }
 
     }

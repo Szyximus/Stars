@@ -760,6 +760,7 @@ public class GameController : NetworkBehaviour
         }
 
         EventManager.selectionManager.SelectedObject = null;
+        EventManager.selectionManager.TargetObject= null;
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
