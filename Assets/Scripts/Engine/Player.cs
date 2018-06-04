@@ -54,6 +54,31 @@ public class Player : NetworkBehaviour
     [SyncVar]
     public SpaceshipsCosts spaceshipsCosts;
 
+    public struct ResearchStruct
+    {
+        public int attackNeededMinerals;
+        public int attackNeededPopulation;
+        public int attackNeededSolarPower;
+        public int attackLevel;
+
+        public int enginesNeededMinerals;
+        public int enginesNeedesPopulation;
+        public int enginesNeededSolarPower;
+        public int enginesLevel;
+
+        public int radarsNeededMinerals;
+        public int radarsNeededPopulation;
+        public int radarsNeededSolarPower;
+        public int radarsLevel;
+
+        public int terraformingNeededMinerals;
+        public int terraformingNeededPopulation;
+        public int terraformingNeededSolarPower;
+        public int terraformingLevel;
+    }
+
+    public ResearchStruct researchStruct;
+
     // Use this for initialization
     void Awake()
     {
@@ -84,8 +109,29 @@ public class Player : NetworkBehaviour
         spaceshipsCosts.colonizerNeededPopulation = 9;
         spaceshipsCosts.colonizerNeededSolarPower = 8;
 
+        researchStruct.attackLevel = 0;
+        researchStruct.attackNeededMinerals = 3;
+        researchStruct.attackNeededPopulation = 2;
+        researchStruct.attackNeededSolarPower = 2;
 
+        researchStruct.enginesLevel = 0;
+        researchStruct.enginesNeededMinerals = 2;
+        researchStruct.enginesNeedesPopulation = 2;
+        researchStruct.enginesNeededSolarPower = 4;
+
+        researchStruct.terraformingLevel = 0;
+        researchStruct.terraformingNeededMinerals = 3;
+        researchStruct.terraformingNeededPopulation = 4;
+        researchStruct.terraformingNeededSolarPower = 2;
+
+        researchStruct.radarsLevel = 0;
+        researchStruct.radarsNeededMinerals = 3;
+        researchStruct.radarsNeededPopulation = 3;
+        researchStruct.radarsNeededSolarPower = 1;
     }
+
+
+
 
     // Update is called once per frame
     void Update()

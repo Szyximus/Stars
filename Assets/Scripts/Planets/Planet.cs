@@ -103,6 +103,8 @@ public class Planet : Ownable
             player.population += player.terraforming - characteristics.habitability + 2;
             player.minerals += resources.minerals / 3;
             resources.minerals += characteristics.temperature / 10;
+            RadarRange += GetOwner().radars;
+
         }
         else
         {
@@ -140,6 +142,8 @@ public class Planet : Ownable
     public void Colonize(Player newOnwer)
     {
         this.Owned(newOnwer);
+        characteristics.healthPoints = maxHealthPoints;
+
         //   Destroy(gameObject);
     }
 

@@ -58,7 +58,6 @@ public class Miner : Spaceship
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, transform.rotation);
                     Destroy(SourceFire, 1f);
                     planetToMine.GiveMineralsTo(GetOwner(), 1);
-                    miner.SetActionPoints(-1);
                 }
                 else
                 {
@@ -77,7 +76,6 @@ public class Miner : Spaceship
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, transform.rotation);
                     Destroy(SourceFire, 1f);
                     startToMine.GiveSolarPower(GetOwner(), 1);
-                    miner.SetActionPoints(-1);
                 }
                 else
                 {

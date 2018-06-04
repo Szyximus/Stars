@@ -12,6 +12,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
+using System.Threading;
 
 /*
  *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
@@ -760,7 +761,7 @@ public class GameController : NetworkBehaviour
         }
 
         EventManager.selectionManager.SelectedObject = null;
-        EventManager.selectionManager.TargetObject= null;
+        EventManager.selectionManager.TargetObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
         GameObject.Find("MiniMap").GetComponent<MiniMapController>().SetupNewTurn(GetCurrentPlayer());
 
@@ -876,8 +877,7 @@ public class GameController : NetworkBehaviour
                 Destroy(colonizer.gameObject);
 
             }
-
-
+        Thread.Sleep(150);
     }
 
     public void Mine()
@@ -897,6 +897,7 @@ public class GameController : NetworkBehaviour
             miner.MineStar(starToMine);
             miner.SetActionPoints(-1);
         }
+        Thread.Sleep(150);
     }
 
     public void Attack()
@@ -913,6 +914,7 @@ public class GameController : NetworkBehaviour
                 spaceship.SetActionPoints(-1);
             }
         }
+        Thread.Sleep(150);
     }
 
     public void BuildSpaceship(GameObject spaceshipPrefab)
@@ -951,18 +953,80 @@ public class GameController : NetworkBehaviour
 
     public void AddTerraforming()
     {
-        if (GetCurrentPlayer().terraforming < 3) GetCurrentPlayer().terraforming++;
+        if (GetCurrentPlayer().terraforming < 3 &&
+            GetCurrentPlayer().minerals >= GetCurrentPlayer().researchStruct.terraformingNeededMinerals &&
+            GetCurrentPlayer().population >= GetCurrentPlayer().researchStruct.terraformingNeededPopulation &&
+            GetCurrentPlayer().solarPower >= GetCurrentPlayer().researchStruct.terraformingNeededSolarPower)
+        {
+            GetCurrentPlayer().minerals -= GetCurrentPlayer().researchStruct.terraformingNeededMinerals;
+            GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.terraformingNeededPopulation;
+            GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.terraformingNeededSolarPower;
+
+            GetCurrentPlayer().researchStruct.terraformingNeededMinerals += 1;
+            GetCurrentPlayer().researchStruct.terraformingNeededPopulation += 1;
+            GetCurrentPlayer().researchStruct.terraformingNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.terraformingLevel += 1;
+            GetCurrentPlayer().terraforming++;
+        }
     }
+
     public void AddAttack()
     {
-        if (GetCurrentPlayer().attack < 2) GetCurrentPlayer().attack++;
+        if (GetCurrentPlayer().attack < 3 &&
+            GetCurrentPlayer().minerals >= GetCurrentPlayer().researchStruct.attackNeededMinerals &&
+            GetCurrentPlayer().population >= GetCurrentPlayer().researchStruct.attackNeededPopulation &&
+            GetCurrentPlayer().solarPower >= GetCurrentPlayer().researchStruct.attackNeededSolarPower)
+        {
+            GetCurrentPlayer().minerals -= GetCurrentPlayer().researchStruct.attackNeededMinerals;
+            GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.attackNeededPopulation;
+            GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.attackNeededSolarPower;
+
+            GetCurrentPlayer().researchStruct.attackNeededMinerals += 1;
+            GetCurrentPlayer().researchStruct.attackNeededPopulation += 1;
+            GetCurrentPlayer().researchStruct.attackNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.attackLevel += 1;
+            GetCurrentPlayer().attack++;
+        }
     }
+
     public void AddEngines()
     {
-        if (GetCurrentPlayer().engines < 2) GetCurrentPlayer().engines++;
+        if (GetCurrentPlayer().engines < 3 &&
+            GetCurrentPlayer().minerals >= GetCurrentPlayer().researchStruct.enginesNeededMinerals &&
+            GetCurrentPlayer().population >= GetCurrentPlayer().researchStruct.enginesNeedesPopulation &&
+            GetCurrentPlayer().solarPower >= GetCurrentPlayer().researchStruct.enginesNeededSolarPower)
+        {
+            GetCurrentPlayer().minerals -= GetCurrentPlayer().researchStruct.enginesNeededMinerals;
+            GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.enginesNeedesPopulation;
+            GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.enginesNeededSolarPower;
+
+            GetCurrentPlayer().researchStruct.enginesNeededMinerals += 1;
+            GetCurrentPlayer().researchStruct.enginesNeedesPopulation += 1;
+            GetCurrentPlayer().researchStruct.enginesNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.enginesLevel += 1;
+            GetCurrentPlayer().engines++;
+
+        }
     }
+
     public void AddRadars()
     {
-        if (GetCurrentPlayer().radars < 2) GetCurrentPlayer().radars++;
+        if (GetCurrentPlayer().radars < 3 &&
+            GetCurrentPlayer().minerals >= GetCurrentPlayer().researchStruct.radarsNeededMinerals &&
+            GetCurrentPlayer().population >= GetCurrentPlayer().researchStruct.radarsNeededPopulation &&
+            GetCurrentPlayer().solarPower >= GetCurrentPlayer().researchStruct.radarsNeededSolarPower)
+        {
+            GetCurrentPlayer().minerals -= GetCurrentPlayer().researchStruct.radarsNeededMinerals;
+            GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.radarsNeededPopulation;
+            GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.radarsNeededSolarPower;
+
+            GetCurrentPlayer().researchStruct.radarsNeededMinerals += 1;
+            GetCurrentPlayer().researchStruct.radarsNeededPopulation += 1;
+            GetCurrentPlayer().researchStruct.radarsNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.radarsLevel += 1;
+            GetCurrentPlayer().radars++;
+        }
     }
+
 }
+
