@@ -95,6 +95,23 @@ public class Spaceship : Ownable
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
+            EventManager.selectionManager.SelectedObject != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner() != this.GetOwner())
+        {
+            Debug.Log("cel");
+            EventManager.selectionManager.TargetObject = this.gameObject;
+            Thread.Sleep(150);
+        }
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        {
+            Debug.Log("tu nie");
+            EventManager.selectionManager.TargetObject = null;
+        }
+    }
 
     public void Move(HexCell destination)
     {
@@ -235,73 +252,46 @@ public class Spaceship : Ownable
         this.actionPoints += actionPoints;
     }
 
-    public bool Attack()
+    public bool Attack(Ownable target)
     {
-        if (!CanMakeAction())
-            return false;
-
-        var gameObjectsInProximity =
-                Physics.OverlapSphere(transform.position, 10)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-        var spaceships = gameObjectsInProximity.Where(o => o.tag == "Unit");
-        var planets = gameObjectsInProximity.Where(o => o.tag == "Planet");
-        // try catch to taki hacks narazie tylko na demo
-        try
+        if (EventManager.selectionManager.TargetObject != null)
         {
-            spaceshipsToAttack = spaceships.FirstOrDefault().GetComponent<Spaceship>() as Spaceship;
-            Debug.Log("Jest statek");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma statkow");
-        }
-        try
-        {
-            planetToAttack = planets.FirstOrDefault().GetComponent<Planet>() as Planet;
-            Debug.Log("Jest planeta");
-        }
-        catch (System.Exception e)
-        {
-            Debug.Log("Nie ma planet");
-        }
-        if (spaceshipsToAttack == null || spaceshipsToAttack.GetOwner() == gameController.GetCurrentPlayer() &&
-               (planetToAttack == null || planetToAttack.GetOwner() == gameController.GetCurrentPlayer()))
-        {
-            Debug.Log("Cannot find planet or planet belong to you");
-            return false;
-        }
-        else if (spaceshipsToAttack != null && spaceshipsToAttack.GetOwner() != gameController.GetCurrentPlayer())
-        {
-            if (GetActionPoints() > 0)
+            Debug.Log("weszlo");
+            if (target == null || target.GetOwner() == EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner())
             {
-
-                GameObject SourceFire = Instantiate(gameController.gameApp.AttackPrefab, transform.position, transform.rotation);
-                GameObject TargetFire = Instantiate(gameController.gameApp.HitPrefab, spaceshipsToAttack.transform.position, spaceshipsToAttack.transform.rotation);
-
-                spaceshipsToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
-
-                Destroy(SourceFire, 1f);
-                Destroy(TargetFire, 1f);
-                return true;
+                Debug.Log("Cannot find planet or planet belong to you");
+                return false;
             }
+            else if (target != null && target.GetOwner() != EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner() && target.GetComponent<Spaceship>() != null)
+            {
+                if (GetActionPoints() > 0)
+                {
+                 //   GameObject SourceFire = Instantiate(GameController.AttackPrefab, transform.position, transform.rotation);
+                 //   GameObject TargetFire = Instantiate(GameController.HitPrefab, target.transform.position, target.transform.rotation);
+                    target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                 //   Destroy(SourceFire, 1f);
+                 //   Destroy(TargetFire, 1f);
+                 //   Destroy(TargetFire, 1f);
+                    return true;
+                }
+                Debug.Log("You dont have enough movement points");
+                return false;
+            }
+            else if (target != null || target.GetOwner() != EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner()
+                && target.GetComponent<Planet>() != null)
+                if (GetActionPoints() > 0)
+                {
+                    target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                    return true;
+                }
             Debug.Log("You dont have enough movement points");
             return false;
         }
-        else if (planetToAttack != null || planetToAttack.GetOwner() != gameController.GetCurrentPlayer())
-        {
-            if (GetActionPoints() > 0)
-            {
-                planetToAttack.AddHealthPoints(-this.spaceshipStatistics.attack);
-                return true;
-            }
-            Debug.Log("You dont have enough movement points");
-            return false;
-        }
+
         return false;
     }
+
+
 
     private void AddHealthPoints(int healthPoints)
     {
@@ -319,9 +309,29 @@ public class Spaceship : Ownable
         else
         {
             this.spaceshipStatistics.healthPoints += healthPoints;
-            
+
         }
     }
+
+    public bool CheckDistance(Ownable target)
+    {
+        if (target != null)
+        {
+            float distance = Vector3.Distance(target.transform.position, this.transform.position);
+            return distance < 10.0 ? true : false;
+        }
+        return false;
+    }
+    public bool CheckDistance(Star target)
+    {
+        if (target != null)
+        {
+            float distance = Vector3.Distance(target.transform.position, this.transform.position);
+            return distance < 10.0 ? true : false;
+        }
+        return false;
+    }
+
 
     private void TurnEnginesOff()
     {

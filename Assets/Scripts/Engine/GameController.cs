@@ -101,7 +101,7 @@ public class GameController : NetworkBehaviour
         currentPlayerIndex -= 1;
         NextTurn();
     }
-    
+
     /*
     *  Server only
     *  Called from ServerNetworkManager
@@ -164,7 +164,7 @@ public class GameController : NetworkBehaviour
     public void SaveGame()
     {
         Debug.Log("SaveGame");
- 
+
         string SaveGameFile = SaveGameFileInput.text;
         if (SaveGameFile == null || "".Equals(SaveGameFile))
         {
@@ -209,7 +209,7 @@ public class GameController : NetworkBehaviour
         }
         return sb.ToString();
     }
-    
+
     private string InfoToJson()
     {
         StringBuilder sb = new StringBuilder();
@@ -352,7 +352,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteValue(star.transform.localScale.x);
 
                 writer.WritePropertyName("material");
-                writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)",""));
+                writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
@@ -417,7 +417,7 @@ public class GameController : NetworkBehaviour
         // todo: w jsonach nie moze byc utf8
 
         JObject savedGameJson = JObject.Parse(savedGameContent);
-        if(savedGameJson == null)
+        if (savedGameJson == null)
         {
             Debug.Log("Error loading json");
             return;
@@ -464,7 +464,7 @@ public class GameController : NetworkBehaviour
             if ((int)gameJson["info"]["maxPlayers"] != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players, should be " + (int)gameJson["info"]["maxPlayers"]);
             playersJson = (JArray)gameJson["players"];
-            if(playersJson.Count != PlayerMenuList.Count)
+            if (playersJson.Count != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
         }
         else
@@ -541,7 +541,7 @@ public class GameController : NetworkBehaviour
                 // in saved game files, owner will contain player's name
                 player = FindPlayer((string)spaceshipJson["owner"]);
             }
-            
+
             if (player == null)
                 continue;
 
@@ -566,13 +566,13 @@ public class GameController : NetworkBehaviour
     {
         // serch for empty hexCell
         HexCell cell;
-        
+
         foreach (HexCoordinates offset in HexCoordinates.NeighboursOffsets)
         {
-                HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + offset.X, startCooridantes.Z + offset.Z);
-                cell = grid.FromCoordinates(newCoordinates);
-                if (cell != null && cell.IsEmpty())
-                    return cell;
+            HexCoordinates newCoordinates = new HexCoordinates(startCooridantes.X + offset.X, startCooridantes.Z + offset.Z);
+            cell = grid.FromCoordinates(newCoordinates);
+            if (cell != null && cell.IsEmpty())
+                return cell;
         }
         return null;
     }
@@ -609,7 +609,7 @@ public class GameController : NetworkBehaviour
             planet.name = planetJson["name"].ToString();
 
             // references and owner
-            if(isNewGame)
+            if (isNewGame)
             {
                 // in new game, owner will contain number (from zero)
                 if (planetJson["owner"] != null && (int)planetJson["owner"] >= 0 && (int)planetJson["owner"] < players.Count)
@@ -629,11 +629,11 @@ public class GameController : NetworkBehaviour
                         planet.GetComponent<Planet>().Colonize(player);
                 }
             }
-            
+
 
             // mesh properties
             float radius = (float)planetJson["radius"];
-            if(radius >= 1)
+            if (radius >= 1)
                 planet.GetComponent<SphereCollider>().radius = radius;
             planet.transform.localScale = new Vector3(radius, radius, radius);
 
@@ -864,40 +864,49 @@ public class GameController : NetworkBehaviour
     public void Colonize()
     {
         var colonizer = EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>();
-        if (colonizer != null)
-        {
-            if (colonizer.ColonizePlanet())
+        Planet planetToColonize = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
+        if (colonizer != null && planetToColonize != null && colonizer.GetActionPoints() > 0)
+
+            if (colonizer.Colonize(planetToColonize))
+
             {
                 grid.FromCoordinates(colonizer.Coordinates).ClearObject();
                 GetCurrentPlayer().Lose(colonizer);
                 Destroy(colonizer.gameObject);
 
             }
-        }
+
 
     }
 
     public void Mine()
     {
         var miner = EventManager.selectionManager.SelectedObject.GetComponent<Miner>();
-        if (miner != null && miner.GetActionPoints() > 0)
+        if (EventManager.selectionManager.TargetObject != null &&
+           EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null && miner.GetActionPoints() > 0)
         {
-            if (miner.MineResources())
-                miner.SetActionPoints(-1);
-            else
-            {
-                Debug.Log("Cannot mine");
-            }
+            Planet planetToMine = EventManager.selectionManager.TargetObject.GetComponent<Planet>();
+            miner.MinePlanet(planetToMine);
+            miner.SetActionPoints(-1);
+        }
+        else if (EventManager.selectionManager.TargetObject != null &&
+             EventManager.selectionManager.TargetObject.GetComponent<Star>() != null && miner.GetActionPoints() > 0)
+        {
+            Star starToMine = EventManager.selectionManager.TargetObject.GetComponent<Star>();
+            miner.MineStar(starToMine);
+            miner.SetActionPoints(-1);
         }
     }
 
     public void Attack()
     {
         var spaceship = EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>();
+        Ownable target = EventManager.selectionManager.TargetObject.GetComponent<Ownable>();
 
-        if (spaceship != null && spaceship.GetActionPoints() > 0)
+        if (spaceship != null && spaceship.GetActionPoints() > 0 && target != null)
+
         {
-            if (spaceship.Attack())
+            if (spaceship.Attack(target))
             {
                 Debug.Log("You attacked");
                 spaceship.SetActionPoints(-1);
