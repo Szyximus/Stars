@@ -38,6 +38,7 @@ public class SideMenu : MonoBehaviour
 
     Button colonizeButton;
     Button mineButton;
+    Button attackButton;
 
     Image icon;
 
@@ -68,6 +69,8 @@ public class SideMenu : MonoBehaviour
         //shipHP = ShipPanel.GetComponentsInChildren<Text>()[1];
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
+        attackButton = ShipPanel.GetComponentsInChildren<Button>()[2];
+
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
 
         scoutCosts = BuildPanel.GetComponentsInChildren<Text>()[1];
@@ -146,25 +149,50 @@ public class SideMenu : MonoBehaviour
                                      "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
                                      "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
 
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null)
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>() as Colonizer) != null &&
+            EventManager.selectionManager.TargetObject != null && EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
         {
-            colonizeButton.gameObject.SetActive(true);
+            if (EventManager.selectionManager.SelectedObject.GetComponent<Colonizer>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Planet>()))
+                colonizeButton.gameObject.SetActive(true);
+            else
+                colonizeButton.gameObject.SetActive(false);
         }
         else
         {
             colonizeButton.gameObject.SetActive(false);
         }
 
-
-        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null)
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Miner>() as Miner) != null &&
+            EventManager.selectionManager.TargetObject != null && (EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null ||
+           (EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)))
         {
-            mineButton.gameObject.SetActive(true);
+            if (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Planet>()) ||
+              (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Star>())))
+                mineButton.gameObject.SetActive(true);
+            else
+                mineButton.gameObject.SetActive(false);
         }
         else
         {
             mineButton.gameObject.SetActive(false);
         }
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Warship>() as Warship) != null &&
+            EventManager.selectionManager.TargetObject != null && ((EventManager.selectionManager.TargetObject.GetComponent<Spaceship>() != null) ||
+            (EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)))
+        {
+            if (EventManager.selectionManager.SelectedObject.GetComponent<Warship>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Ownable>()))
+                attackButton.gameObject.SetActive(true);
+            else
+                attackButton.gameObject.SetActive(false);
+        }
+        else
+        {
+            attackButton.gameObject.SetActive(false);
+        }
     }
+
+
 
     void ShowEnemySpaceshipPanels()
     {

@@ -35,35 +35,31 @@ public class Colonizer : Spaceship
     /**
      * The method checks if some of the planets are near the Colonizer and whether it is possible to colonize these planets.
      */
-    public bool ColonizePlanet()
+    public bool Colonize(Planet planetToColonize)
     {
-        var gameObjectsInProximity =
-                Physics.OverlapSphere(transform.position, 10)
-                .Except(new[] { GetComponent<Collider>() })
-                .Select(c => c.gameObject)
-                .ToArray();
-
-        var cells = gameObjectsInProximity.Where(o => o.tag == "Planet");
-
-        PlanetToColonize = (cells.FirstOrDefault().GetComponent<Planet>() as Planet);
-        if (PlanetToColonize == null || PlanetToColonize.GetOwner() == gameController.GetCurrentPlayer()) return false;
-        else
-        if (CheckCanBeColonizate(PlanetToColonize) && PlanetToColonize.GetOwner() == null && GetActionPoints() > 0)
+        if (!CheckDistance(planetToColonize))
+            return false;
+        if (planetToColonize == null || planetToColonize.GetOwner() == this.GetOwner())
         {
-            PlanetToColonize.Colonize();
-            Debug.Log("You colonized planet " + PlanetToColonize.name);
+            return false;
+        }
+        if (CheckCanBeColonizate(planetToColonize) && planetToColonize.GetOwner() == null && GetActionPoints() > 0)
+        {
+            planetToColonize.Colonize();
+            Debug.Log("You colonized planet " + planetToColonize.name);
             return true;
         }
         else
-        if (PlanetToColonize.GetOwner() != null && GetActionPoints() > 0)
+        if (planetToColonize.GetOwner() != null && GetActionPoints() > 0)
         {
-            if (CheckCanBeConquered(PlanetToColonize) && CheckCanBeColonizate(PlanetToColonize))
+            if (CheckCanBeConquered(planetToColonize) && CheckCanBeColonizate(planetToColonize))
             {
-                Debug.Log("You colonized " + PlanetToColonize.GetOwnerName() + "'s planet " + PlanetToColonize.name);
-                PlanetToColonize.Colonize();
+                Debug.Log("You colonized " + planetToColonize.GetOwnerName() + "'s planet " + planetToColonize.name);
+                planetToColonize.Colonize();
                 return true;
             }
             Debug.Log("Planet's health points are over 0");
+
             return false;
         }
         return false;

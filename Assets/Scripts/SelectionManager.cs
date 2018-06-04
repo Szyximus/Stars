@@ -10,6 +10,8 @@ namespace Assets.Scripts
     public class SelectionManager
     {
         private GameObject selectedObject;
+        private GameObject targetObject = null;
+
         /// <summary>
         /// Storing reference to selected object
         /// if no object is selected will return null
@@ -35,10 +37,29 @@ namespace Assets.Scripts
             }
         }
 
+        public GameObject TargetObject
+        {
+            get
+            {
+                return targetObject;
+            }
+            set
+            {
+                if (targetObject != value)   //clicking second time disables selection
+                    targetObject = value;
+                else
+                    targetObject = null;
+
+                //Debug.Log(String.Format("Selected grid cell: {0}",
+                //    _selectedObject != null ? _selectedObject.tag : "no object selected")
+                //    );
+            }
+        }
         /// <summary>
         /// Storing reference to selected grid cell
         /// if no cell is selected will return null
         /// </summary>
+        /// 
         private HexCell gridCellSelection;
         public HexCell GridCellSelection
         {

@@ -74,6 +74,24 @@ public class Planet : Ownable
     {
         if (!uiListener.IsUIOverride && isActiveAndEnabled && grid.FromCoordinates(Coordinates).State == EHexState.Visible) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
+    private void OnMouseOver()
+    {
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
+            EventManager.selectionManager.SelectedObject != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null &&
+            EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner() != this.GetOwner())
+        {
+            Debug.Log("cel");
+            EventManager.selectionManager.TargetObject = this.gameObject;
+            Thread.Sleep(150);
+        }
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        {
+            Debug.Log("tu nie");
+            EventManager.selectionManager.TargetObject = null;
+        }
+    }
+
 
     override
     public void SetupNewTurn()
