@@ -108,6 +108,7 @@ public class Planet : Ownable
         }
         else
         {
+            FindStarsNear();
             resources.minerals += characteristics.temperature / 14;
         }
     }
@@ -118,7 +119,7 @@ public class Planet : Ownable
     }
     public int GetMineralsnGrowth()
     {
-        return resources.minerals / 3;
+        return GetOwner() != null ? characteristics.temperature / 10 : characteristics.temperature / 14;
     }
 
     public int GetSolarPowerGrowth()
