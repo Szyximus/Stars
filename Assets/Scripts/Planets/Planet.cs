@@ -57,8 +57,15 @@ public class Planet : Ownable
         maxHealthPoints = characteristics.healthPoints;
         UpdateCoordinates();
 
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        //FindStarsNear();
         Debug.Log("Awake planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
+    }
+
+    private void Start()
+    {
+        FindStarsNear();
     }
 
 
@@ -96,30 +103,27 @@ public class Planet : Ownable
     override
     public void SetupNewTurn()
     {
+        FindStarsNear();
         Player player = GetOwner();
         if (player != null)
         {
-            FindStarsNear();
+            //FindStarsNear();
             player.population += player.terraforming - characteristics.habitability + 2;
-            player.minerals += resources.minerals / 3;
-            resources.minerals += characteristics.temperature / 10;
+            player.minerals += resources.minerals / 5;
             RadarRange += GetOwner().radars;
 
         }
-        else
-        {
-            FindStarsNear();
-            resources.minerals += characteristics.temperature / 14;
-        }
+            
+
     }
 
     public int GetPopulationGrowth()
     {
-        return GetOwner() != null ? GetOwner().terraforming - characteristics.habitability + 2 : characteristics.habitability;
+        return gameController.GetCurrentPlayer().terraforming - characteristics.habitability + 2;
     }
     public int GetMineralsnGrowth()
     {
-        return GetOwner() != null ? characteristics.temperature / 10 : characteristics.temperature / 14;
+        return resources.minerals / 5;
     }
 
     public int GetSolarPowerGrowth()
@@ -197,14 +201,14 @@ public class Planet : Ownable
 
     private void FindStarsNear()
     {
-        List<GameObject> list;
-        List<Star> starsList;
+        //List<GameObject> list;
+        //List<Star> starsList;
         Star starOneHex;
         Star starTwoHex;
         Star starThreeHex;
 
         var gameObjectsInProximityOneHex =
-                Physics.OverlapSphere(transform.position, 10)
+                Physics.OverlapSphere(transform.position, 15)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
@@ -214,7 +218,7 @@ public class Planet : Ownable
                 .Select(c => c.gameObject)
                 .ToArray();
         var gameObjectsInProximityThreeHex =
-                Physics.OverlapSphere(transform.position, 150)
+                Physics.OverlapSphere(transform.position, 25)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
@@ -263,18 +267,24 @@ public class Planet : Ownable
 
         if (starOneHex != null)
         {
-            starOneHex.GiveSolarPower(GetOwner(), 3);
             solarPowerGrowth = 3;
+            if (player != null)
+                starOneHex.GiveSolarPower(player, 3);
+            
         }
         else if (starTwoHex != null)
         {
-            starTwoHex.GiveSolarPower(GetOwner(), 2);
             solarPowerGrowth = 2;
+            if (player != null)
+                starTwoHex.GiveSolarPower(player, 2);
+            
         }
         else if (starThreeHex != null)
         {
-            starThreeHex.GiveSolarPower(GetOwner(), 1);
             solarPowerGrowth = 1;
+            if (player != null)
+                starThreeHex.GiveSolarPower(player, 1);
+
         }
 
     }

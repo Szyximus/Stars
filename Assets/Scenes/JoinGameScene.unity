@@ -2005,7 +2005,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1659825756}
+        - m_Target: {fileID: 0}
           m_MethodName: Back
           m_Mode: 1
           m_Arguments:
@@ -2338,7 +2338,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1659825755}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2f770bedb53fc7409229f15fbdd8f9f, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c491951526a42f419037b7df2e29ad0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &1659825757
