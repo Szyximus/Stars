@@ -320,7 +320,7 @@ public class Spaceship : Ownable
 
     private void AddHealthPoints(int healthPoints)
     {
-        if ((this.spaceshipStatistics.healthPoints += healthPoints) <= 0)
+        if ((this.spaceshipStatistics.healthPoints + healthPoints) <= 0)
         {
             GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position, transform.rotation);
             this.GetOwner().Lose(this);
