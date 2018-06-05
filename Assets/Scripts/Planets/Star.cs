@@ -18,9 +18,11 @@ public class Star : MonoBehaviour
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
     private UIHoverListener uiListener;
+    public GameObject mesh;
 
     void Awake()
     {
+        mesh = GetComponentInChildren<MeshRenderer>().gameObject;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
         UpdateCoordinates();

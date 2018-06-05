@@ -45,18 +45,20 @@ public class Planet : Ownable
     private UIHoverListener uiListener;
     private HexGrid grid;
     public HexCoordinates Coordinates { get; set; }
+    public GameObject mesh;
 
     private new void Awake()
     {
         base.Awake();
         RadarRange = 40f;
 
+        mesh = GetComponentInChildren<MeshRenderer>().gameObject;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
         UpdateCoordinates();
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        
         //FindStarsNear();
         Debug.Log("Awake planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);

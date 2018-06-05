@@ -21,7 +21,7 @@ public class ShipMinimapIcon : MonoBehaviour
 
         if (GetComponentInParent<Ownable>().GetOwner() == null)
         {
-            sprite.color = new Color(0.5f, 0.5f, 0.5f);
+            sprite.color = new Color(0.66f, 0.66f, 0.66f);
 
         }
     }

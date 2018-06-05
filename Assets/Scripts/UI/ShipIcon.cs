@@ -26,6 +26,12 @@ public class ShipIcon : MonoBehaviour
 
         } else sprite.color = new Color(0.75f, 0, 0);
 
-        
+        if (GetComponentInParent<Ownable>().GetOwner() == null)
+        {
+            sprite.color = new Color(0.56f, 0.56f, 0.56f);
+
+        }
+
+
     }
 }

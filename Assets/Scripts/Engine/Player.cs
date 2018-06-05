@@ -9,6 +9,7 @@ public class Player : NetworkBehaviour
     public bool local;
     public bool clientConnected;
 
+
     [SyncVar]
     public bool human;
     [SyncVar]
@@ -95,6 +96,8 @@ public class Player : NetworkBehaviour
         engines = 0;
         radars = 0;
         looser = false;
+
+        
 
         spaceshipsCosts.scoutNeededMinerals = 5;
         spaceshipsCosts.scoutNeededPopulation = 2;
