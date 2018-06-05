@@ -11,7 +11,7 @@ using Assets.Scripts.HexLogic;
 using System.Linq;
 using UnityEngine.Networking;
 
-
+[System.Serializable]
 public class Planet : Ownable
 {
     private int solarPowerGrowth = 0;
@@ -40,7 +40,7 @@ public class Planet : Ownable
     public bool mayBeHome;
 
     [SyncVar]
-    private int maxHealthPoints;
+    public int maxHealthPoints;
 
     private UIHoverListener uiListener;
     private HexGrid grid;
@@ -54,7 +54,6 @@ public class Planet : Ownable
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
 
-        maxHealthPoints = characteristics.healthPoints;
         UpdateCoordinates();
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();

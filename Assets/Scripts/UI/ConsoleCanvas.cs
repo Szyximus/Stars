@@ -8,25 +8,23 @@ public class ConsoleCanvas : MonoBehaviour
 
     bool Shown;
 
-    private static bool created = false;
+    private static ConsoleCanvas instance;
     private ConsolePanel panel;
 
     private void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
-            //gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
-            panel = GetComponentInChildren<ConsolePanel>();
-            DontDestroyOnLoad(this.gameObject);
-            created = true;
-        }
-    }
+            instance = this;
+            DontDestroyOnLoad(gameObject);
 
-    void Start()
-    {
-        //panel.enabled = false;
-        panel.gameObject.SetActive(false);
-        Shown = true;
+            panel = GetComponentInChildren<ConsolePanel>();
+            panel.gameObject.SetActive(false);
+            Shown = false;
+        } else if(instance != this)
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Show()

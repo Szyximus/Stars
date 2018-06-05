@@ -9,6 +9,7 @@ public abstract class Ownable : NetworkBehaviour
 
     protected Player owner;
     protected GameController gameController;
+    protected GameApp gameApp;
 
     [SyncVar]
     public float RadarRange;
@@ -16,6 +17,7 @@ public abstract class Ownable : NetworkBehaviour
     public void Awake()
     {
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
     }
 
     protected bool CanMakeAction()
@@ -33,6 +35,8 @@ public abstract class Ownable : NetworkBehaviour
 
     public void Lose()
     {
+        if (this.owner != null)
+            this.owner.Lose(this);
         this.owner = null;
     }
 

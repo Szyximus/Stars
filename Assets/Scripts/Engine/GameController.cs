@@ -13,6 +13,7 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Threading;
+using System.Linq;
 
 /*
  *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
@@ -155,7 +156,7 @@ public class GameController : NetworkBehaviour
         else
             Debug.Log("wtf we are?");
 
-        levelLoader.LoadLevel("MainMenuScene");
+        levelLoader.Back("MainMenuScene");
     }
 
 
@@ -467,12 +468,40 @@ public class GameController : NetworkBehaviour
             playersJson = (JArray)gameJson["players"];
             if (playersJson.Count != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
+
+            // check if players names are not empty
+            if (!playersJson.Where(s => ((string)s["name"]).Equals("")).ToList().Count.Equals(0))
+            {
+                throw new Exception("Players names can't be empty");
+            }
+
+            // check if players names are unique
+            List<string>  PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+            if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+            {
+                throw new Exception("Players names must be unique!");
+            }
         }
         else
         {
             if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
                 throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+
+            // check if players names are not empty
+            if (!PlayerMenuList.Where(s => s.name.Equals("")).ToList().Count.Equals(0))
+            {
+                throw new Exception("Players names can't be empty");
+            }
+
+            // check if players names are unique
+            List<string> PlayerMenuListNames = PlayerMenuList.Select(s => s.name).ToList();
+            if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+            {
+                throw new Exception("Players names must be unique!");
+            }
         }
+
+        
 
         int i = 0;
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
@@ -503,6 +532,19 @@ public class GameController : NetworkBehaviour
 
     void PlayersFromJson(JArray playersJson)
     {
+        // check if players names are not empty
+        if (!playersJson.Where(s => ((string)s["name"]).Equals("")).ToList().Count.Equals(0))
+        {
+            throw new Exception("Players names can't be empty");
+        }
+
+        // check if players names are unique
+        List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+        if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+        {
+            throw new Exception("Players names must be unique!");
+        }
+
         foreach (JObject playerJson in playersJson)
         {
             // init
@@ -603,7 +645,9 @@ public class GameController : NetworkBehaviour
             GameObject planet = Instantiate(original: gameApp.PlanetPrefab, position: new Vector3(
                 (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
+            
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
+            planet.GetComponent<Planet>().maxHealthPoints = planet.GetComponent<Planet>().characteristics.healthPoints;
             // NetworkServer.Spawn(planet);
 
             // general
@@ -760,6 +804,32 @@ public class GameController : NetworkBehaviour
             owned.SetupNewTurn();
         }
 
+        // check if winner
+        if(IsCurrentPlayerWinner())
+        {
+            EndGame();
+            return;
+        }
+
+        // check if looser
+        if(IsCurrentPlayerLooser())
+        {
+            if(GetCurrentPlayer().local)
+            {
+                NextTurnServer();
+                return;
+            } else
+            {
+                if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+                {
+                    NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(2));
+                }
+                NextTurnServer();
+                return;
+            }
+        }
+
         EventManager.selectionManager.SelectedObject = null;
         EventManager.selectionManager.TargetObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
@@ -775,7 +845,6 @@ public class GameController : NetworkBehaviour
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Hide();
             turnScreen.Play("year: " + year + " | player: " + GetCurrentPlayer().name);
         }
         else
@@ -796,6 +865,75 @@ public class GameController : NetworkBehaviour
         }
     }
 
+    /*
+     *  Send connClientEndGame to all players and make end screen for server
+     */
+    private void EndGame()
+    {
+        foreach (GameObject playerGameObject in players)
+        {
+            Player player = playerGameObject.GetComponent<Player>();
+            if (serverNetworkManager.connections.ContainsKey(player.name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame,
+                    new StringMessage("Winner: " + GetCurrentPlayer().name));
+            }
+        }
+        turnScreen.Show("year: " + year + "\nWinner: " + GetCurrentPlayer().name);
+    }
+
+    private bool IsCurrentPlayerLooser()
+    {
+        Player player = GetCurrentPlayer();
+
+        // was looser before
+        if (player.looser == true)
+            return true;
+
+        // no planets and no colonizers
+        foreach (Ownable owned in player.GetOwned())
+        {
+            if (owned.gameObject.GetComponent<Planet>() != null)
+                return false;
+            if (owned.gameObject.GetComponent<Colonizer>() != null)
+                return false;
+        }
+
+        player.looser = true;
+        return true;
+    }
+
+    private bool IsCurrentPlayerWinner()
+    {
+        Player player = GetCurrentPlayer();
+
+        // last man standing
+        var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
+        if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+        {
+            return true;
+        }
+
+        // too rich to loose
+        int tooRichTreshold = 1000;
+        if (player.minerals >= tooRichTreshold || player.population >= tooRichTreshold ||
+            player.solarPower >= tooRichTreshold || player.terraforming >= tooRichTreshold)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+     *  Called from clientNetworkManager, when the client should end game
+     */
+    public void GameEnded(string msg)
+    {
+        Debug.Log("GameEnded");
+        turnScreen.Show("END\n" + msg);
+    }
 
     /*
      *  Called from clientNetworkManager, when the client should wait
@@ -813,6 +951,15 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("StopWaitForTurn");
         turnScreen.Hide();
+    }
+
+    /*
+     *  Called from clientNetworkManager, when the client lost game
+     */
+    public void LostTurn()
+    {
+        Debug.Log("LostTurn");
+        turnScreen.Show("You lost the game");
     }
 
 

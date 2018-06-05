@@ -63,7 +63,7 @@ public class ServerNetworkManager : NetworkManager
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
 
             // uncomment for testing
-            //this.networkAddress = "127.0.0.1";
+            //this.serverBindAddress = "127.0.0.1";
             //this.networkPort = 7777;
             if (!this.StartServer())
                 throw new Exception("Starting server error!");
@@ -92,7 +92,7 @@ public class ServerNetworkManager : NetworkManager
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
 
             // uncomment for testing
-            //this.networkAddress = "127.0.0.1";
+            //this.serverBindAddress = "127.0.0.1";
             //this.networkPort = 7777;
             if(!this.StartServer())
                 throw new Exception("Starting server error!");
@@ -380,7 +380,8 @@ public class ServerNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         Debug.Log("Server has stopped");
-        levelLoader.Back("MainMenuScene");
+        if(levelLoader != null)
+            levelLoader.Back("MainMenuScene");
     }
 
     public override void OnStopHost()

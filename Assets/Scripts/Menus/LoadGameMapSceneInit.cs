@@ -32,7 +32,7 @@ public class LoadGameMapSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.Back("mainMenuScene");
+        levelLoader.Back("MainMenuScene");
     }
 
     public void Next()
