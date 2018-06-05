@@ -469,8 +469,14 @@ public class GameController : NetworkBehaviour
             if (playersJson.Count != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
 
+            // check if players names are not empty
+            if (!playersJson.Where(s => ((string)s["name"]).Equals("")).ToList().Count.Equals(0))
+            {
+                throw new Exception("Players names can't be empty");
+            }
+
             // check if players names are unique
-            List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+            List<string>  PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
             if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
             {
                 throw new Exception("Players names must be unique!");
@@ -480,6 +486,12 @@ public class GameController : NetworkBehaviour
         {
             if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
                 throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+
+            // check if players names are not empty
+            if (!PlayerMenuList.Where(s => s.name.Equals("")).ToList().Count.Equals(0))
+            {
+                throw new Exception("Players names can't be empty");
+            }
 
             // check if players names are unique
             List<string> PlayerMenuListNames = PlayerMenuList.Select(s => s.name).ToList();
@@ -520,6 +532,12 @@ public class GameController : NetworkBehaviour
 
     void PlayersFromJson(JArray playersJson)
     {
+        // check if players names are not empty
+        if (!playersJson.Where(s => ((string)s["name"]).Equals("")).ToList().Count.Equals(0))
+        {
+            throw new Exception("Players names can't be empty");
+        }
+
         // check if players names are unique
         List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
         if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
