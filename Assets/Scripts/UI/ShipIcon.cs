@@ -24,11 +24,11 @@ public class ShipIcon : MonoBehaviour
         {
             sprite.color = Color.white;
 
-        } else sprite.color = new Color(0.75f, 0, 0);
+        } else sprite.color = new Color(0.66f, 0, 0);
 
         if (GetComponentInParent<Ownable>().GetOwner() == null)
         {
-            sprite.color = new Color(0.56f, 0.56f, 0.56f);
+            sprite.color = new Color(0.50f, 0.50f, 0.50f);
 
         }
 
