@@ -308,7 +308,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteValue(planet.GetOwnerName());
 
                 writer.WritePropertyName("planetMain");
-                Debug.Log(JsonUtility.ToJson(planet));
+                writer.WriteRawValue(JsonUtility.ToJson(planet));
 
                 writer.WritePropertyName("radius");
                 writer.WriteValue(planet.transform.localScale.x);
