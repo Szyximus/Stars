@@ -865,6 +865,9 @@ public class GameController : NetworkBehaviour
         }
     }
 
+    /*
+     *  Send connClientEndGame to all players and make end screen for server
+     */
     private void EndGame()
     {
         foreach (GameObject playerGameObject in players)
@@ -921,6 +924,15 @@ public class GameController : NetworkBehaviour
         }
 
         return false;
+    }
+
+    /*
+     *  Called from clientNetworkManager, when the client should end game
+     */
+    public void GameEnded(string msg)
+    {
+        Debug.Log("GameEnded");
+        turnScreen.Show("END\n" + msg);
     }
 
     /*

@@ -99,6 +99,7 @@ public class ClientNetworkManager : NetworkManager
         networkClient.RegisterHandler(gameApp.connAssignPlayerSuccessId, OnClientAssignPlayerSuccess);
         networkClient.RegisterHandler(gameApp.connSetupTurnId, OnClientSetupTurn);
         networkClient.RegisterHandler(gameApp.connClientLoadGameId, OnClientLoadGame);
+        networkClient.RegisterHandler(gameApp.connClientEndGame, OnClientEndGame);
 
         string playerName = gameApp.GetAndRemoveInputField("PlayerName");
         string password = gameApp.GetAndRemoveInputField("Password");
@@ -114,6 +115,17 @@ public class ClientNetworkManager : NetworkManager
         networkClient.Send(gameApp.connAssignPlayerId, playerMsg);
     }
 
+
+    /*
+     *  Custom callback (on connClientEndGame)
+     *  Server invoke it at the end of the game
+     */
+    public void OnClientEndGame(NetworkMessage netMsg)
+    {
+        string msg = netMsg.ReadMessage<StringMessage>().value;
+        Debug.Log("OnClientEndGame: " + msg);
+        gameController.GameEnded(msg);
+    }
 
     /*
      *  Custom callback (on connAssignPlayerErrorId)
