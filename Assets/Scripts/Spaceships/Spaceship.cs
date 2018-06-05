@@ -73,6 +73,7 @@ public class Spaceship : Ownable
     override
     public void SetupNewTurn()
     {
+        basicAttack = spaceshipStatistics.attack;
         actionPoints = MaxActionPoints + GetOwner().engines;
         spaceshipStatistics.attack = basicAttack + GetOwner().attack;
         RadarRange = basicRadarRange + GetOwner().radars;

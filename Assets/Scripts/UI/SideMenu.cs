@@ -207,7 +207,7 @@ public class SideMenu : MonoBehaviour
         StarFill.SetActive(false);
 
         ShipCharacteristicsPanel.SetActive(true);
-        shipCharacteristics.text = ("FirePower: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.attack + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
+        shipCharacteristics.text = ("FirePower: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.attack).ToString() + "\n" +
                                  //"Defense: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.defense.ToString() + "\n" +
                                  "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
                                  "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
