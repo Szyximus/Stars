@@ -16,7 +16,6 @@ public class Spaceship : Ownable
     public HexCoordinates Coordinates { get; set; }
     private Vector3 oldPosition;
     public HexCoordinates Destination { get; set; }
-    public GameApp gameApp;
 
     private UIHoverListener uiListener;
     private AudioSource engineSound;
@@ -64,8 +63,6 @@ public class Spaceship : Ownable
         engineSound = gameObject.GetComponent<AudioSource>();
 
         TurnEnginesOff();
-
-        gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
         Debug.Log("Awake spaceship");
     }

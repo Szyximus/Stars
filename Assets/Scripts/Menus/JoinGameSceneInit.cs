@@ -21,7 +21,7 @@ public class JoinGameSceneInit : MonoBehaviour
 
     public void Back()
     {
-        levelLoader.LoadLevel("mainMenuScene");
+        levelLoader.Back("MainMenuScene");
     }
 
     public void Join()

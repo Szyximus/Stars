@@ -63,8 +63,8 @@ public class ServerNetworkManager : NetworkManager
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
 
             // uncomment for testing
-            //this.networkAddress = "127.0.0.1";
-            //this.networkPort = 7777;
+            this.serverBindAddress = "127.0.0.1";
+            this.networkPort = 7777;
             if (!this.StartServer())
                 throw new Exception("Starting server error!");
             this.ServerChangeScene("GameScene");
@@ -92,8 +92,8 @@ public class ServerNetworkManager : NetworkManager
             this.networkPort = int.Parse(gameApp.GetInputField("ServerPort"));
 
             // uncomment for testing
-            //this.networkAddress = "127.0.0.1";
-            //this.networkPort = 7777;
+            this.serverBindAddress = "127.0.0.1";
+            this.networkPort = 7777;
             if(!this.StartServer())
                 throw new Exception("Starting server error!");
             this.ServerChangeScene("GameScene");

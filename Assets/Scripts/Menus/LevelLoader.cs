@@ -15,16 +15,19 @@ public class LevelLoader : MonoBehaviour {
     public GameObject slider;
     private GameApp gameApp;
 
-    private static bool created = false;
+    private static LevelLoader instance;
 
     private void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
-            DontDestroyOnLoad(this.gameObject);
-            created = true;
+            DontDestroyOnLoad(gameObject);
+            instance = this;
+        } else if(instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 

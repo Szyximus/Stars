@@ -14,7 +14,7 @@ using Newtonsoft.Json.Linq;
  */
 public class GameApp : MonoBehaviour
 {
-    private static bool created = false;
+    private static GameApp instance;
     private LevelLoader levelLoader;
 
     // base path for saved games files and new game files
@@ -124,7 +124,7 @@ public class GameApp : MonoBehaviour
 
     void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             Debug.Log("Awake GameApp");
 
@@ -165,8 +165,11 @@ public class GameApp : MonoBehaviour
                 }
             }
 
-            DontDestroyOnLoad(this.gameObject);
-            created = true;
+            DontDestroyOnLoad(gameObject);
+            instance = this;
+        } else if(instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
