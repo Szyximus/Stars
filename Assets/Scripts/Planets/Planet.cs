@@ -15,6 +15,7 @@ using UnityEngine.Networking;
 public class Planet : Ownable
 {
     private int solarPowerGrowth = 0;
+    private int basicRadarRange = 40;
 
     [System.Serializable]
     public struct PlanetCharacteristics
@@ -58,7 +59,7 @@ public class Planet : Ownable
 
         UpdateCoordinates();
 
-        
+
         //FindStarsNear();
         Debug.Log("Awake planet " + name + ", coordinates: " + Coordinates + " - " + transform.position +
                    "Minerals " + resources.minerals + "HealthPoints " + characteristics.healthPoints);
@@ -111,10 +112,10 @@ public class Planet : Ownable
             //FindStarsNear();
             player.population += player.terraforming - characteristics.habitability + 2;
             player.minerals += resources.minerals / 5;
-            RadarRange += GetOwner().radars;
+            RadarRange = basicRadarRange + GetOwner().radars;
 
         }
-            
+
 
     }
 
@@ -271,14 +272,14 @@ public class Planet : Ownable
             solarPowerGrowth = 3;
             if (player != null)
                 starOneHex.GiveSolarPower(player, 3);
-            
+
         }
         else if (starTwoHex != null)
         {
             solarPowerGrowth = 2;
             if (player != null)
                 starTwoHex.GiveSolarPower(player, 2);
-            
+
         }
         else if (starThreeHex != null)
         {

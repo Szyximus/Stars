@@ -45,6 +45,8 @@ public class Spaceship : Ownable
     public Spaceship spaceshipsToAttack;
 
     public int maxHealthPoints;
+    private int basicRadarRange = 26;
+    private int basicAttack;
 
     protected new void Awake()
     {
@@ -54,6 +56,7 @@ public class Spaceship : Ownable
         RadarRange = 26f;
         MaxActionPoints = 7;
         maxHealthPoints = spaceshipStatistics.healthPoints;
+        basicAttack = spaceshipStatistics.attack;
 
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
@@ -71,9 +74,8 @@ public class Spaceship : Ownable
     public void SetupNewTurn()
     {
         actionPoints = MaxActionPoints + GetOwner().engines;
-        spaceshipStatistics.attack += GetOwner().attack;
-        RadarRange += GetOwner().radars;
-
+        spaceshipStatistics.attack = basicAttack + GetOwner().attack;
+        RadarRange = basicRadarRange + GetOwner().radars;
     }
 
     void UpdateCoordinates()
@@ -300,7 +302,7 @@ public class Spaceship : Ownable
                     distance = heading.magnitude;
                     direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.5f, 0);
-                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction*2.5f, target.transform.rotation);
+                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction * 2.5f, target.transform.rotation);
                     Destroy(SourceFire, 1f);
                     Destroy(TargetFire, 1f);
                     target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
