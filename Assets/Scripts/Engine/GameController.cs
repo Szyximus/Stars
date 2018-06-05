@@ -467,12 +467,28 @@ public class GameController : NetworkBehaviour
             playersJson = (JArray)gameJson["players"];
             if (playersJson.Count != PlayerMenuList.Count)
                 throw new Exception("Wrong number of players2, should be " + (int)gameJson["info"]["maxPlayers"]);
+
+            // check if players names are unique
+            List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+            if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+            {
+                throw new Exception("Players names must be unique!");
+            }
         }
         else
         {
             if ((int)gameJson["info"]["maxPlayers"] < PlayerMenuList.Count)
                 throw new Exception("Too much players, max is " + (int)gameJson["info"]["maxPlayers"]);
+
+            // check if players names are unique
+            List<string> PlayerMenuListNames = PlayerMenuList.Select(s => s.name).ToList();
+            if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+            {
+                throw new Exception("Players names must be unique!");
+            }
         }
+
+        
 
         int i = 0;
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
@@ -503,6 +519,13 @@ public class GameController : NetworkBehaviour
 
     void PlayersFromJson(JArray playersJson)
     {
+        // check if players names are unique
+        List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+        if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
+        {
+            throw new Exception("Players names must be unique!");
+        }
+
         foreach (JObject playerJson in playersJson)
         {
             // init
