@@ -110,24 +110,24 @@ public class Player : NetworkBehaviour
         spaceshipsCosts.colonizerNeededSolarPower = 8;
 
         researchStruct.attackLevel = 0;
-        researchStruct.attackNeededMinerals = 3;
-        researchStruct.attackNeededPopulation = 2;
-        researchStruct.attackNeededSolarPower = 2;
+        researchStruct.attackNeededMinerals = 20;
+        researchStruct.attackNeededPopulation = 10;
+        researchStruct.attackNeededSolarPower = 12;
 
         researchStruct.enginesLevel = 0;
-        researchStruct.enginesNeededMinerals = 2;
-        researchStruct.enginesNeedesPopulation = 2;
-        researchStruct.enginesNeededSolarPower = 4;
+        researchStruct.enginesNeededMinerals = 10;
+        researchStruct.enginesNeedesPopulation = 11;
+        researchStruct.enginesNeededSolarPower = 20;
 
         researchStruct.terraformingLevel = 0;
-        researchStruct.terraformingNeededMinerals = 3;
-        researchStruct.terraformingNeededPopulation = 4;
-        researchStruct.terraformingNeededSolarPower = 2;
+        researchStruct.terraformingNeededMinerals = 12;
+        researchStruct.terraformingNeededPopulation = 18;
+        researchStruct.terraformingNeededSolarPower = 14;
 
         researchStruct.radarsLevel = 0;
-        researchStruct.radarsNeededMinerals = 3;
-        researchStruct.radarsNeededPopulation = 3;
-        researchStruct.radarsNeededSolarPower = 1;
+        researchStruct.radarsNeededMinerals = 11;
+        researchStruct.radarsNeededPopulation = 12;
+        researchStruct.radarsNeededSolarPower = 15;
     }
 
 
