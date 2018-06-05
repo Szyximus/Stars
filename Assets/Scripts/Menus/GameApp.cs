@@ -28,6 +28,7 @@ public class GameApp : MonoBehaviour
     public readonly short connAssignPlayerSuccessId = 20003;
     public readonly short connSetupTurnId = 20004;
     public readonly short connClientLoadGameId = 20005;
+    public readonly short connClientEndGame = 20006;
 
     // all prefabs in one place
     public GameObject PlayerPrefab;

@@ -35,6 +35,8 @@ public abstract class Ownable : NetworkBehaviour
 
     public void Lose()
     {
+        if (this.owner != null)
+            this.owner.Lose(this);
         this.owner = null;
     }
 

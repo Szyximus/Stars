@@ -27,6 +27,8 @@ public class Player : NetworkBehaviour
     public int engines;
     [SyncVar]
     public int radars;
+    [SyncVar]
+    public bool looser;
 
     private ArrayList spaceships;
     private ArrayList planets;
@@ -92,6 +94,7 @@ public class Player : NetworkBehaviour
         attack = 0;
         engines = 0;
         radars = 0;
+        looser = false;
 
         spaceshipsCosts.scoutNeededMinerals = 5;
         spaceshipsCosts.scoutNeededPopulation = 2;

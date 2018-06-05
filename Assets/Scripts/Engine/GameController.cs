@@ -13,6 +13,7 @@ using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Threading;
+using System.Linq;
 
 /*
  *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
@@ -155,7 +156,7 @@ public class GameController : NetworkBehaviour
         else
             Debug.Log("wtf we are?");
 
-        levelLoader.LoadLevel("MainMenuScene");
+        levelLoader.Back("MainMenuScene");
     }
 
 
@@ -307,7 +308,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteValue(planet.GetOwnerName());
 
                 writer.WritePropertyName("planetMain");
-                writer.WriteRawValue(JsonUtility.ToJson(planet));
+                Debug.Log(JsonUtility.ToJson(planet));
 
                 writer.WritePropertyName("radius");
                 writer.WriteValue(planet.transform.localScale.x);
@@ -626,7 +627,9 @@ public class GameController : NetworkBehaviour
             GameObject planet = Instantiate(original: gameApp.PlanetPrefab, position: new Vector3(
                 (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
+            
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
+            planet.GetComponent<Planet>().maxHealthPoints = planet.GetComponent<Planet>().characteristics.healthPoints;
             // NetworkServer.Spawn(planet);
 
             // general
@@ -783,6 +786,32 @@ public class GameController : NetworkBehaviour
             owned.SetupNewTurn();
         }
 
+        // check if winner
+        if(IsCurrentPlayerWinner())
+        {
+            EndGame();
+            return;
+        }
+
+        // check if looser
+        if(IsCurrentPlayerLooser())
+        {
+            if(GetCurrentPlayer().local)
+            {
+                NextTurnServer();
+                return;
+            } else
+            {
+                if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+                {
+                    NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(2));
+                }
+                NextTurnServer();
+                return;
+            }
+        }
+
         EventManager.selectionManager.SelectedObject = null;
         EventManager.selectionManager.TargetObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
@@ -798,7 +827,6 @@ public class GameController : NetworkBehaviour
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Hide();
             turnScreen.Play("year: " + year + " | player: " + GetCurrentPlayer().name);
         }
         else
@@ -819,6 +847,63 @@ public class GameController : NetworkBehaviour
         }
     }
 
+    private void EndGame()
+    {
+        foreach (GameObject playerGameObject in players)
+        {
+            Player player = playerGameObject.GetComponent<Player>();
+            if (serverNetworkManager.connections.ContainsKey(player.name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame,
+                    new StringMessage("Winner: " + GetCurrentPlayer().name));
+            }
+        }
+        turnScreen.Show("year: " + year + "\nWinner: " + GetCurrentPlayer().name);
+    }
+
+    private bool IsCurrentPlayerLooser()
+    {
+        Player player = GetCurrentPlayer();
+
+        // was looser before
+        if (player.looser == true)
+            return true;
+
+        // no planets and no colonizers
+        foreach (Ownable owned in player.GetOwned())
+        {
+            if (owned.gameObject.GetComponent<Planet>() != null)
+                return false;
+            if (owned.gameObject.GetComponent<Colonizer>() != null)
+                return false;
+        }
+
+        player.looser = true;
+        return true;
+    }
+
+    private bool IsCurrentPlayerWinner()
+    {
+        Player player = GetCurrentPlayer();
+
+        // last man standing
+        var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
+        if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+        {
+            return true;
+        }
+
+        // too rich to loose
+        int tooRichTreshold = 1000;
+        if (player.minerals >= tooRichTreshold || player.population >= tooRichTreshold ||
+            player.solarPower >= tooRichTreshold || player.terraforming >= tooRichTreshold)
+        {
+            return true;
+        }
+
+        return false;
+    }
 
     /*
      *  Called from clientNetworkManager, when the client should wait
@@ -836,6 +921,15 @@ public class GameController : NetworkBehaviour
     {
         Debug.Log("StopWaitForTurn");
         turnScreen.Hide();
+    }
+
+    /*
+     *  Called from clientNetworkManager, when the client lost game
+     */
+    public void LostTurn()
+    {
+        Debug.Log("LostTurn");
+        turnScreen.Show("You lost the game");
     }
 
 

@@ -147,11 +147,20 @@ public class ClientNetworkManager : NetworkManager
         Debug.Log("OnClientSetupTurn");
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        bool playNow = netMsg.ReadMessage<IntegerMessage>().value == 1;
-        if (playNow)
-            gameController.StopWaitForTurn();
-        else
-            gameController.WaitForTurn();
+        int gameStatus = netMsg.ReadMessage<IntegerMessage>().value;
+        switch(gameStatus)
+        {
+            case 0:
+                gameController.WaitForTurn();
+                break;
+            case 1:
+                gameController.StopWaitForTurn();
+                break;
+            case 2:
+            default:
+                gameController.LostTurn();
+                break;
+        }         
     }
 
     /*

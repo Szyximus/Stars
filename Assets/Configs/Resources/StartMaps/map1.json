@@ -12,7 +12,7 @@
 						"temperature": 54,
 						"radiation": 69,
 						"oxygen": 85,
-						"healthPoints": 100,
+						"healthPoints": 66,
 						"habitability": 1
 					},
 					"resources": {
@@ -37,7 +37,7 @@
 						"temperature": 69,
 						"radiation": 54,
 						"oxygen": 45,
-						"healthPoints": 100,
+						"healthPoints": 66,
 						"habitability": 3
 					},
 					"resources": {

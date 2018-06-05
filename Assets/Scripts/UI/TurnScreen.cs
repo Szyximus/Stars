@@ -44,7 +44,8 @@ public class TurnScreen : MonoBehaviour
     public void Hide()
     {
         sound.Play();
-        StartCoroutine(FadeOut());
+        if(gameObject.activeSelf)
+            StartCoroutine(FadeOut());
     }
 
     IEnumerator FadeIn(bool autoFadeOut)
