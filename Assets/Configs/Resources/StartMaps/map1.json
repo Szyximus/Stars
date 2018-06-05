@@ -28,7 +28,7 @@
 					0,
 					292.5
 				],
-				"owner": 1
+				"owner": 0
 			},
 			{
 				"name": "planet X",
@@ -54,7 +54,7 @@
 					0,
 					280
 				],
-				"owner": 2
+				"owner": 1
 			},
 			{
 				"name": "Nova",
@@ -79,7 +79,7 @@
 					0,
 					316
 				],
-				"owner": 3
+				"owner": 2
 			},
 			{
 				"name": "Moon",
@@ -105,7 +105,7 @@
 					0,
 					300
 				],
-				"owner": 4
+				"owner": 3
 			}
 		],
 		"stars": [{
@@ -171,57 +171,69 @@
 				}
 			},
 			{
-				"model": "Miner",
-				"owner": 0,
-				"position": [311.7, 0, 285],
-				"spaceshipMain": {
-					"RadarRange": 15.0,
-					"neededMinerals": 2,
-					"neededPopulation": 5,
-					"neededSolarPower": 6,
-					"spaceshipStatistics": {
-						"healthPoints": 80,
-						"attack": 5,
-						"defense": 15,
-						"speed": 6
-					},
-					"MaxActionPoints": 6
-				}
-			},
-			{
-				"model": "Warship",
+				"model": "Scout",
 				"owner": 1,
-				"position": [410, 0, 277.5],
+				"position": [
+					396,
+					0,
+					280
+				],
 				"spaceshipMain": {
 					"RadarRange": 25.0,
-					"neededMinerals": 6,
-					"neededPopulation": 4,
-					"neededSolarPower": 5,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
 					"spaceshipStatistics": {
-						"healthPoints": 300,
-						"attack": 35,
-						"defense": 50,
-						"speed": 5
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
 					},
-					"MaxActionPoints": 5
+					"MaxActionPoints": 7
 				}
 			},
 			{
-				"model": "Colonizer",
+				"model": "Scout",
 				"owner": 2,
-				"position": [402.7, 0, 260.5],
+				"position": [
+					355,
+					0,
+					316
+				],
 				"spaceshipMain": {
-					"RadarRange": 20.0,
-					"neededMinerals": 7,
-					"neededPopulation": 9,
-					"neededSolarPower": 8,
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
 					"spaceshipStatistics": {
-						"healthPoints": 600,
-						"attack": 5,
-						"defense": 40,
-						"speed": 4
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
 					},
-					"MaxActionPoints": 4
+					"MaxActionPoints": 7
+				}
+			},
+			{
+				"model": "Scout",
+				"owner": 3,
+				"position": [
+					302,
+					0,
+					300
+				],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
 				}
 			}
 		]

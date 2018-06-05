@@ -380,7 +380,8 @@ public class ServerNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         Debug.Log("Server has stopped");
-        levelLoader.Back("MainMenuScene");
+        if(levelLoader != null)
+            levelLoader.Back("MainMenuScene");
     }
 
     public override void OnStopHost()
