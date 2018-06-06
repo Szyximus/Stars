@@ -46,8 +46,8 @@ public class MiniMapController : MonoBehaviour
         // Add a Line Renderer to the GameObject
         line = this.gameObject.AddComponent<LineRenderer>();
         // Set the width of the Line Renderer
-        line.startWidth = 0.5f;
-        line.endWidth = 0.5f;
+        line.startWidth = 1f;
+        line.endWidth = 1f;
         // Set the number of vertex fo the Line Renderer
         line.positionCount = 5;
         line.material = LineMat;
