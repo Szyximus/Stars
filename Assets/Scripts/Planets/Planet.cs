@@ -15,7 +15,7 @@ using UnityEngine.Networking;
 public class Planet : Ownable
 {
     private int solarPowerGrowth = 0;
-    private int basicRadarRange = 40;
+    private int basicRadarRange = 5;
 
     [System.Serializable]
     public struct PlanetCharacteristics
@@ -51,11 +51,13 @@ public class Planet : Ownable
     private new void Awake()
     {
         base.Awake();
-        RadarRange = 40f;
+        RadarRange =basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
 
         mesh = GetComponentInChildren<MeshRenderer>().gameObject;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
+
+        maxHealthPoints = 500;
 
         UpdateCoordinates();
 
@@ -67,7 +69,7 @@ public class Planet : Ownable
 
     private void Start()
     {
-        FindStarsNear();
+        FindStarsNearWithoutGivingPower();
     }
 
 
@@ -92,7 +94,7 @@ public class Planet : Ownable
         {
             Debug.Log("cel");
             EventManager.selectionManager.TargetObject = this.gameObject;
-            Thread.Sleep(150);
+            Thread.Sleep(100);
         }
         else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
         {
@@ -110,9 +112,9 @@ public class Planet : Ownable
         if (player != null)
         {
             //FindStarsNear();
-            player.population += player.terraforming - characteristics.habitability + 2;
-            player.minerals += resources.minerals / 5;
-            RadarRange = basicRadarRange + GetOwner().radars;
+            player.population += player.terraforming - characteristics.habitability + 3;
+            player.minerals += GetMineralsnGrowth();
+            RadarRange =(basicRadarRange + GetOwner().radars + 0f) * 2 * HexMetrics.innerRadius;
 
         }
 
@@ -121,11 +123,11 @@ public class Planet : Ownable
 
     public int GetPopulationGrowth()
     {
-        return gameController.GetCurrentPlayer().terraforming - characteristics.habitability + 2;
+        return gameController.GetCurrentPlayer().terraforming - characteristics.habitability + 3;
     }
     public int GetMineralsnGrowth()
     {
-        return resources.minerals / 5;
+        return resources.minerals / 10;
     }
 
     public int GetSolarPowerGrowth()
@@ -210,17 +212,17 @@ public class Planet : Ownable
         Star starThreeHex;
 
         var gameObjectsInProximityOneHex =
-                Physics.OverlapSphere(transform.position, 15)
+                Physics.OverlapSphere(transform.position, 2 * 2 * HexMetrics.innerRadius + 0.01f)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
         var gameObjectsInProximityTwoHex =
-                Physics.OverlapSphere(transform.position, 20)
+                Physics.OverlapSphere(transform.position, 3 * 2 * HexMetrics.innerRadius + 0.01f)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
         var gameObjectsInProximityThreeHex =
-                Physics.OverlapSphere(transform.position, 25)
+                Physics.OverlapSphere(transform.position, 4 * 2 * HexMetrics.innerRadius + 0.01f)
                 .Except(new[] { GetComponent<Collider>() })
                 .Select(c => c.gameObject)
                 .ToArray();
@@ -269,23 +271,123 @@ public class Planet : Ownable
 
         if (starOneHex != null)
         {
-            solarPowerGrowth = 3;
+            solarPowerGrowth = 4;
             if (player != null)
-                starOneHex.GiveSolarPower(player, 3);
+                starOneHex.GiveSolarPower(player, 4);
 
         }
         else if (starTwoHex != null)
         {
-            solarPowerGrowth = 2;
+            solarPowerGrowth = 3;
             if (player != null)
-                starTwoHex.GiveSolarPower(player, 2);
+                starTwoHex.GiveSolarPower(player, 3);
 
         }
         else if (starThreeHex != null)
         {
+            solarPowerGrowth = 2;
+            if (player != null)
+                starThreeHex.GiveSolarPower(player, 2);
+
+        }
+        else
+        {
             solarPowerGrowth = 1;
             if (player != null)
                 starThreeHex.GiveSolarPower(player, 1);
+
+        }
+
+    }
+
+    private void FindStarsNearWithoutGivingPower()
+    {
+        //List<GameObject> list;
+        //List<Star> starsList;
+        Star starOneHex;
+        Star starTwoHex;
+        Star starThreeHex;
+
+        var gameObjectsInProximityOneHex =
+                Physics.OverlapSphere(transform.position, 2 * 2 * HexMetrics.innerRadius + 0.01f)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+        var gameObjectsInProximityTwoHex =
+                Physics.OverlapSphere(transform.position, 3 * 2 * HexMetrics.innerRadius + 0.01f)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+        var gameObjectsInProximityThreeHex =
+                Physics.OverlapSphere(transform.position, 4 * 2 * HexMetrics.innerRadius + 0.01f)
+                .Except(new[] { GetComponent<Collider>() })
+                .Select(c => c.gameObject)
+                .ToArray();
+
+        var starsInProximityOneHex = gameObjectsInProximityOneHex.Where(o => o.tag == "Star");
+        var starsInProximityTwoHex = gameObjectsInProximityTwoHex.Where(o => o.tag == "Star");
+        var starsInProximityThreeHex = gameObjectsInProximityThreeHex.Where(o => o.tag == "Star");
+        //zmienic ten syf
+        try
+        {
+            //  list = starsInProximityOneHex.ToList();
+            //if (list.Count() > 1)
+            //{
+            //    starsList.Add(list.)
+            //}
+            //   else if (list.Count() == 0)
+            starOneHex = (starsInProximityOneHex.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            starOneHex = null;
+            Debug.Log("Near (one hex) the planet cannot find stars");
+
+        }
+        try
+        {
+            starTwoHex = (starsInProximityTwoHex.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            starTwoHex = null;
+            Debug.Log("Near (two hex)  the planet cannot find stars");
+        }
+
+        try
+        {
+            starThreeHex = (starsInProximityThreeHex.FirstOrDefault().GetComponent<Star>() as Star);
+        }
+        catch
+        {
+            starThreeHex = null;
+            Debug.Log("Near (three hex) the planet cannot find stars");
+        }
+
+        Player player = GetOwner();
+
+        if (starOneHex != null)
+        {
+            solarPowerGrowth = 4;
+           
+
+        }
+        else if (starTwoHex != null)
+        {
+            solarPowerGrowth = 3;
+           
+
+        }
+        else if (starThreeHex != null)
+        {
+            solarPowerGrowth = 2;
+         
+
+        }
+        else
+        {
+            solarPowerGrowth = 1;
+      
 
         }
 

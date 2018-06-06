@@ -88,9 +88,9 @@ public class Player : NetworkBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
-        minerals = 10;
-        population = 10;
-        solarPower = 10;
+        minerals = 0;
+        population = 0;
+        solarPower = 0;
         terraforming = 1;
         attack = 0;
         engines = 0;

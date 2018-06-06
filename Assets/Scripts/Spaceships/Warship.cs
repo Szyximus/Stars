@@ -17,17 +17,17 @@ public class Warship : Spaceship
         base.Awake();
 
         model = "Warship";
-        MaxActionPoints = 5;
-        RadarRange = 25;
+        MaxActionPoints = 6;
+        RadarRange = 3;
 
         neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededMinerals;
         neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededPopulation;
         neededSolarPower = gameController.GetCurrentPlayer().spaceshipsCosts.warshipNeededSolarPower;
 
-        spaceshipStatistics.healthPoints = 300;
-        spaceshipStatistics.attack = 35;
-        spaceshipStatistics.defense = 50;
-        spaceshipStatistics.speed = 5;
+        spaceshipStatistics.healthPoints = 100;
+        spaceshipStatistics.attack = 10;
+        spaceshipStatistics.radars = 3;
+        spaceshipStatistics.speed = 6;
     }
 
 

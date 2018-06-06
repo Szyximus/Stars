@@ -567,14 +567,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: 
   RadarRange: 0
-  gameApp: {fileID: 0}
   neededMinerals: 0
   neededPopulation: 0
   neededSolarPower: 0
   spaceshipStatistics:
     healthPoints: 0
     attack: 0
-    defense: 0
+    radars: 0
     speed: 0
   Flying: 0
   MaxActionPoints: 0
@@ -605,7 +604,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_EffectColor: {r: 0, g: 0, b: 0, a: 0.5}
-  m_EffectDistance: {x: 10, y: -10}
+  m_EffectDistance: {x: 2, y: -2}
   m_UseGraphicAlpha: 1
 --- !u!114 &114778397870511392
 MonoBehaviour:

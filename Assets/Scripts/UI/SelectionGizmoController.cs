@@ -27,15 +27,20 @@ public class SelectionGizmoController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //This should only be called at an event, not every frame. fix later after EventManager is proper.
         if (EventManager.selectionManager.SelectedObject != null)
         {
             transform.position = EventManager.selectionManager.SelectedObject.transform.position + offset;
+
         }
-        else transform.position = new Vector3(-1000, -1000, -1000);
+        else
+        {
+            transform.position = new Vector3(-1000, -1000, -1000);
+            EventManager.selectionManager.TargetObject = null;
+        }
 
         if (transform.hasChanged)
         {
+            EventManager.selectionManager.TargetObject = null;
             sound.Play();
             transform.hasChanged = false;
         }

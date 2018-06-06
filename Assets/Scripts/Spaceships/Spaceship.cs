@@ -31,7 +31,7 @@ public class Spaceship : Ownable
     {
         public int healthPoints;
         public int attack;
-        public int defense;
+        public int radars;
         public int speed;
     }
 
@@ -45,7 +45,7 @@ public class Spaceship : Ownable
     public Spaceship spaceshipsToAttack;
 
     public int maxHealthPoints;
-    private int basicRadarRange = 26;
+    private int basicRadarRange;
     private int basicAttack;
 
     protected new void Awake()
@@ -53,10 +53,11 @@ public class Spaceship : Ownable
         base.Awake();
         model = null;
         Flying = false;
-        RadarRange = 26f;
-        MaxActionPoints = 7;
+        MaxActionPoints = spaceshipStatistics.speed;
+        basicRadarRange = spaceshipStatistics.radars;
+        RadarRange =basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
         maxHealthPoints = spaceshipStatistics.healthPoints;
-        basicAttack = spaceshipStatistics.attack;
+        basicAttack = 10;
 
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         UpdateCoordinates();
@@ -73,10 +74,10 @@ public class Spaceship : Ownable
     override
     public void SetupNewTurn()
     {
-        basicAttack = spaceshipStatistics.attack;
         actionPoints = MaxActionPoints + GetOwner().engines;
-        spaceshipStatistics.attack = basicAttack + GetOwner().attack;
-        RadarRange = basicRadarRange + GetOwner().radars;
+        spaceshipStatistics.attack = basicAttack + GetOwner().attack * 5;
+        basicRadarRange = spaceshipStatistics.radars;
+        RadarRange =(basicRadarRange + GetOwner().radars + 0f) *2 * HexMetrics.innerRadius;
     }
 
     void UpdateCoordinates()

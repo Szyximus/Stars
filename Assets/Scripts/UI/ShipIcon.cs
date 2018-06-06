@@ -17,7 +17,7 @@ public class ShipIcon : MonoBehaviour
     {
         var target = Camera.main.transform.position;
         target.x = transform.position.x;
-        transform.LookAt(target);
+        transform.LookAt(2 * transform.position - target);
         var distanceToCamera = Vector3.Distance(transform.position, target) / 60f;
         transform.localScale = new Vector3(distanceToCamera, distanceToCamera, distanceToCamera);
         if (GetComponentInParent<Ownable>().GetOwner() == gameController.GetCurrentPlayer())

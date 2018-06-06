@@ -4,6 +4,8 @@ using UnityEngine.UI;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 /*
  *  Class used in NewGameScene
@@ -102,7 +104,16 @@ public class NewGameSceneInit : MonoBehaviour
         }
         GameObject newPlayer = Instantiate(gameApp.PlayerMenuPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
         newPlayer.transform.SetParent(dynamicGrid.transform, false);
+        EventTrigger trigger = newPlayer.GetComponentInChildren<Toggle>().gameObject.AddComponent<EventTrigger>();
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+        entry.eventID = EventTriggerType.PointerExit;
+        entry.callback.AddListener((eventData) => {
+            GameObject.Find("EventSystem").GetComponent<EventSystem>().SetSelectedGameObject(GameObject.Find("EventSystem"));
+        });
+        trigger.triggers.Add(entry);
+
         playersToAddToGame.Add(newPlayer);
+        
     }
 
     /*

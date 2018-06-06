@@ -647,7 +647,7 @@ public class GameController : NetworkBehaviour
             );
             
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
-            planet.GetComponent<Planet>().maxHealthPoints = planet.GetComponent<Planet>().characteristics.healthPoints;
+            planet.GetComponent<Planet>().maxHealthPoints = 500;
             // NetworkServer.Spawn(planet);
 
             // general
@@ -845,7 +845,7 @@ public class GameController : NetworkBehaviour
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Play("year: " + year + " | player: " + GetCurrentPlayer().name);
+            turnScreen.Play("year: " + year + "\n" + GetCurrentPlayer().name);
         }
         else
         {
@@ -917,8 +917,8 @@ public class GameController : NetworkBehaviour
 
         // too rich to loose
         int tooRichTreshold = 1000;
-        if (player.minerals >= tooRichTreshold || player.population >= tooRichTreshold ||
-            player.solarPower >= tooRichTreshold || player.terraforming >= tooRichTreshold)
+        if (player.minerals >= tooRichTreshold && player.population >= tooRichTreshold &&
+            player.solarPower >= tooRichTreshold)
         {
             return true;
         }
@@ -1024,7 +1024,7 @@ public class GameController : NetworkBehaviour
                 Destroy(colonizer.gameObject);
 
             }
-        Thread.Sleep(150);
+        Thread.Sleep(100);
     }
 
     public void Mine()
@@ -1109,9 +1109,9 @@ public class GameController : NetworkBehaviour
             GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.terraformingNeededPopulation;
             GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.terraformingNeededSolarPower;
 
-            GetCurrentPlayer().researchStruct.terraformingNeededMinerals += 1;
-            GetCurrentPlayer().researchStruct.terraformingNeededPopulation += 1;
-            GetCurrentPlayer().researchStruct.terraformingNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.terraformingNeededMinerals += 5;
+            GetCurrentPlayer().researchStruct.terraformingNeededPopulation += 5;
+            GetCurrentPlayer().researchStruct.terraformingNeededSolarPower += 5;
             GetCurrentPlayer().researchStruct.terraformingLevel += 1;
             GetCurrentPlayer().terraforming++;
         }
@@ -1128,9 +1128,9 @@ public class GameController : NetworkBehaviour
             GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.attackNeededPopulation;
             GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.attackNeededSolarPower;
 
-            GetCurrentPlayer().researchStruct.attackNeededMinerals += 1;
-            GetCurrentPlayer().researchStruct.attackNeededPopulation += 1;
-            GetCurrentPlayer().researchStruct.attackNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.attackNeededMinerals += 5;
+            GetCurrentPlayer().researchStruct.attackNeededPopulation += 5;
+            GetCurrentPlayer().researchStruct.attackNeededSolarPower += 5;
             GetCurrentPlayer().researchStruct.attackLevel += 1;
             GetCurrentPlayer().attack++;
         }
@@ -1147,9 +1147,9 @@ public class GameController : NetworkBehaviour
             GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.enginesNeedesPopulation;
             GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.enginesNeededSolarPower;
 
-            GetCurrentPlayer().researchStruct.enginesNeededMinerals += 1;
-            GetCurrentPlayer().researchStruct.enginesNeedesPopulation += 1;
-            GetCurrentPlayer().researchStruct.enginesNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.enginesNeededMinerals += 5;
+            GetCurrentPlayer().researchStruct.enginesNeedesPopulation += 5;
+            GetCurrentPlayer().researchStruct.enginesNeededSolarPower += 5;
             GetCurrentPlayer().researchStruct.enginesLevel += 1;
             GetCurrentPlayer().engines++;
 
@@ -1167,9 +1167,9 @@ public class GameController : NetworkBehaviour
             GetCurrentPlayer().population -= GetCurrentPlayer().researchStruct.radarsNeededPopulation;
             GetCurrentPlayer().solarPower -= GetCurrentPlayer().researchStruct.radarsNeededSolarPower;
 
-            GetCurrentPlayer().researchStruct.radarsNeededMinerals += 1;
-            GetCurrentPlayer().researchStruct.radarsNeededPopulation += 1;
-            GetCurrentPlayer().researchStruct.radarsNeededSolarPower += 1;
+            GetCurrentPlayer().researchStruct.radarsNeededMinerals += 5;
+            GetCurrentPlayer().researchStruct.radarsNeededPopulation += 5;
+            GetCurrentPlayer().researchStruct.radarsNeededSolarPower += 5;
             GetCurrentPlayer().researchStruct.radarsLevel += 1;
             GetCurrentPlayer().radars++;
         }
