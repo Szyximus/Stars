@@ -70,11 +70,17 @@ public class NewGameSceneInit : MonoBehaviour
         List<GameApp.PlayerMenu> playerMenuList = new List<GameApp.PlayerMenu>();
         foreach (GameObject player in playersToAddToGame)
         {
+            string tempType;
+            if (player.transform.Find("PlayerTypeInput").GetComponent<Toggle>().isOn)
+            {
+                tempType = "L";
+            }
+            else tempType = "R";
             playerMenuList.Add( new GameApp.PlayerMenu {
                 name = player.transform.Find("PlayerNameInput").GetComponent<InputField>().text,
                 password = player.transform.Find("PlayerPassInput").GetComponent<InputField>().text,
-                race = player.transform.Find("PlayerRaceInput").GetComponent<InputField>().text,
-                playerType = player.transform.Find("PlayerTypeInput").GetComponent<InputField>().text,
+                race = "human",
+                playerType = tempType
             });
         }
 
