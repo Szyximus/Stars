@@ -102,7 +102,7 @@ public static class Pathfinder
 
         direction++;
 
-        if ( cell.IsEmpty() )
+        if (cell != null && cell.IsEmpty() )
             return cell;
         else if ( (int)direction < 6 )
             return GetNextEmptyCell( source, ref direction );

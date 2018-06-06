@@ -158,24 +158,30 @@ public class HexGrid : MonoBehaviour
     }
 
     void TouchCell(Vector3 position)
-    {
-        HexCoordinates coordinates = HexCoordinates.FromPosition(position);
 
-        GameObject selectedObject;
-        if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
-            if (selectedObject.tag == "Unit")
-            {
-                var spaceship = selectedObject.GetComponent<Spaceship>();
-                if (coordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(coordinates).IsEmpty())
+    {
+        if (HexCoordinates.FromPosition(position) != null)
+        {
+            HexCoordinates coordinates = HexCoordinates.FromPosition(position);
+
+            GameObject selectedObject;
+            if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
+                if (selectedObject.tag == "Unit")
                 {
-                    spaceship.Destination = coordinates;
-                    //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
-                    StartCoroutine(spaceship.MoveTo(spaceship.Destination));
+                    var spaceship = selectedObject.GetComponent<Spaceship>();
+                    if (coordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(coordinates) != null && FromCoordinates(coordinates).IsEmpty())
+                    {
+                        spaceship.Destination = coordinates;
+                        //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
+                        StartCoroutine(spaceship.MoveTo(spaceship.Destination));
+                    }
                 }
-            }
-        if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
-            FromCoordinates(coordinates); //it's only one match, First() used to change type
-        //Debug.Log("touched at " + coordinates);
+            if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
+                FromCoordinates(coordinates); //it's only one match, First() used to change type
+                                              //Debug.Log("touched at " + coordinates);
+        }
+
+
     }
 
     public void SetupNewTurn(Player currentPlayer)
