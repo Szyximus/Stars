@@ -30,7 +30,7 @@ public class TurnScreen : MonoBehaviour
         gameObject.SetActive(true);
         label.text = value;
         sound.Play();
-        StartCoroutine(FadeIn(true));
+        FadeIn(true);
     }
 
     public void Show(string value)
@@ -38,7 +38,7 @@ public class TurnScreen : MonoBehaviour
         gameObject.SetActive(true);
         label.text = value;
         sound.Play();
-        StartCoroutine(FadeIn(false));
+        FadeIn(false);
     }
 
     public void Hide()
@@ -48,21 +48,21 @@ public class TurnScreen : MonoBehaviour
             StartCoroutine(FadeOut());
     }
 
-    IEnumerator FadeIn(bool autoFadeOut)
+    void FadeIn(bool autoFadeOut)
     {
         Debug.Log("TurnScreen: fade in");
         gameObject.SetActive(true);
-        float startTime = Time.time;
+        //float startTime = Time.time;
 
-        while (Time.time - startTime < 1) // takes exactly 1 s. regardless of framerate
-        {
-            float passedTime = Time.time - startTime;
-            label.color = new Vector4(1, 1, 1, passedTime);
-            background.color = new Vector4(0, 0, 0, passedTime / 1.2f);
-            yield return null;
-        }
+        //while (Time.time - startTime < 1) // takes exactly 1 s. regardless of framerate
+        //{
+        //    float passedTime = Time.time - startTime;
+        //    label.color = new Vector4(1, 1, 1, passedTime);
+        //    background.color = new Vector4(0, 0, 0, passedTime / 1.2f);
+        //    yield return null;
+        //}
         label.color = new Vector4(1, 1, 1, 1);
-        background.color = new Vector4(0, 0, 0, 0.83f);
+        background.color = new Vector4(0, 0, 0, 1);
 
         if (autoFadeOut)
             StartCoroutine(FadeOut());
@@ -77,7 +77,7 @@ public class TurnScreen : MonoBehaviour
         {
             float passedTime = Time.time - startTime;
             label.color = new Vector4(1, 1, 1, 1f- passedTime / 2f);
-            background.color = new Vector4(0, 0, 0, 0.83f - passedTime / 2.4f);
+            background.color = new Vector4(0, 0, 0, 1f - passedTime / 2f);
             yield return null;
         }
 

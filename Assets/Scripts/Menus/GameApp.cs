@@ -80,7 +80,7 @@ public class GameApp : MonoBehaviour
 
     // this files should be in Assets/Configs/Resources/StartMaps
     private List<string> startMapsList = new List<string> {
-        "map1", "map2"
+        "1. Small- 2 Players", "2. Medium- 4 Players", "3. Large- 8 Players"
     };
 
     // Scripts can receive inputs by "name". Inputs are found by object name ("inputField") in editor 

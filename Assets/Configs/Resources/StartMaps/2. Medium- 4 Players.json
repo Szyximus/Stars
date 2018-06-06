@@ -1,0 +1,241 @@
+{
+	"info": {
+	    "maxPlayers": 4,
+		"currentPlayer": 1,
+		"year": 2400
+	},
+	"map": {
+		"planets": [{
+				"name": "Korriban",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 54,
+						"radiation": 69,
+						"oxygen": 85,
+						"healthPoints": 100,
+						"habitability": 1
+					},
+					"resources": {
+						"minerals": 15,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 1,
+				"position": [
+					307.4,
+					0,
+					292.5
+				],
+				"owner": 0
+			},
+			{
+				"name": "planet X",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 69,
+						"radiation": 54,
+						"oxygen": 45,
+						"healthPoints": 150,
+						"habitability": 3
+					},
+					"resources": {
+						"minerals": 12,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": false
+				},
+				"radius": 1.8,
+				"material": "Planet3Material",
+				"position": [
+					405,
+					0,
+					280
+				],
+				"owner": 1
+			},
+			{
+				"name": "Nova",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 56,
+						"radiation": 21,
+						"oxygen": 78,
+						"healthPoints": 50,
+						"habitability": 1
+					},
+					"resources": {
+						"minerals": 20,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 1.2,
+				"position": [
+					364.5,
+					0,
+					316
+				],
+				"owner": 2
+			},
+			{
+				"name": "Moon",
+				"planetMain": {
+					"characteristics": {
+						"temperature": 35,
+						"radiation": 3,
+						"oxygen": 0,
+						"healthPoints": 50,
+						"habitability": 2
+					},
+					"resources": {
+						"minerals": 10,
+						"energy": 0,
+						"population": 0
+					},
+					"mayBeHome": true
+				},
+				"radius": 0.5,
+				"material": "Planet2Material",
+				"position": [
+					311.8,
+					0,
+					300
+				],
+				"owner": 3
+			}
+		],
+		"stars": [{
+				"name": "Sun",
+				"starMain": {
+					"resources": {
+						"solarPower": 100
+					}
+				},
+				"radius": 1,
+				"position": [
+					287.73,
+					0,
+					295.7
+				]
+			},
+			{
+				"name": "Super Star",
+				"starMain": {
+					"resources": {
+						"solarPower": 200
+					}
+				},
+				"radius": 1.1,
+				"position": [
+					444.5,
+					0,
+					397.45
+				]
+			},
+			{
+				"name": "Red Star",
+				"starMain": {
+					"resources": {
+						"solarPower": 50
+					}
+				},
+				"radius": 1,
+				"position": [
+					382.32,
+					0,
+					303.37
+				],
+				"material": "RedStarMaterial"
+			}
+		],
+		"spaceships": [{
+				"model": "Scout",
+				"owner": 0,
+				"position": [298.7, 0, 292.5],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
+				}
+			},
+			{
+				"model": "Scout",
+				"owner": 1,
+				"position": [
+					396,
+					0,
+					280
+				],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
+				}
+			},
+			{
+				"model": "Scout",
+				"owner": 2,
+				"position": [
+					355,
+					0,
+					316
+				],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
+				}
+			},
+			{
+				"model": "Scout",
+				"owner": 3,
+				"position": [
+					302,
+					0,
+					300
+				],
+				"spaceshipMain": {
+					"RadarRange": 25.0,
+					"neededMinerals": 5,
+					"neededPopulation": 2,
+					"neededSolarPower": 4,
+					"spaceshipStatistics": {
+						"healthPoints": 150,
+						"attack": 10,
+						"defense": 25,
+						"speed": 7
+					},
+					"MaxActionPoints": 7
+				}
+			}
+		]
+	}
+}
