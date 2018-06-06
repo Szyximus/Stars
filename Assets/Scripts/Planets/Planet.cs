@@ -411,6 +411,8 @@ public class Planet : Ownable
     {
         if ((this.characteristics.healthPoints + healthPoints) <= 0)
         {
+            GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position + new Vector3(0, 0.5f, 0), transform.rotation);
+            Destroy(Explosion, 2f);
             this.characteristics.healthPoints = maxHealthPoints;
             if (this.GetOwner() != null) Lose();
         }

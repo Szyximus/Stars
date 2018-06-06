@@ -278,6 +278,10 @@ public class Spaceship : Ownable
                     var direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.1f, 0);
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
+                    GameObject SourceFire1 = Instantiate(gameApp.AttackPrefab, transform.position + direction*2, transform.rotation);
+                    GameObject SourceFire2 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 4, transform.rotation);
+                    GameObject SourceFire3 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 6, transform.rotation);
+                    GameObject SourceFire4 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 8, transform.rotation);
                     heading = transform.position - target.transform.position;
                     distance = heading.magnitude;
                     direction = heading / distance; // This is now the normalized direction.
@@ -285,7 +289,11 @@ public class Spaceship : Ownable
                     GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction, target.transform.rotation);
                     target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
                     Destroy(SourceFire, 1f);
-                    Destroy(TargetFire, 1f);
+                    Destroy(SourceFire1, 1.1f);
+                    Destroy(SourceFire2, 1.2f);
+                    Destroy(SourceFire3, 1.3f);
+                    Destroy(SourceFire4, 1.4f);
+                    Destroy(TargetFire, 1.5f);
                     return true;
                 }
                 Debug.Log("You dont have enough movement points");
@@ -300,13 +308,21 @@ public class Spaceship : Ownable
                     var direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.1f, 0);
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
+                    GameObject SourceFire1 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 2, transform.rotation);
+                    GameObject SourceFire2 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 4, transform.rotation);
+                    GameObject SourceFire3 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 6, transform.rotation);
+                    GameObject SourceFire4 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 8, transform.rotation);
                     heading = transform.position - target.transform.position;
                     distance = heading.magnitude;
                     direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.5f, 0);
                     GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction * 2.5f, target.transform.rotation);
                     Destroy(SourceFire, 1f);
-                    Destroy(TargetFire, 1f);
+                    Destroy(SourceFire1, 1.1f);
+                    Destroy(SourceFire2, 1.2f);
+                    Destroy(SourceFire3, 1.3f);
+                    Destroy(SourceFire4, 1.4f);
+                    Destroy(TargetFire, 1.5f);
                     target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
                     return true;
                 }

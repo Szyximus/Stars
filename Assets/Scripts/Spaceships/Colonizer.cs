@@ -45,6 +45,8 @@ public class Colonizer : Spaceship
         }
         if (CheckCanBeColonizate(planetToColonize) && planetToColonize.GetOwner() == null && GetActionPoints() > 0)
         {
+            GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, transform.rotation);
+            Destroy(SourceFire, 1f);
             planetToColonize.Colonize();
             Debug.Log("You colonized planet " + planetToColonize.name);
             return true;

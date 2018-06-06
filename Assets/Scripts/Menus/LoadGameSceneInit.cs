@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using Newtonsoft.Json.Linq;
 using System;
 using UnityEngine.UI;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
 
 /*
  *  Class used in LoadGameScene
@@ -70,11 +72,18 @@ public class LoadGameSceneInit : MonoBehaviour
         {
             GameObject newPlayer = Instantiate(gameApp.PlayerMenuPrefab, new Vector3(0, 0, 0), Quaternion.identity) as GameObject;
             newPlayer.transform.SetParent(dynamicGrid.transform, false);
+            EventTrigger trigger = newPlayer.GetComponentInChildren<Toggle>().gameObject.AddComponent<EventTrigger>();
+            EventTrigger.Entry entry = new EventTrigger.Entry();
+            entry.eventID = EventTriggerType.PointerExit;
+            entry.callback.AddListener((eventData) => {
+                GameObject.Find("EventSystem").GetComponent<EventSystem>().SetSelectedGameObject(GameObject.Find("EventSystem"));
+            });
+            trigger.triggers.Add(entry);
             newPlayer.transform.Find("PlayerNameInput").GetComponent<InputField>().text = (string)playerJson["name"];
             newPlayer.transform.Find("PlayerNameInput").GetComponent<InputField>().enabled = false;
 
-            newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().text = (string)playerJson["playerMain"]["race"];
-            newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().enabled = false;
+            //newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().text = (string)playerJson["playerMain"]["race"];
+            //newPlayer.transform.Find("PlayerRaceInput").GetComponent<InputField>().enabled = false;
             playersToAddToGame.Add(newPlayer);
         }
     }
@@ -89,12 +98,18 @@ public class LoadGameSceneInit : MonoBehaviour
         List<GameApp.PlayerMenu> playerMenuList = new List<GameApp.PlayerMenu>();
         foreach (GameObject player in playersToAddToGame)
         {
+            string tempType;
+            if (player.transform.Find("PlayerTypeInput").GetComponent<Toggle>().isOn)
+            {
+                tempType = "L";
+            }
+            else tempType = "R";
             playerMenuList.Add(new GameApp.PlayerMenu
             {
                 name = player.transform.Find("PlayerNameInput").GetComponent<InputField>().text,
                 password = player.transform.Find("PlayerPassInput").GetComponent<InputField>().text,
-                race = player.transform.Find("PlayerRaceInput").GetComponent<InputField>().text,
-                playerType = player.transform.Find("PlayerTypeInput").GetComponent<InputField>().text,
+                //race = player.transform.Find("PlayerRaceInput").GetComponent<InputField>().text,
+                playerType = tempType
             });
         }
 

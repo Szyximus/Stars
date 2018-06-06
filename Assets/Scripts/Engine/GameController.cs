@@ -845,7 +845,7 @@ public class GameController : NetworkBehaviour
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Play("year: " + year + "\n" + GetCurrentPlayer().name);
+            turnScreen.Play("year: " + year + "\n" + "\n" + GetCurrentPlayer().name);
         }
         else
         {
@@ -880,7 +880,7 @@ public class GameController : NetworkBehaviour
                     new StringMessage("Winner: " + GetCurrentPlayer().name));
             }
         }
-        turnScreen.Show("year: " + year + "\nWinner: " + GetCurrentPlayer().name);
+        turnScreen.Show("year: " + year + "\n\nWinner: " + GetCurrentPlayer().name);
     }
 
     private bool IsCurrentPlayerLooser()
