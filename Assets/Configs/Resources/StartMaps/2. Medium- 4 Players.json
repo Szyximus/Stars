@@ -2,7 +2,12 @@
 	"info": {
 	    "maxPlayers": 4,
 		"currentPlayer": 1,
-		"year": 2400
+		"year": 2400,
+		"tooRichTreshold": {
+			"tooRichTresholdMinerals": 1000,
+			"tooRichTresholdPopulation": 1000,
+			"tooRichTresholdSolarPower": 1000
+		  }
 	},
 	"map": {
 		"planets": [{

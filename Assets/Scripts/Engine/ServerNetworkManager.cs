@@ -30,12 +30,16 @@ public class ServerNetworkManager : NetworkManager
     // dict with player name -> remote client connection
     public Dictionary<string, NetworkConnection> connections;
 
+    // put connection to the set after first OnSceneReady
+    public HashSet<NetworkConnection> connectionsIsNew;
+
 
     void Awake()
     {
         if (!created)
         {
             connections = new Dictionary<string, NetworkConnection>();
+            connectionsIsNew = new HashSet<NetworkConnection>();
 
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
@@ -121,20 +125,22 @@ public class ServerNetworkManager : NetworkManager
     }
 
 
-    // Server callbacks
-
     /*
-     *  After server was started or received next turn from remote client
-     *  Scene should have been changed to "GameScene", GameController should be available
-     *  Calls initialization functions from GameController
+     *  Used from OnServerSceneChanged
+     *  Wait for all remote clients to load theirs scenes
+     *  And init next turn or new game
      */
-    public override void OnServerSceneChanged(string sceneName)
+    private IEnumerator OnServerSceneChangedCoroutine()
     {
-        Debug.Log("OnServerSceneChanged: " + sceneName);
-        base.OnServerSceneChanged(sceneName);
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        gameController.serverNetworkManager = this;
+        // wait for all remote clients
+        Debug.Log("OnServerSceneChangedCoroutine start");
+        foreach (var conn in connections.Values)
+        {
+            yield return new WaitUntil(() => conn == null || conn.isReady);
+        }
+        Debug.Log("OnServerSceneChangedCoroutine end");
+
 
         if (isNewGame || isLoadGame)
         {
@@ -157,11 +163,30 @@ public class ServerNetworkManager : NetworkManager
             {
                 gameController.ServerNextTurnGame(nextTurnGameJson);
                 nextTurnGameJson = null;
-            } catch(Exception e)
+            }
+            catch (Exception e)
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
             }
         }
+    }
+
+
+    // Server callbacks
+
+    /*
+     *  After server was started or received next turn from remote client
+     *  Scene should have been changed to "GameScene", GameController should be available
+     */
+    public override void OnServerSceneChanged(string sceneName)
+    {
+        Debug.Log("OnServerSceneChanged: " + sceneName);
+        base.OnServerSceneChanged(sceneName);
+
+        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        gameController.serverNetworkManager = this;
+
+        StartCoroutine(OnServerSceneChangedCoroutine());
     }
 
     /*
@@ -194,7 +219,7 @@ public class ServerNetworkManager : NetworkManager
             netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Wrong json data sent"));
             return;
         }
- 
+
         if (gameController.FindPlayer(clientPlayerName) == null)
         {
             Debug.Log("OnServerClientAssignPlayer: player name not found, " + clientPlayerName);
@@ -209,6 +234,11 @@ public class ServerNetworkManager : NetworkManager
         {
             Debug.Log("OnServerClientAssignPlayer: player taken");
             netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player is taken"));
+        }
+        else if (gameController.FindPlayer(clientPlayerName).local)
+        {
+            Debug.Log("OnServerClientAssignPlayer: player is local");
+            netMsg.conn.Send(gameApp.connAssignPlayerErrorId, new StringMessage("Player is local"));
         }
         else
         {
@@ -309,12 +339,12 @@ public class ServerNetworkManager : NetworkManager
         foreach (var item in connections.Where(kvp => kvp.Value == conn).ToList())
         {
             connections.Remove(item.Key);
+            connectionsIsNew.Remove(item.Value);
         }
     }
 
     /*
-     *  Clients are ready, check if this is some client's turn and send msgs
-     *  
+     *  Client is ready, check if this is his turn and send msgs (only if this is new connection)
      */
     public override void OnServerReady(NetworkConnection conn)
     {
@@ -331,17 +361,33 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-        if (gameController.GetCurrentPlayer().name.Equals(playerName)) {
-            // now is turn of this player
-            Debug.Log("OnServerReady: connClientLoadGameId");
-            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(1));
-            conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
-        }
-        else
+        if (!connectionsIsNew.Contains(conn))
         {
-            // all other players should wait
-            Debug.Log("OnServerReady: connSetupTurnId");
-            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(0));
+            connectionsIsNew.Add(conn);
+            if (gameController != null && gameController.GetCurrentPlayer() != null && gameController.GetCurrentPlayer().name.Equals(playerName))
+            {
+                // now is turn of this player
+                Debug.Log("OnServerReady: connClientLoadGameId");
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 1,
+                    msg = "Play"
+                });
+                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
+                conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
+            
+            }
+            else
+            {
+                // all other players should wait
+                Debug.Log("OnServerReady: connSetupTurnId");
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 0,
+                    msg = "Waiting four our turn...\n" + gameController.GetTurnStatusInfo()
+                });
+                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
+            }
         }
     }
 

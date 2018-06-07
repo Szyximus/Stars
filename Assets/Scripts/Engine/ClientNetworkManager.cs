@@ -152,25 +152,27 @@ public class ClientNetworkManager : NetworkManager
     /*
      *  Custom callback (on connSetupTurnId)
      *  Server invoke it from "OnServerReady" when the client finished loading scene
-     *  netMsg contains number: 0 - wait, 1 - your turn, play
+     *  netMsg contains number: 0 - wait, 1 - your turn, play, 2 - you lost
      */
     public void OnClientSetupTurn(NetworkMessage netMsg)
     {
         Debug.Log("OnClientSetupTurn");
 
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
-        int gameStatus = netMsg.ReadMessage<IntegerMessage>().value;
-        switch(gameStatus)
+        string turnStatusJson = netMsg.ReadMessage<StringMessage>().value;
+        GameApp.TurnStatus turnStatus  = JsonUtility.FromJson<GameApp.TurnStatus>(turnStatusJson);
+
+        switch(turnStatus.status)
         {
             case 0:
-                gameController.WaitForTurn();
+                gameController.WaitForTurn(turnStatus.msg);
                 break;
             case 1:
-                gameController.StopWaitForTurn();
+                gameController.StopWaitForTurn(turnStatus.msg);
                 break;
             case 2:
             default:
-                gameController.LostTurn();
+                gameController.LostTurn(turnStatus.msg);
                 break;
         }         
     }
@@ -186,6 +188,8 @@ public class ClientNetworkManager : NetworkManager
 
         string savedGame = netMsg.ReadMessage<StringMessage>().value;
 
+        Debug.Log(savedGame);
+
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.ClientNextTurnGame(savedGame);
     }
@@ -197,7 +201,7 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientNotReady(NetworkConnection conn)
     {
         Debug.Log("Server has set client to be not-ready (stop getting state updates): " + conn);
-        gameController.WaitForTurn();
+        gameController.WaitForTurn("Wait...");
     }
 
 

@@ -98,6 +98,12 @@ public class GameApp : MonoBehaviour
         public string playerType;
     }
 
+    public struct TurnStatus
+    {
+        public int status;
+        public string msg;
+    }
+
     /*
      *  Read json file given path
      */

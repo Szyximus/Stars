@@ -51,13 +51,11 @@ public class Planet : Ownable
     private new void Awake()
     {
         base.Awake();
-        RadarRange =basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
+        RadarRange = basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
 
         mesh = GetComponentInChildren<MeshRenderer>().gameObject;
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
-
-        maxHealthPoints = 500;
 
         UpdateCoordinates();
 

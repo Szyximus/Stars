@@ -46,6 +46,9 @@ public class GameController : NetworkBehaviour
 
     public InputField SaveGameFileInput;
 
+    // end game objectives
+    public int tooRichTresholdMinerals, tooRichTresholdPopulation, tooRichTresholdSolarPower;
+
     void Awake()
     {
         Debug.Log("GameContoller Awake");
@@ -230,6 +233,22 @@ public class GameController : NetworkBehaviour
             writer.WritePropertyName("maxPlayers");
             writer.WriteValue(players.Count);
 
+            // tooRichTreshold
+            writer.WritePropertyName("tooRichTreshold");
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("tooRichTresholdMinerals");
+            writer.WriteValue(tooRichTresholdMinerals);
+
+            writer.WritePropertyName("tooRichTresholdPopulation");
+            writer.WriteValue(tooRichTresholdPopulation);
+
+            writer.WritePropertyName("tooRichTresholdSolarPower");
+            writer.WriteValue(tooRichTresholdSolarPower);
+
+            writer.WriteEndObject();
+            // tooRichTreshold end
+
             writer.WriteEndObject();
         }
         return sb.ToString();
@@ -311,7 +330,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteRawValue(JsonUtility.ToJson(planet));
 
                 writer.WritePropertyName("radius");
-                writer.WriteValue(planet.mesh.transform.localScale.x);
+                writer.WriteValue(planet.GetComponentsInChildren<MeshFilter>()[0].transform.localScale.x);
 
                 writer.WritePropertyName("material");
                 writer.WriteValue(planetGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
@@ -351,7 +370,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteRawValue(JsonUtility.ToJson(star));
 
                 writer.WritePropertyName("radius");
-                writer.WriteValue(star.mesh.transform.localScale.x);
+                writer.WriteValue(star.GetComponentsInChildren<MeshFilter>()[0].transform.localScale.x);
 
                 writer.WritePropertyName("material");
                 writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
@@ -447,6 +466,19 @@ public class GameController : NetworkBehaviour
             {
                 currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
             }
+        }
+
+        JObject tooRichTreshold = (JObject)infoJson["tooRichTreshold"];
+        if(tooRichTreshold == null)
+        {
+            tooRichTresholdMinerals = 1000;
+            tooRichTresholdPopulation = 1000;
+            tooRichTresholdSolarPower = 1000;
+        } else
+        {
+            tooRichTresholdMinerals = (int)tooRichTreshold["tooRichTresholdMinerals"];
+            tooRichTresholdPopulation = (int)tooRichTreshold["tooRichTresholdPopulation"];
+            tooRichTresholdSolarPower = (int)tooRichTreshold["tooRichTresholdSolarPower"];
         }
     }
 
@@ -647,7 +679,6 @@ public class GameController : NetworkBehaviour
             );
             
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
-            planet.GetComponent<Planet>().maxHealthPoints = 500;
             // NetworkServer.Spawn(planet);
 
             // general
@@ -661,7 +692,7 @@ public class GameController : NetworkBehaviour
                 {
                     Player player = players[(int)planetJson["owner"]].GetComponent<Player>();
                     if (player != null)
-                        planet.GetComponent<Planet>().Colonize(player);
+                        planet.GetComponent<Planet>().Owned(player);
                 }
             }
             else
@@ -671,16 +702,14 @@ public class GameController : NetworkBehaviour
                 {
                     Player player = FindPlayer((string)planetJson["owner"]);
                     if (player != null)
-                        planet.GetComponent<Planet>().Colonize(player);
+                        planet.GetComponent<Planet>().Owned(player);
                 }
             }
 
 
             // mesh properties
             float radius = (float)planetJson["radius"];
-            //if (radius >= 1)
-                //planet.GetComponent<SphereCollider>().radius = radius;
-            planet.GetComponent<Planet>().mesh.transform.localScale = new Vector3(radius, radius, radius);
+            planet.GetComponentsInChildren<MeshFilter>()[0].transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)planetJson["material"];
             if (materialString != null)
@@ -714,9 +743,7 @@ public class GameController : NetworkBehaviour
 
             // mesh properties
             float radius = (float)starJson["radius"];
-            if (radius >= 1)
-                star.GetComponent<SphereCollider>().radius = radius;
-            star.transform.localScale = new Vector3(radius, radius, radius);
+            star.GetComponentsInChildren<MeshFilter>()[0].transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)starJson["material"];
             if (materialString != null)
@@ -779,7 +806,7 @@ public class GameController : NetworkBehaviour
     }
 
     /*
-     *  After "NextTurn" button on server
+     *  After "NextTurn" button on server or after receiving json from remote client
      */
     public void NextTurnServer()
     {
@@ -823,7 +850,12 @@ public class GameController : NetworkBehaviour
                 if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
                 {
                     NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(2));
+                    string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                    {
+                        status = 2,
+                        msg = "You lost in " + GetYear() + " year"
+                    });
+                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 }
                 NextTurnServer();
                 return;
@@ -839,26 +871,44 @@ public class GameController : NetworkBehaviour
         Debug.Log("Next turn, player: " + GetCurrentPlayer().name + ", local: " + GetCurrentPlayer().local);
 
         // set all clients to wait state
-        NetworkServer.SetAllClientsNotReady();
+        foreach (GameObject playerGameObject in players)
+        {
+            Player player = playerGameObject.GetComponent<Player>();
+            if (serverNetworkManager.connections.ContainsKey(player.name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[player.name];
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 0,
+                    msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
+                });
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
+            }
+        }
 
         if (GetCurrentPlayer().local)
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Play("year: " + year + "\n" + "\n" + GetCurrentPlayer().name);
+            turnScreen.Play("year: " + year + "\n" + "\nPlayer: " + GetCurrentPlayer().name);
         }
         else
         {
             // now remote player turn, wait on the server
             Debug.Log("Next remote turn");
-            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name);
+            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name + "...\n" + GetTurnStatusInfo());
 
             // if client for the player is connected, set him ready and invoke "OnClientReady" message
             if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
             {
                 NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(1));
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 1,
+                    msg = "Play"
+                });
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
 
             // if client is not connected, we should have some "skip turn" button on the server
@@ -875,7 +925,7 @@ public class GameController : NetworkBehaviour
             Player player = playerGameObject.GetComponent<Player>();
             if (serverNetworkManager.connections.ContainsKey(player.name))
             {
-                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkConnection connection = serverNetworkManager.connections[player.name];
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame,
                     new StringMessage("Winner: " + GetCurrentPlayer().name));
             }
@@ -908,17 +958,20 @@ public class GameController : NetworkBehaviour
     {
         Player player = GetCurrentPlayer();
 
-        // last man standing
-        var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
-        if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+        // last man standing, only if more than one player
+        if (players.Count > 1)
         {
-            return true;
+            var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
+            if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+            {
+                return true;
+            }
         }
 
         // too rich to loose
-        int tooRichTreshold = 1000;
-        if (player.minerals >= tooRichTreshold && player.population >= tooRichTreshold &&
-            player.solarPower >= tooRichTreshold)
+        if (player.minerals >= tooRichTresholdMinerals &&
+            player.population >= tooRichTresholdPopulation &&
+            player.solarPower >= tooRichTresholdSolarPower)
         {
             return true;
         }
@@ -938,28 +991,28 @@ public class GameController : NetworkBehaviour
     /*
      *  Called from clientNetworkManager, when the client should wait
      */
-    public void WaitForTurn()
+    public void WaitForTurn(string msg)
     {
-        Debug.Log("WaitForTurn");
-        turnScreen.Show("Waiting for our turn...");
+        Debug.Log("WaitForTurn: " + msg);
+        turnScreen.Show(msg);
     }
 
     /*
      * Called from clientNetworkManager, when the client should play
      */
-    public void StopWaitForTurn()
+    public void StopWaitForTurn(string msg)
     {
-        Debug.Log("StopWaitForTurn");
+        Debug.Log("StopWaitForTurn: " + msg);
         turnScreen.Hide();
     }
 
     /*
      *  Called from clientNetworkManager, when the client lost game
      */
-    public void LostTurn()
+    public void LostTurn(string msg)
     {
-        Debug.Log("LostTurn");
-        turnScreen.Show("You lost the game");
+        Debug.Log("LostTurn: " + msg);
+        turnScreen.Show(msg);
     }
 
 
@@ -974,6 +1027,26 @@ public class GameController : NetworkBehaviour
     public int GetYear()
     {
         return year;
+    }
+
+    /*
+     *  Used for displaying info on TurnScreen (between turns)
+     */
+    public string GetTurnStatusInfo()
+    {
+        string info = "Year: " + year + "\n\n";
+        info += "OBJECTIVES:\n";
+        info += "Collect at least:\n";
+        info += "  - minerals: " + tooRichTresholdMinerals + "\n";
+        info += "  - population: " + tooRichTresholdPopulation + "\n";
+        info += "  - solar power: " + tooRichTresholdSolarPower + "\n";
+
+        if (players.Count > 1)
+        {
+            info += "Or destroy all your enemies";
+        }
+
+        return info;
     }
 
 
