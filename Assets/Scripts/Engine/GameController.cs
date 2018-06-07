@@ -871,13 +871,26 @@ public class GameController : NetworkBehaviour
         Debug.Log("Next turn, player: " + GetCurrentPlayer().name + ", local: " + GetCurrentPlayer().local);
 
         // set all clients to wait state
-        NetworkServer.SetAllClientsNotReady();
+        foreach (GameObject playerGameObject in players)
+        {
+            Player player = playerGameObject.GetComponent<Player>();
+            if (serverNetworkManager.connections.ContainsKey(player.name))
+            {
+                NetworkConnection connection = serverNetworkManager.connections[player.name];
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 0,
+                    msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
+                });
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
+            }
+        }
 
         if (GetCurrentPlayer().local)
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Play("year: " + year + "\n" + "\n" + GetCurrentPlayer().name);
+            turnScreen.Play("year: " + year + "\n" + "\nPlayer: " + GetCurrentPlayer().name);
         }
         else
         {
@@ -892,10 +905,10 @@ public class GameController : NetworkBehaviour
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 1,
-                    msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
+                    msg = "Play"
                 });
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
 
             // if client is not connected, we should have some "skip turn" button on the server
@@ -912,7 +925,7 @@ public class GameController : NetworkBehaviour
             Player player = playerGameObject.GetComponent<Player>();
             if (serverNetworkManager.connections.ContainsKey(player.name))
             {
-                NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                NetworkConnection connection = serverNetworkManager.connections[player.name];
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame,
                     new StringMessage("Winner: " + GetCurrentPlayer().name));
             }
