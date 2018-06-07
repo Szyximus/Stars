@@ -679,7 +679,6 @@ public class GameController : NetworkBehaviour
             );
             
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
-            planet.GetComponent<Planet>().maxHealthPoints = 500;
             // NetworkServer.Spawn(planet);
 
             // general
@@ -693,7 +692,7 @@ public class GameController : NetworkBehaviour
                 {
                     Player player = players[(int)planetJson["owner"]].GetComponent<Player>();
                     if (player != null)
-                        planet.GetComponent<Planet>().Colonize(player);
+                        planet.GetComponent<Planet>().Owned(player);
                 }
             }
             else
@@ -703,7 +702,7 @@ public class GameController : NetworkBehaviour
                 {
                     Player player = FindPlayer((string)planetJson["owner"]);
                     if (player != null)
-                        planet.GetComponent<Planet>().Colonize(player);
+                        planet.GetComponent<Planet>().Owned(player);
                 }
             }
 

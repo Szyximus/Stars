@@ -44,7 +44,6 @@ public class Spaceship : Ownable
     public Planet planetToAttack;
     public Spaceship spaceshipsToAttack;
 
-    public int maxHealthPoints;
     private int basicRadarRange;
     private int basicAttack;
 
@@ -55,8 +54,7 @@ public class Spaceship : Ownable
         Flying = false;
         MaxActionPoints = spaceshipStatistics.speed;
         basicRadarRange = spaceshipStatistics.radars;
-        RadarRange =basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
-        maxHealthPoints = spaceshipStatistics.healthPoints;
+        RadarRange = basicRadarRange * 2 * HexMetrics.innerRadius + 0f;
         basicAttack = 10;
 
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
