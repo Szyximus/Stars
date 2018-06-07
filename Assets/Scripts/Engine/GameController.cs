@@ -46,6 +46,9 @@ public class GameController : NetworkBehaviour
 
     public InputField SaveGameFileInput;
 
+    // end game objectives
+    public int tooRichTresholdMinerals, tooRichTresholdPopulation, tooRichTresholdSolarPower;
+
     void Awake()
     {
         Debug.Log("GameContoller Awake");
@@ -229,6 +232,22 @@ public class GameController : NetworkBehaviour
 
             writer.WritePropertyName("maxPlayers");
             writer.WriteValue(players.Count);
+
+            // tooRichTreshold
+            writer.WritePropertyName("tooRichTreshold");
+            writer.WriteStartObject();
+
+            writer.WritePropertyName("tooRichTresholdMinerals");
+            writer.WriteValue(tooRichTresholdMinerals);
+
+            writer.WritePropertyName("tooRichTresholdPopulation");
+            writer.WriteValue(tooRichTresholdPopulation);
+
+            writer.WritePropertyName("tooRichTresholdSolarPower");
+            writer.WriteValue(tooRichTresholdSolarPower);
+
+            writer.WriteEndObject();
+            // tooRichTreshold end
 
             writer.WriteEndObject();
         }
@@ -447,6 +466,19 @@ public class GameController : NetworkBehaviour
             {
                 currentPlayerIndex = players.IndexOf(FindPlayer(currentPlayerName).gameObject);
             }
+        }
+
+        JObject tooRichTreshold = (JObject)infoJson["tooRichTreshold"];
+        if(tooRichTreshold == null)
+        {
+            tooRichTresholdMinerals = 1000;
+            tooRichTresholdPopulation = 1000;
+            tooRichTresholdSolarPower = 1000;
+        } else
+        {
+            tooRichTresholdMinerals = (int)tooRichTreshold["tooRichTresholdMinerals"];
+            tooRichTresholdPopulation = (int)tooRichTreshold["tooRichTresholdPopulation"];
+            tooRichTresholdSolarPower = (int)tooRichTreshold["tooRichTresholdSolarPower"];
         }
     }
 
@@ -819,7 +851,12 @@ public class GameController : NetworkBehaviour
                 if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
                 {
                     NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(2));
+                    string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                    {
+                        status = 2,
+                        msg = "You lost in " + GetYear() + " year"
+                    });
+                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 }
                 NextTurnServer();
                 return;
@@ -847,13 +884,18 @@ public class GameController : NetworkBehaviour
         {
             // now remote player turn, wait on the server
             Debug.Log("Next remote turn");
-            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name);
+            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name + "...\n" + GetTurnStatusInfo());
 
             // if client for the player is connected, set him ready and invoke "OnClientReady" message
             if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
             {
                 NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new IntegerMessage(1));
+                string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                {
+                    status = 1,
+                    msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
+                });
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
             }
 
@@ -904,17 +946,20 @@ public class GameController : NetworkBehaviour
     {
         Player player = GetCurrentPlayer();
 
-        // last man standing
-        var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
-        if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+        // last man standing, only if more than one player
+        if (players.Count > 1)
         {
-            return true;
+            var notLoosers = players.Where(p => p.GetComponent<Player>().looser == false).ToList();
+            if (notLoosers.Count == 1 && notLoosers.ElementAt(0).GetComponent<Player>() == player)
+            {
+                return true;
+            }
         }
 
         // too rich to loose
-        int tooRichTreshold = 1000;
-        if (player.minerals >= tooRichTreshold && player.population >= tooRichTreshold &&
-            player.solarPower >= tooRichTreshold)
+        if (player.minerals >= tooRichTresholdMinerals &&
+            player.population >= tooRichTresholdPopulation &&
+            player.solarPower >= tooRichTresholdSolarPower)
         {
             return true;
         }
@@ -934,28 +979,28 @@ public class GameController : NetworkBehaviour
     /*
      *  Called from clientNetworkManager, when the client should wait
      */
-    public void WaitForTurn()
+    public void WaitForTurn(string msg)
     {
-        Debug.Log("WaitForTurn");
-        turnScreen.Show("Waiting for our turn...");
+        Debug.Log("WaitForTurn: " + msg);
+        turnScreen.Show(msg);
     }
 
     /*
      * Called from clientNetworkManager, when the client should play
      */
-    public void StopWaitForTurn()
+    public void StopWaitForTurn(string msg)
     {
-        Debug.Log("StopWaitForTurn");
+        Debug.Log("StopWaitForTurn: " + msg);
         turnScreen.Hide();
     }
 
     /*
      *  Called from clientNetworkManager, when the client lost game
      */
-    public void LostTurn()
+    public void LostTurn(string msg)
     {
-        Debug.Log("LostTurn");
-        turnScreen.Show("You lost the game");
+        Debug.Log("LostTurn: " + msg);
+        turnScreen.Show(msg);
     }
 
 
@@ -970,6 +1015,26 @@ public class GameController : NetworkBehaviour
     public int GetYear()
     {
         return year;
+    }
+
+    /*
+     *  Used for displaying info on TurnScreen (between turns)
+     */
+    public string GetTurnStatusInfo()
+    {
+        string info = "Year: " + year + "\n\n";
+        info += "OBJECTIVES:\n";
+        info += "Collect at least:\n";
+        info += "  - minerals: " + tooRichTresholdMinerals + "\n";
+        info += "  - population: " + tooRichTresholdPopulation + "\n";
+        info += "  - solar power: " + tooRichTresholdSolarPower + "\n";
+
+        if (players.Count > 1)
+        {
+            info += "Or destroy all your enemies";
+        }
+
+        return info;
     }
 
 

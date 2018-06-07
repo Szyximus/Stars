@@ -334,14 +334,24 @@ public class ServerNetworkManager : NetworkManager
         if (gameController.GetCurrentPlayer().name.Equals(playerName)) {
             // now is turn of this player
             Debug.Log("OnServerReady: connClientLoadGameId");
-            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(1));
+            string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+            {
+                status = 1,
+                msg = "Play"
+            });
+            conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
         }
         else
         {
             // all other players should wait
             Debug.Log("OnServerReady: connSetupTurnId");
-            conn.Send(gameApp.connSetupTurnId, new IntegerMessage(0));
+            string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+            {
+                status = 0,
+                msg = "Waiting four our turn...\n" + gameController.GetTurnStatusInfo()
+            });
+            conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
         }
     }
 
