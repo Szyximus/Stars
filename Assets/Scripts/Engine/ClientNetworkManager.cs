@@ -152,7 +152,7 @@ public class ClientNetworkManager : NetworkManager
     /*
      *  Custom callback (on connSetupTurnId)
      *  Server invoke it from "OnServerReady" when the client finished loading scene
-     *  netMsg contains number: 0 - wait, 1 - your turn, play
+     *  netMsg contains number: 0 - wait, 1 - your turn, play, 2 - you lost
      */
     public void OnClientSetupTurn(NetworkMessage netMsg)
     {

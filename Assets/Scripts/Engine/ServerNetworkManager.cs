@@ -29,6 +29,8 @@ public class ServerNetworkManager : NetworkManager
 
     // dict with player name -> remote client connection
     public Dictionary<string, NetworkConnection> connections;
+
+    // put connection to the set after first OnSceneReady
     public HashSet<NetworkConnection> connectionsIsNew;
 
 
@@ -122,6 +124,12 @@ public class ServerNetworkManager : NetworkManager
         this.ServerChangeScene("GameScene");
     }
 
+
+    /*
+     *  Used from OnServerSceneChanged
+     *  Wait for all remote clients to load theirs scenes
+     *  And init next turn or new game
+     */
     private IEnumerator OnServerSceneChangedCoroutine()
     {
 
@@ -132,6 +140,7 @@ public class ServerNetworkManager : NetworkManager
             yield return new WaitUntil(() => conn == null || conn.isReady);
         }
         Debug.Log("OnServerSceneChangedCoroutine end");
+
 
         if (isNewGame || isLoadGame)
         {
@@ -168,7 +177,6 @@ public class ServerNetworkManager : NetworkManager
     /*
      *  After server was started or received next turn from remote client
      *  Scene should have been changed to "GameScene", GameController should be available
-     *  Calls initialization functions from GameController
      */
     public override void OnServerSceneChanged(string sceneName)
     {
@@ -336,8 +344,7 @@ public class ServerNetworkManager : NetworkManager
     }
 
     /*
-     *  Clients are ready, check if this is some client's turn and send msgs
-     *  
+     *  Client is ready, check if this is his turn and send msgs (only if this is new connection)
      */
     public override void OnServerReady(NetworkConnection conn)
     {

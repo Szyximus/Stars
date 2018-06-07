@@ -806,7 +806,7 @@ public class GameController : NetworkBehaviour
     }
 
     /*
-     *  After "NextTurn" button on server
+     *  After "NextTurn" button on server or after receiving json from remote client
      */
     public void NextTurnServer()
     {
