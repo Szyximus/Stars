@@ -311,7 +311,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteRawValue(JsonUtility.ToJson(planet));
 
                 writer.WritePropertyName("radius");
-                writer.WriteValue(planet.mesh.transform.localScale.x);
+                writer.WriteValue(planet.GetComponentsInChildren<MeshFilter>()[0].transform.localScale.x);
 
                 writer.WritePropertyName("material");
                 writer.WriteValue(planetGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
@@ -351,7 +351,7 @@ public class GameController : NetworkBehaviour
                 writer.WriteRawValue(JsonUtility.ToJson(star));
 
                 writer.WritePropertyName("radius");
-                writer.WriteValue(star.mesh.transform.localScale.x);
+                writer.WriteValue(star.GetComponentsInChildren<MeshFilter>()[0].transform.localScale.x);
 
                 writer.WritePropertyName("material");
                 writer.WriteValue(starGameObject.GetComponentsInChildren<MeshRenderer>()[0].material.name.Replace(" (Instance)", ""));
@@ -678,9 +678,7 @@ public class GameController : NetworkBehaviour
 
             // mesh properties
             float radius = (float)planetJson["radius"];
-            //if (radius >= 1)
-                //planet.GetComponent<SphereCollider>().radius = radius;
-            planet.GetComponent<Planet>().mesh.transform.localScale = new Vector3(radius, radius, radius);
+            planet.GetComponentsInChildren<MeshFilter>()[0].transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)planetJson["material"];
             if (materialString != null)
@@ -714,9 +712,7 @@ public class GameController : NetworkBehaviour
 
             // mesh properties
             float radius = (float)starJson["radius"];
-            if (radius >= 1)
-                star.GetComponent<SphereCollider>().radius = radius;
-            star.transform.localScale = new Vector3(radius, radius, radius);
+            star.GetComponentsInChildren<MeshFilter>()[0].transform.localScale = new Vector3(radius, radius, radius);
 
             string materialString = (string)starJson["material"];
             if (materialString != null)
