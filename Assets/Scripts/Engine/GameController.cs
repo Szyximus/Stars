@@ -9,11 +9,11 @@ using Assets.Scripts;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Text;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Threading;
-using System.Linq;
+//using System.Linq;
 
 /*
  *  Object at "GameScene", server and clients should own a copy, so they can play as in local game
