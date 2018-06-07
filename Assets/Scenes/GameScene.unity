@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.15078667, g: 0.18174234, b: 0.23856907, a: 1}
+  m_IndirectSpecularColor: {r: 0.08620161, g: 0.10249735, b: 0.1360821, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1677,6 +1677,9 @@ MonoBehaviour:
   clientNetworkManager: {fileID: 0}
   serverNetworkManager: {fileID: 0}
   SaveGameFileInput: {fileID: 978420772}
+  tooRichTresholdMinerals: 0
+  tooRichTresholdPopulation: 0
+  tooRichTresholdSolarPower: 0
 --- !u!4 &951704593
 Transform:
   m_ObjectHideFlags: 0
@@ -2047,7 +2050,7 @@ Prefab:
     - target: {fileID: 114898816363089966, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_Color.a
-      value: 0.29411766
+      value: 0.7254902
       objectReference: {fileID: 0}
     - target: {fileID: 114898816363089966, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2285,7 +2288,7 @@ Prefab:
     - target: {fileID: 224303851621350000, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 31.999878
+      value: 31.999756
       objectReference: {fileID: 0}
     - target: {fileID: 224303851621350000, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2425,7 +2428,7 @@ Prefab:
     - target: {fileID: 224781789016590452, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: 31.999878
+      value: 31.999756
       objectReference: {fileID: 0}
     - target: {fileID: 224781789016590452, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2603,7 +2606,7 @@ Prefab:
     - target: {fileID: 224131106654689124, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_AnchoredPosition.x
-      value: -31.999878
+      value: -31.999756
       objectReference: {fileID: 0}
     - target: {fileID: 224131106654689124, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2824,7 +2827,7 @@ Prefab:
     - target: {fileID: 114898816363089966, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_Color.r
-      value: 0.7137255
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
