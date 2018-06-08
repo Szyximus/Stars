@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+// Base class for every object that can be owned by a player, like spaceship or planet
 public abstract class Ownable : NetworkBehaviour
 {
     [SyncVar]

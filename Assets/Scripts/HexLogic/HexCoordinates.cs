@@ -2,6 +2,8 @@
 using UnityEngine;
 
 [System.Serializable]
+
+//defines coordinates of fields in hexagonal space, translates between hexagonal space and 3d space
 public struct HexCoordinates
 {
     [SerializeField]

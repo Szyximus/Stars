@@ -29,10 +29,15 @@ public class SelectionGizmoController : MonoBehaviour
     {
         if (EventManager.selectionManager.SelectedObject != null)
         {
+            
+            if (Vector3.Distance(transform.position , EventManager.selectionManager.SelectedObject.transform.position + offset) > 1f) 
+            {
+                sound.Play();
+            }
+
             if (transform.position != EventManager.selectionManager.SelectedObject.transform.position + offset)
             {
                 transform.position = EventManager.selectionManager.SelectedObject.transform.position + offset;
-                sound.Play();
             }
 
         }
@@ -44,7 +49,7 @@ public class SelectionGizmoController : MonoBehaviour
                 sound.Play();
             }
             EventManager.selectionManager.TargetObject = null;
-            
+
         }
 
         //if (transform.hasChanged)
@@ -58,5 +63,5 @@ public class SelectionGizmoController : MonoBehaviour
         //transform.hasChanged = false;
 
     }
-    
+
 }

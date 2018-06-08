@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 
+//a 10x10 chunk of hexes, made for memory reasons
 public class HexGridChunk : MonoBehaviour
 {
 

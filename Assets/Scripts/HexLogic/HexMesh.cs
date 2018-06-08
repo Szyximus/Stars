@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
+//3D mesh of a hex field
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour
 {

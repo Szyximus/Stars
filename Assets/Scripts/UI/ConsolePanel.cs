@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
+//contains a console with logs for debugging
 public class ConsolePanel : MonoBehaviour
 {
     //#if !UNITY_EDITOR

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+
+//The in-game icons of ships and planets
 public class ShipIcon : MonoBehaviour
 {
     private GameController gameController;

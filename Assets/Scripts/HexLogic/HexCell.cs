@@ -4,6 +4,7 @@ using UnityEngine;
 using Assets.Scripts.HexLogic;
 using System.Linq;
 
+//represents a single hexagonal field on a map
 public class HexCell : MonoBehaviour
 {
     public HexCoordinates Coordinates;

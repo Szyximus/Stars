@@ -6,6 +6,7 @@ using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
+//represents an entire grid of hexes, made of 10x10 chunks
 public class HexGrid : MonoBehaviour
 {
 
@@ -20,8 +21,6 @@ public class HexGrid : MonoBehaviour
     public HexCell CellPrefab;
 
     public HexCell[] cells;
-
-    //public Text cellLabelPrefab;
 
     private UIHoverListener uiListener;
 

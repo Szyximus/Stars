@@ -4,7 +4,7 @@ using UnityEngine;
 using Assets.Scripts;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-
+//used to give a player feedback that the text is clickable
 public class ClickableText : MonoBehaviour 
     , IPointerEnterHandler
     , IPointerExitHandler
