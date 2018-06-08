@@ -28,7 +28,7 @@ public class ClientNetworkManager : NetworkManager
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
-
+              
             DontDestroyOnLoad(this.gameObject);
             created = true;
             Debug.Log("Awake: " + this.gameObject);
@@ -124,6 +124,9 @@ public class ClientNetworkManager : NetworkManager
     {
         string msg = netMsg.ReadMessage<StringMessage>().value;
         Debug.Log("OnClientEndGame: " + msg);
+
+        if(gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.GameEnded(msg);
     }
 
@@ -158,7 +161,8 @@ public class ClientNetworkManager : NetworkManager
     {
         Debug.Log("OnClientSetupTurn");
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         string turnStatusJson = netMsg.ReadMessage<StringMessage>().value;
         GameApp.TurnStatus turnStatus  = JsonUtility.FromJson<GameApp.TurnStatus>(turnStatusJson);
 
@@ -190,7 +194,8 @@ public class ClientNetworkManager : NetworkManager
 
         Debug.Log(savedGame);
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.ClientNextTurnGame(savedGame);
     }
 
@@ -201,6 +206,8 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientNotReady(NetworkConnection conn)
     {
         Debug.Log("Server has set client to be not-ready (stop getting state updates): " + conn);
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.WaitForTurn("Wait...");
     }
 

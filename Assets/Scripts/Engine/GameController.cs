@@ -831,37 +831,6 @@ public class GameController : NetworkBehaviour
             owned.SetupNewTurn();
         }
 
-        // check if winner
-        if(IsCurrentPlayerWinner())
-        {
-            EndGame();
-            return;
-        }
-
-        // check if looser
-        if(IsCurrentPlayerLooser())
-        {
-            if(GetCurrentPlayer().local)
-            {
-                NextTurnServer();
-                return;
-            } else
-            {
-                if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
-                {
-                    NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                    string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
-                    {
-                        status = 2,
-                        msg = "You lost in " + GetYear() + " year"
-                    });
-                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
-                }
-                NextTurnServer();
-                return;
-            }
-        }
-
         EventManager.selectionManager.SelectedObject = null;
         EventManager.selectionManager.TargetObject = null;
         grid.SetupNewTurn(GetCurrentPlayer());
@@ -886,11 +855,43 @@ public class GameController : NetworkBehaviour
             }
         }
 
+        // check if winner
+        if (IsCurrentPlayerWinner())
+        {
+            EndGame();
+            return;
+        }
+
+        // check if looser
+        if (IsCurrentPlayerLooser())
+        {
+            if (GetCurrentPlayer().local)
+            {
+                NextTurnServer();
+                return;
+            }
+            else
+            {
+                if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
+                {
+                    NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
+                    string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                    {
+                        status = 2,
+                        msg = "You lost!\nYear: " + GetYear()
+                    });
+                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
+                }
+                NextTurnServer();
+                return;
+            }
+        }
+
         if (GetCurrentPlayer().local)
         {
             // local player turn, just play
             Debug.Log("Next local turn on server");
-            turnScreen.Play("year: " + year + "\n" + "\nPlayer: " + GetCurrentPlayer().name);
+            turnScreen.Play("Year: " + year + "\n\nPlayer: " + GetCurrentPlayer().name);
         }
         else
         {
@@ -920,17 +921,19 @@ public class GameController : NetworkBehaviour
      */
     private void EndGame()
     {
+        turnScreen.Show("Year: " + year + "\nWinner: " + GetCurrentPlayer().name);
         foreach (GameObject playerGameObject in players)
         {
             Player player = playerGameObject.GetComponent<Player>();
             if (serverNetworkManager.connections.ContainsKey(player.name))
             {
+                string msg = "You lost!\nYear: " + year + "\nWinner: " + GetCurrentPlayer().name;
+                if (GetCurrentPlayer().name.Equals(player.name))
+                    msg = "You win!\nYear: " + year;
                 NetworkConnection connection = serverNetworkManager.connections[player.name];
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame,
-                    new StringMessage("Winner: " + GetCurrentPlayer().name));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientEndGame, new StringMessage(msg));
             }
         }
-        turnScreen.Show("year: " + year + "\n\nWinner: " + GetCurrentPlayer().name);
     }
 
     private bool IsCurrentPlayerLooser()
@@ -985,6 +988,8 @@ public class GameController : NetworkBehaviour
     public void GameEnded(string msg)
     {
         Debug.Log("GameEnded");
+        if(turnScreen == null)
+            turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
         turnScreen.Show("END\n" + msg);
     }
 
