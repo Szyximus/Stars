@@ -858,6 +858,14 @@ public class GameController : NetworkBehaviour
                     status = 0,
                     msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
                 });
+                if (player.looser)
+                {
+                    turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                    {
+                        status = 2,
+                        msg = "You lost!\nYear: " + GetYear()
+                    });
+                }
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
         }
@@ -872,26 +880,8 @@ public class GameController : NetworkBehaviour
         // check if looser
         if (IsCurrentPlayerLooser())
         {
-            if (GetCurrentPlayer().local)
-            {
-                NextTurnServer();
-                return;
-            }
-            else
-            {
-                if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))
-                {
-                    NetworkConnection connection = serverNetworkManager.connections[GetCurrentPlayer().name];
-                    string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
-                    {
-                        status = 2,
-                        msg = "You lost!\nYear: " + GetYear()
-                    });
-                    NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
-                }
-                NextTurnServer();
-                return;
-            }
+            NextTurnServer();
+            return;
         }
 
         if (GetCurrentPlayer().local)

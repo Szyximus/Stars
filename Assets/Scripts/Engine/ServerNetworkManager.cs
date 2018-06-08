@@ -357,17 +357,35 @@ public class ServerNetworkManager : NetworkManager
         Debug.Log("Client is set to the ready state (ready to receive state updates): " + conn);
 
         string playerName = FindPlayerByConnection(conn);
-        if(playerName == null)
+        if (playerName == null)
         {
             Debug.Log("OnServerReady: conn " + conn + " without player, disconnecting");
             conn.Disconnect();
             return;
         }
 
+
+        Player player = null;
+        if (gameController == null && gameController.GetCurrentPlayer() == null)
+        {
+            Debug.Log("OnServerReady: conn " + conn + " gameController == null");
+            conn.Disconnect();
+            return;
+        } else
+        {
+            player = gameController.FindPlayer(playerName);
+            if(player == null)
+            {
+                Debug.Log("OnServerReady: conn " + conn + " player == null");
+                conn.Disconnect();
+                return;
+            }
+        }
+
         if (!connectionsIsNew.Contains(conn))
         {
             connectionsIsNew.Add(conn);
-            if (gameController != null && gameController.GetCurrentPlayer() != null && gameController.GetCurrentPlayer().name.Equals(playerName))
+            if (gameController.GetCurrentPlayer().name.Equals(playerName))
             {
                 // now is turn of this player
                 Debug.Log("OnServerReady: connClientLoadGameId");
@@ -376,19 +394,27 @@ public class ServerNetworkManager : NetworkManager
                     status = 1,
                     msg = "Play"
                 });
-                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
-            
+                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
             else
             {
                 // all other players should wait
                 Debug.Log("OnServerReady: connSetupTurnId");
+
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 0,
                     msg = "Waiting four our turn...\n" + gameController.GetTurnStatusInfo()
                 });
+                if (player.looser)
+                {
+                    turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
+                    {
+                        status = 2,
+                        msg = "You lost!\nYear: " + gameController.GetYear()
+                    });
+                }
                 conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
         }
