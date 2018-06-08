@@ -856,7 +856,7 @@ public class GameController : NetworkBehaviour
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 0,
-                    msg = "Waiting four our turn...\n" + GetTurnStatusInfo()
+                    msg = "Waiting four our turn..."
                 });
                 if (player.looser)
                 {
@@ -894,7 +894,7 @@ public class GameController : NetworkBehaviour
         {
             // now remote player turn, wait on the server
             Debug.Log("Next remote turn");
-            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name + "...\n" + GetTurnStatusInfo());
+            turnScreen.Show("Waiting for player " + GetCurrentPlayer().name + "...");
 
             // if client for the player is connected, set him ready and invoke "OnClientReady" message
             if (serverNetworkManager.connections.ContainsKey(GetCurrentPlayer().name))

@@ -364,22 +364,11 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-
-        Player player = null;
         if (gameController == null && gameController.GetCurrentPlayer() == null)
         {
             Debug.Log("OnServerReady: conn " + conn + " gameController == null");
             conn.Disconnect();
             return;
-        } else
-        {
-            player = gameController.FindPlayer(playerName);
-            if(player == null)
-            {
-                Debug.Log("OnServerReady: conn " + conn + " player == null");
-                conn.Disconnect();
-                return;
-            }
         }
 
         if (!connectionsIsNew.Contains(conn))
@@ -405,16 +394,8 @@ public class ServerNetworkManager : NetworkManager
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 0,
-                    msg = "Waiting four our turn...\n" + gameController.GetTurnStatusInfo()
+                    msg = "Connected, waiting for turn...\n"
                 });
-                if (player.looser)
-                {
-                    turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
-                    {
-                        status = 2,
-                        msg = "You lost!\nYear: " + gameController.GetYear()
-                    });
-                }
                 conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
         }
