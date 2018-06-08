@@ -20,7 +20,7 @@ public class Miner : Spaceship
         base.Awake();
 
         model = "Miner";
-        MaxActionPoints = 5;
+        MaxActionPoints = 4;
         RadarRange = 2;
 
         neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.minerNeededMinerals;
@@ -30,7 +30,7 @@ public class Miner : Spaceship
 
         spaceshipStatistics.attack = 0;
         spaceshipStatistics.radars = 2;
-        spaceshipStatistics.speed = 5;
+        spaceshipStatistics.speed = 4;
     }
 
     private bool CheckCanBeMined(Star star)

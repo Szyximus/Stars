@@ -169,7 +169,7 @@
 					"spaceshipStatistics": {
 						"healthPoints": 150,
 						"attack": 10,
-						"defense": 25,
+						"radars": 50,
 						"speed": 7
 					},
 					"MaxActionPoints": 7

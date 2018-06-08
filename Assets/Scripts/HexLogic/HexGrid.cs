@@ -21,7 +21,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell[] cells;
 
-    public Text cellLabelPrefab;
+    //public Text cellLabelPrefab;
 
     private UIHoverListener uiListener;
 

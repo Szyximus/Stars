@@ -29,24 +29,33 @@ public class SelectionGizmoController : MonoBehaviour
     {
         if (EventManager.selectionManager.SelectedObject != null)
         {
-            transform.position = EventManager.selectionManager.SelectedObject.transform.position + offset;
+            if (transform.position != EventManager.selectionManager.SelectedObject.transform.position + offset)
+            {
+                transform.position = EventManager.selectionManager.SelectedObject.transform.position + offset;
+                sound.Play();
+            }
 
         }
         else
         {
-            transform.position = new Vector3(-1000, -1000, -1000);
+            if (transform.position != new Vector3(-1000, -1000, -1000))
+            {
+                transform.position = new Vector3(-1000, -1000, -1000);
+                sound.Play();
+            }
             EventManager.selectionManager.TargetObject = null;
+            
         }
 
-        if (transform.hasChanged)
-        {
-            EventManager.selectionManager.TargetObject = null;
-            sound.Play();
-            transform.hasChanged = false;
-        }
+        //if (transform.hasChanged)
+        //{
+        //    EventManager.selectionManager.TargetObject = null;
+        //    sound.Play();
+        //    transform.hasChanged = false;
+        //}
 
         transform.Rotate(Vector3.up * 20 * Time.deltaTime);
-        transform.hasChanged = false;
+        //transform.hasChanged = false;
 
     }
     
