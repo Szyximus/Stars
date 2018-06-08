@@ -19,6 +19,7 @@ public class ServerNetworkManager : NetworkManager
     private GameController gameController;
     private GameApp gameApp;
     private LevelLoader levelLoader;
+    private ErrorInfoPanel errorInfoPanel;
 
     private static ServerNetworkManager instance;
 
@@ -43,6 +44,7 @@ public class ServerNetworkManager : NetworkManager
 
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+            errorInfoPanel = GameObject.Find("ErrorInfoCanvas").GetComponent<ErrorInfoPanel>();
 
             DontDestroyOnLoad(this.gameObject);
             instance = this;
@@ -78,6 +80,7 @@ public class ServerNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupNewGame error: " + e.Message);
+            errorInfoPanel.Show("SetupNewGame error: " + e.Message);
             return;
         }
     }
@@ -107,6 +110,7 @@ public class ServerNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupLoadGame error: " + e.Message);
+            errorInfoPanel.Show("SetupLoadGame error: " + e.Message);
             return;
         }
     }
@@ -156,6 +160,7 @@ public class ServerNetworkManager : NetworkManager
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
                 Debug.Log(e.StackTrace);
+                errorInfoPanel.Show("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
                 this.StopServer();
             }
         }
@@ -170,6 +175,7 @@ public class ServerNetworkManager : NetworkManager
             catch (Exception e)
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
+                errorInfoPanel.Show("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
             }
         }
     }

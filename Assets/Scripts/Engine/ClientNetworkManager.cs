@@ -16,6 +16,7 @@ public class ClientNetworkManager : NetworkManager
     private GameController gameController;
     private GameApp gameApp;
     private LevelLoader levelLoader;
+    private ErrorInfoPanel errorInfoPanel;
 
     public NetworkClient networkClient;
     public NetworkConnection connection;
@@ -28,7 +29,8 @@ public class ClientNetworkManager : NetworkManager
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
-              
+            errorInfoPanel = GameObject.Find("ErrorInfoCanvas").GetComponent<ErrorInfoPanel>();
+
             DontDestroyOnLoad(this.gameObject);
             instance = this;
             Debug.Log("Awake: " + this.gameObject);
@@ -61,6 +63,7 @@ public class ClientNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupClient error: " + e.Message);
+            errorInfoPanel.Show("SetupClient error: " + e.Message);
             return;
         }
     }
