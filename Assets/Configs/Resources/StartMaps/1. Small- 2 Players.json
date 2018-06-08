@@ -4,9 +4,9 @@
         "currentPlayer": 0,
         "year": 2399,
 		"tooRichTreshold": {
-			"tooRichTresholdMinerals": 50,
-			"tooRichTresholdPopulation": 50,
-			"tooRichTresholdSolarPower": 50
+			"tooRichTresholdMinerals": 100,
+			"tooRichTresholdPopulation": 100,
+			"tooRichTresholdSolarPower": 100
 		  }
     },
     "map": {
