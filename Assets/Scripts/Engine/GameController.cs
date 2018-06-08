@@ -856,7 +856,7 @@ public class GameController : NetworkBehaviour
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 0,
-                    msg = "Waiting four our turn..."
+                    msg = "Waiting for your turn..."
                 });
                 if (player.looser)
                 {
@@ -1037,7 +1037,7 @@ public class GameController : NetworkBehaviour
     public string GetTurnStatusInfo()
     {
         string info = "Year: " + year + "\n\n";
-        info += "OBJECTIVES:\n";
+        info += "OBJECTIVES:\n\n";
         info += "Collect at least:\n";
         info += "  - minerals: " + tooRichTresholdMinerals + "\n";
         info += "  - population: " + tooRichTresholdPopulation + "\n";
