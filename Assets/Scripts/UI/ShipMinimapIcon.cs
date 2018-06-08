@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+//The minimap icons of ships and planets
 public class ShipMinimapIcon : MonoBehaviour
 {
     private GameController gameController;

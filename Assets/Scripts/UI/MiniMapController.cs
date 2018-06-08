@@ -3,6 +3,8 @@ using UnityEngine.EventSystems;
 using System.Linq;
 using System;
 
+
+//controls the minimap
 public class MiniMapController : MonoBehaviour
     , IPointerDownHandler
 {

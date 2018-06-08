@@ -5,6 +5,7 @@ using UnityEngine;
 public class SkyRotate : MonoBehaviour {
     public float SpeedMultiplier;
 
+    //rotates the sky every frame for more dynamism
     void Awake()
     {
         Application.targetFrameRate = 60; //fpscap

@@ -1,246 +1,1962 @@
 {
-	"info": {
-	    "maxPlayers": 4,
-		"currentPlayer": 1,
-		"year": 2400,
+    "info": {
+        "maxPlayers": 4,
+        "currentPlayer": 0,
+        "year": 2399,
 		"tooRichTreshold": {
-			"tooRichTresholdMinerals": 1000,
-			"tooRichTresholdPopulation": 1000,
-			"tooRichTresholdSolarPower": 1000
+			"tooRichTresholdMinerals": 250,
+			"tooRichTresholdPopulation": 250,
+			"tooRichTresholdSolarPower": 250
 		  }
-	},
-	"map": {
-		"planets": [{
-				"name": "Korriban",
-				"planetMain": {
-					"characteristics": {
-						"temperature": 54,
-						"radiation": 69,
-						"oxygen": 85,
-						"healthPoints": 100,
-						"habitability": 1
-					},
-					"resources": {
-						"minerals": 15,
-						"energy": 0,
-						"population": 0
-					},
-					"mayBeHome": true
-				},
-				"radius": 1,
-				"position": [
-					307.4,
-					0,
-					292.5
-				],
-				"owner": 0
-			},
-			{
-				"name": "planet X",
-				"planetMain": {
-					"characteristics": {
-						"temperature": 69,
-						"radiation": 54,
-						"oxygen": 45,
-						"healthPoints": 150,
-						"habitability": 3
-					},
-					"resources": {
-						"minerals": 12,
-						"energy": 0,
-						"population": 0
-					},
-					"mayBeHome": false
-				},
-				"radius": 1.8,
-				"material": "Planet3Material",
-				"position": [
-					405,
-					0,
-					280
-				],
-				"owner": 1
-			},
-			{
-				"name": "Nova",
-				"planetMain": {
-					"characteristics": {
-						"temperature": 56,
-						"radiation": 21,
-						"oxygen": 78,
-						"healthPoints": 50,
-						"habitability": 1
-					},
-					"resources": {
-						"minerals": 20,
-						"energy": 0,
-						"population": 0
-					},
-					"mayBeHome": true
-				},
-				"radius": 1.2,
-				"position": [
-					364.5,
-					0,
-					316
-				],
-				"owner": 2
-			},
-			{
-				"name": "Moon",
-				"planetMain": {
-					"characteristics": {
-						"temperature": 35,
-						"radiation": 3,
-						"oxygen": 0,
-						"healthPoints": 50,
-						"habitability": 2
-					},
-					"resources": {
-						"minerals": 10,
-						"energy": 0,
-						"population": 0
-					},
-					"mayBeHome": true
-				},
-				"radius": 0.5,
-				"material": "Planet2Material",
-				"position": [
-					311.8,
-					0,
-					300
-				],
-				"owner": 3
-			}
-		],
-		"stars": [{
-				"name": "Sun",
-				"starMain": {
-					"resources": {
-						"solarPower": 100
-					}
-				},
-				"radius": 1,
-				"position": [
-					287.73,
-					0,
-					295.7
-				]
-			},
-			{
-				"name": "Super Star",
-				"starMain": {
-					"resources": {
-						"solarPower": 200
-					}
-				},
-				"radius": 1.1,
-				"position": [
-					444.5,
-					0,
-					397.45
-				]
-			},
-			{
-				"name": "Red Star",
-				"starMain": {
-					"resources": {
-						"solarPower": 50
-					}
-				},
-				"radius": 1,
-				"position": [
-					382.32,
-					0,
-					303.37
-				],
-				"material": "RedStarMaterial"
-			}
-		],
-		"spaceships": [{
-				"model": "Scout",
-				"owner": 0,
-				"position": [298.7, 0, 292.5],
-				"spaceshipMain": {
-					"RadarRange": 25.0,
-					"neededMinerals": 5,
-					"neededPopulation": 2,
-					"neededSolarPower": 4,
-					"spaceshipStatistics": {
-						"healthPoints": 150,
-						"attack": 10,
-						"defense": 25,
-						"speed": 7
-					},
-					"MaxActionPoints": 7
-				}
-			},
-			{
-				"model": "Scout",
-				"owner": 1,
-				"position": [
-					396,
-					0,
-					280
-				],
-				"spaceshipMain": {
-					"RadarRange": 25.0,
-					"neededMinerals": 5,
-					"neededPopulation": 2,
-					"neededSolarPower": 4,
-					"spaceshipStatistics": {
-						"healthPoints": 150,
-						"attack": 10,
-						"defense": 25,
-						"speed": 7
-					},
-					"MaxActionPoints": 7
-				}
-			},
-			{
-				"model": "Scout",
-				"owner": 2,
-				"position": [
-					355,
-					0,
-					316
-				],
-				"spaceshipMain": {
-					"RadarRange": 25.0,
-					"neededMinerals": 5,
-					"neededPopulation": 2,
-					"neededSolarPower": 4,
-					"spaceshipStatistics": {
-						"healthPoints": 150,
-						"attack": 10,
-						"defense": 25,
-						"speed": 7
-					},
-					"MaxActionPoints": 7
-				}
-			},
-			{
-				"model": "Scout",
-				"owner": 3,
-				"position": [
-					302,
-					0,
-					300
-				],
-				"spaceshipMain": {
-					"RadarRange": 25.0,
-					"neededMinerals": 5,
-					"neededPopulation": 2,
-					"neededSolarPower": 4,
-					"spaceshipStatistics": {
-						"healthPoints": 150,
-						"attack": 10,
-						"defense": 25,
-						"speed": 7
-					},
-					"MaxActionPoints": 7
-				}
-			}
-		]
-	}
+    },
+    "map": {
+        "planets": [
+            {
+                "name": "Korriban",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 54,
+                        "radiation": 69,
+                        "oxygen": 85,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 40,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1,
+                "position": [
+                    307.4,
+                    0,
+                    292.5
+                ],
+                //"owner": 0
+            },
+            {
+                "name": "Nova",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 56,
+                        "radiation": 21,
+                        "oxygen": 78,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 30,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.2,
+                "material": "Planet0Material",
+                "position": [
+                    364.5,
+                    0,
+                    316
+                ],
+                "owner": 3
+            },
+            {
+                "name": "Vitelius",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 69,
+                        "radiation": 54,
+                        "oxygen": 45,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.8,
+                "material": "Planet3Material",
+                "position": [
+                    405,
+                    0,
+                    280
+                ]
+                //"owner": 1
+            },
+            {
+                "name": "Moon",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 35,
+                        "radiation": 3,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 10,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.5,
+                "material": "Planet2Material",
+                "position": [
+                    311.8,
+                    0,
+                    300
+                ]
+                //"owner": 3
+            },
+            {
+                "name": "Yasvo",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 91,
+                        "radiation": 88,
+                        "oxygen": 12,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 50,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.7,
+                "material": "Planet5Material",
+                "position": [
+                    285.8,
+                    0,
+                    300.0
+                ]
+            },
+            {
+                "name": "Hephaestus 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 31,
+                        "radiation": 44,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 30,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.1,
+                "material": "Planet6Material",
+                "position": [
+                    285.8,
+                    0,
+                    270.0
+                ]
+            },
+            {
+                "name": "Ocasta",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 31,
+                        "radiation": 44,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 30,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.7,
+                "material": "Planet9Material",
+                "position": [
+                    307.7,
+                    0,
+                    262.8
+                ]
+            },
+            {
+                "name": "Aporia 3",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 71,
+                        "radiation": 40,
+                        "oxygen": 22,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 40,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.7,
+                "material": "Planet4Material",
+                "position": [
+                    389.9,
+                    0,
+                    315.0
+                ]
+            },
+            {
+                "name": "Iniguar",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 21,
+                        "radiation": 77,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.4,
+                "material": "Planet6Material",
+                "position": [
+                    394.0,
+                    0,
+                    306.7
+                ]
+            },
+            {
+                "name": "Omia 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 2,
+                        "radiation": 49,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 30,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.6,
+                "material": "Planet8Material",
+                "position": [
+                    312.0,
+                    0,
+                    165.5
+                ]
+            },
+            {
+                "name": "Demeter",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 21,
+                        "radiation": 10,
+                        "oxygen": 28,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 50,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.7,
+                "material": "Planet3Material",
+                "position": [
+                    268.4,
+                    0,
+                    210.1
+                ]
+            },
+            {
+                "name": "Sacagawea",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 91,
+                        "radiation": 69,
+                        "oxygen": 20,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 40,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.6,
+                "material": "Planet5Material",
+                "position": [
+                    307.6,
+                    0,
+                    202.4
+                ]
+            },
+            {
+                "name": "Freyeon",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 66,
+                        "radiation": 20,
+                        "oxygen": 90,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.9,
+                "material": "Planet0Material",
+                "position": [
+                    185.7,
+                    0,
+                    277.7
+                ]
+            },
+            {
+                "name": "Zulu 4",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 26,
+                        "radiation": 64,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 30,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.5,
+                "material": "Planet2Material",
+                "position": [
+                    190.5,
+                    0,
+                    285.0
+                ]
+            },
+            {
+                "name": "Gael",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 16,
+                        "radiation": 80,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.7,
+                "material": "Planet9Material",
+                "position": [
+                    220.1,
+                    0,
+                    262.1
+                ]
+            },
+            {
+                "name": "Ventos",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 92,
+                        "radiation": 56,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 10,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet8Material",
+                "position": [
+                    181.9,
+                    0,
+                    240.1
+                ]
+            },
+            {
+                "name": "Theseus 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 92,
+                        "radiation": 86,
+                        "oxygen": 15,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.7,
+                "material": "Planet6Material",
+                "position": [
+                    242.5,
+                    0,
+                    89.8
+                ]
+            },
+            {
+                "name": "Zealae 6",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 62,
+                        "radiation": 66,
+                        "oxygen": 21,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 20,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.9,
+                "material": "Planet6Material",
+                "position": [
+                    220.2,
+                    0,
+                    97.7
+                ]
+            },
+            {
+                "name": "W'hojia",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 42,
+                        "radiation": 36,
+                        "oxygen": 81,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.5,
+                "material": "Planet0Material",
+                "position": [
+                    255.5,
+                    0,
+                    112.7
+                ],
+                "owner": 0
+            },
+            {
+                "name": "Naraka",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 35,
+                        "radiation": 10,
+                        "oxygen": 61,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet7Material",
+                "position": [
+                    229.4,
+                    0,
+                    128.2
+                ]
+            },
+            {
+                "name": "Muse 3",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 5,
+                        "radiation": 82,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.8,
+                "material": "Planet3Material",
+                "position": [
+                    264.1,
+                    0,
+                    67.4
+                ]
+            },
+            {
+                "name": "Aporia 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 55,
+                        "radiation": 81,
+                        "oxygen": 15,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.1,
+                "material": "Planet4Material",
+                "position": [
+                    125.5,
+                    0,
+                    157.6
+                ]
+            },
+            {
+                "name": "Regansburg",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 25,
+                        "radiation": 95,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.5,
+                "material": "Planet2Material",
+                "position": [
+                    130.3,
+                    0,
+                    157.6
+                ]
+            },
+            {
+                "name": "Psi Safari",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 45,
+                        "radiation": 35,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1,
+                "material": "Planet9Material",
+                "position": [
+                    90.2,
+                    0,
+                    142.6
+                ]
+            },
+            {
+                "name": "Abellio 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 24,
+                        "radiation": 76,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.4,
+                "material": "Planet6Material",
+                "position": [
+                    86.4,
+                    0,
+                    135.1
+                ]
+            },
+            {
+                "name": "Sahana",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 13,
+                        "radiation": 66,
+                        "oxygen": 20,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.4,
+                "material": "Planet4Material",
+                "position": [
+                    346.7,
+                    0,
+                    74.9
+                ]
+            },
+            {
+                "name": "Carinus",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 93,
+                        "radiation": 75,
+                        "oxygen": 12,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.9,
+                "material": "Planet5Material",
+                "position": [
+                    368.0,
+                    0,
+                    37.5
+                ]
+            },
+            {
+                "name": "Rohini 4",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 63,
+                        "radiation": 76,
+                        "oxygen": 15,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.6,
+                "material": "Planet8Material",
+                "position": [
+                    467.4,
+                    0,
+                    135.2
+                ]
+            },
+            {
+                "name": "Coyopa",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 55,
+                        "radiation": 15,
+                        "oxygen": 60,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.3,
+                "material": "Planet0Material",
+                "position": [
+                    450.2,
+                    0,
+                    104.9
+                ]
+            },
+            {
+                "name": "Aradin 2",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 15,
+                        "radiation": 57,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.6,
+                "material": "Planet9Material",
+                "position": [
+                    489.7,
+                    0,
+                    97.4
+                ]
+            },
+            {
+                "name": "Curie",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 45,
+                        "radiation": 97,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.2,
+                "material": "Planet8Material",
+                "position": [
+                    584.5,
+                    0,
+                    82.4
+                ]
+            },
+            {
+                "name": "Xochiquetzal",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 75,
+                        "radiation": 21,
+                        "oxygen": 64,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.3,
+                "material": "Planet0Material",
+                "position": [
+                    593.5,
+                    0,
+                    52.3
+                ]
+            },
+            {
+                "name": "Galerius",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 45,
+                        "radiation": 81,
+                        "oxygen": 22,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet6Material",
+                "position": [
+                    623.6,
+                    0,
+                    60.2
+                ]
+            },
+            {
+                "name": "Bacchus",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 85,
+                        "radiation": 51,
+                        "oxygen": 94,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1,
+                "material": "Planet1Material",
+                "position": [
+                    614.9,
+                    0,
+                    75.2
+                ]
+            },
+            {
+                "name": "Deltiri 10",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 50,
+                        "radiation": 67,
+                        "oxygen": 4,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.6,
+                "material": "Planet2Material",
+                "position": [
+                    619.2,
+                    0,
+                    82.7
+                ]
+            },
+            {
+                "name": "Sube",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 20,
+                        "radiation": 65,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.8,
+                "material": "Planet3Material",
+                "position": [
+                    562.9,
+                    0,
+                    255.2
+                ]
+            },
+            {
+                "name": "Kryatz",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 35,
+                        "radiation": 45,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.2,
+                "material": "Planet9Material",
+                "position": [
+                    524.0,
+                    0,
+                    217.5
+                ]
+            },
+            {
+                "name": "Khufu",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 45,
+                        "radiation": 85,
+                        "oxygen": 20,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.5,
+                "material": "Planet9Material",
+                "position": [
+                    532.4,
+                    0,
+                    217.5
+                ]
+            },
+            {
+                "name": "Fluvub",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 15,
+                        "radiation": 70,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1,
+                "material": "Planet8Material",
+                "position": [
+                    667.7,
+                    0,
+                    194.5
+                ]
+            },
+            {
+                "name": "Fluvub",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 85,
+                        "radiation": 50,
+                        "oxygen": 30,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.7,
+                "material": "Planet4Material",
+                "position": [
+                    649.6,
+                    0,
+                    225.1
+                ]
+            },
+            {
+                "name": "Hera 3",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 10,
+                        "radiation": 50,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 65,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.7,
+                "material": "Planet3Material",
+                "position": [
+                    99.5,
+                    0,
+                    322.7
+                ]
+            },
+            {
+                "name": "Arda",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 63,
+                        "radiation": 76,
+                        "oxygen": 15,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.7,
+                "material": "Planet9Material",
+                "position": [
+                    640.9,
+                    0,
+                    330.0
+                ]
+            },
+            {
+                "name": "Izoj",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 55,
+                        "radiation": 15,
+                        "oxygen": 60,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.3,
+                "material": "Planet7Material",
+                "position": [
+                    619.5,
+                    0,
+                    308.0
+                ],
+                "owner": 1
+            },
+            {
+                "name": "Elysium",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 15,
+                        "radiation": 57,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.6,
+                "material": "Planet8Material",
+                "position": [
+                    663.1,
+                    0,
+                    292.3
+                ]
+            },
+            {
+                "name": "Thoth",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 85,
+                        "radiation": 91,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1,
+                "material": "Planet8Material",
+                "position": [
+                    558.6,
+                    0,
+                    367.3
+                ]
+            },
+            {
+                "name": "Athena",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 55,
+                        "radiation": 11,
+                        "oxygen": 50,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.4,
+                "material": "Planet1Material",
+                "position": [
+                    563.0,
+                    0,
+                    359.8
+                ]
+            },
+            {
+                "name": "Omega Unica",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 15,
+                        "radiation": 5,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.8,
+                "material": "Planet9Material",
+                "position": [
+                    510.8,
+                    0,
+                    344.84
+                ]
+            },
+            {
+                "name": "Gauss 3",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 85,
+                        "radiation": 50,
+                        "oxygen": 10,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet5Material",
+                "position": [
+                    454.7,
+                    0,
+                    412.5
+                ]
+            },
+            {
+                "name": "Zhangzhong",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 55,
+                        "radiation": 50,
+                        "oxygen": 0,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 15,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.5,
+                "material": "Planet2Material",
+                "position": [
+                    463.4,
+                    0,
+                    412.5
+                ]
+            },
+            {
+                "name": "Rama 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 85,
+                        "radiation": 50,
+                        "oxygen": 25,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.5,
+                "material": "Planet4Material",
+                "position": [
+                    359.5,
+                    0,
+                    382.6
+                ]
+            },
+            {
+                "name": "Powhatan",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 25,
+                        "radiation": 20,
+                        "oxygen": 15,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.9,
+                "material": "Planet6Material",
+                "position": [
+                    324.8,
+                    0,
+                    412.5
+                ]
+            },
+            {
+                "name": "Unica 4",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 95,
+                        "radiation": 50,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet4Material",
+                "position": [
+                    528.4,
+                    0,
+                    434.8
+                ]
+            },
+            {
+                "name": "Nintoku 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 40,
+                        "radiation": 60,
+                        "oxygen": 25,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.5,
+                "material": "Planet0Material",
+                "position": [
+                    554.4,
+                    0,
+                    464.9
+                ],
+                "owner": 2
+            },
+            {
+                "name": "Damara",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 60,
+                        "radiation": 20,
+                        "oxygen": 55,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.1,
+                "material": "Planet7Material",
+                "position": [
+                    497.9,
+                    0,
+                    517.3
+                ]
+            },
+            {
+                "name": "GC-818",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 12,
+                        "radiation": 20,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 1
+                    },
+                    "resources": {
+                        "minerals": 55,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.5,
+                "material": "Planet3Material",
+                "position": [
+                    411.4,
+                    0,
+                    502.3
+                ]
+            },
+            {
+                "name": "Deus 5",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 80,
+                        "radiation": 20,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 45,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.2,
+                "material": "Planet6Material",
+                "position": [
+                    281.7,
+                    0,
+                    487.3
+                ]
+            },
+            {
+                "name": "Adur",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 40,
+                        "radiation": 50,
+                        "oxygen": 25,
+                        "healthPoints": 500,
+                        "habitability": 2
+                    },
+                    "resources": {
+                        "minerals": 35,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 1.5,
+                "material": "Planet9Material",
+                "position": [
+                    276.9,
+                    0,
+                    450
+                ]
+            },
+            {
+                "name": "Alpha Novus 9",
+                "planetMain": {
+                    "characteristics": {
+                        "temperature": 90,
+                        "radiation": 80,
+                        "oxygen": 5,
+                        "healthPoints": 500,
+                        "habitability": 3
+                    },
+                    "resources": {
+                        "minerals": 25,
+                        "energy": 0,
+                        "population": 0
+                    },
+                    "mayBeHome": true
+                },
+                "radius": 0.8,
+                "material": "Planet5Material",
+                "position": [
+                    216.5,
+                    0,
+                    404.6
+                ]
+            }
+        ],
+        "stars": [
+            {
+                "name": "Sun",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    287.73,
+                    0,
+                    295.7
+                ]
+            },
+            {
+                "name": "Rigel",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    444.5,
+                    0,
+                    397.45
+                ]
+            },
+            {
+                "name": "Betelgeza",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    382.32,
+                    0,
+                    303.37
+                ],
+                "material": "RedStarMaterial"
+            },
+            {
+                "name": "Sirius",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    190.7,
+                    0,
+                    254.9
+                ]
+            },
+            {
+                "name": "Aldebaran",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    294.8,
+                    0,
+                    195.1
+                ]
+            },
+            {
+                "name": "Arktur",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    463.8,
+                    0,
+                    121.4
+                ]
+            },
+            {
+                "name": "Fomalhaut",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    541.4,
+                    0,
+                    232.7
+                ],
+                "material": "RedStarMaterial"
+            },
+            {
+                "name": "Ursae",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    662.8,
+                    0,
+                    217.5
+                ]
+            },
+            {
+                "name": "Vega",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    108.5,
+                    0,
+                    143.0
+                ]
+            },
+            {
+                "name": "Kanopus",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    238.3,
+                    0,
+                    97.0
+                ],
+                "material": "RedStarMaterial"
+            },
+            {
+                "name": "Algol",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    358.6,
+                    0,
+                    52.5
+                ]
+            },
+            {
+                "name": "Altair",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    602.0,
+                    0,
+                    67.8
+                ]
+            },
+            {
+                "name": "Achernar",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    640.9,
+                    0,
+                    315.0
+                ]
+            },
+            {
+                "name": "Dubhe",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    546.3,
+                    0,
+                    360.2
+                ]
+            },
+            {
+                "name": "Diphda",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    575.7,
+                    0,
+                    457.2
+                ]
+            },
+            {
+                "name": "Andromedae",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    346.6,
+                    0,
+                    390.2
+                ]
+            },
+            {
+                "name": "Alioth",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    220.9,
+                    0,
+                    412.0
+                ]
+            },
+            {
+                "name": "Velorum",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    82.7,
+                    0,
+                    336.8
+                ],
+                "material": "RedStarMaterial"
+            },
+            {
+                "name": "Pegasi",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    65.4,
+                    0,
+                    442.4
+                ]
+            },
+            {
+                "name": "Kapella",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    86.5,
+                    0,
+                    554.2
+                ]
+            },  
+            {
+                "name": "Markab",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    203.4,
+                    0,
+                    517.9
+                ]
+            },
+            {
+                "name": "Alnitak",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    290.5,
+                    0,
+                    472.1
+                ],
+                "material": "RedStarMaterial"
+            },
+            {
+                "name": "Alnilam",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    397.9,
+                    0,
+                    449.6
+                ]
+            },
+            {
+                "name": "Centauri",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1.1,
+                "position": [
+                    515.6,
+                    0,
+                    442.9
+                ]
+            },
+            {
+                "name": "Alnair",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    506.6,
+                    0,
+                    532.2
+                ]
+            },  
+            {
+                "name": "Scheat",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 0.9,
+                "position": [
+                    321.0,
+                    0,
+                    554.4
+                ]
+            },
+            {
+                "name": "Rasalhauge",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    406.5,
+                    0,
+                    525.1
+                ],
+                "material": "RedStarMaterial"
+            },    
+            {
+                "name": "Bellatrix",
+                "starMain": {
+                    "resources": {
+                        "solarPower": 1000
+                    }
+                },
+                "radius": 1,
+                "position": [
+                    641.3,
+                    0,
+                    539.4
+                ]
+            }
+        ],
+        "spaceships": [
+            {
+                "model": "Scout",
+                "owner": 0,
+                "position": [
+                    250.5,
+                    0,
+                    112.7
+                ],
+                "spaceshipMain": {
+                    "RadarRange": 25.0,
+                    "neededMinerals": 5,
+                    "neededPopulation": 2,
+                    "neededSolarPower": 4,
+                    "spaceshipStatistics": {
+                        "healthPoints": 50,
+                        "attack": 0,
+                        "radars": 4,
+                        "speed": 6
+                    },
+                    "MaxActionPoints": 6
+                }
+            },
+            {
+                "model": "Scout",
+                "owner": 1,
+                "position": [
+                    614.4,
+                    0,
+                    308.0
+                ],
+                "spaceshipMain": {
+                    "RadarRange": 25.0,
+                    "neededMinerals": 5,
+                    "neededPopulation": 2,
+                    "neededSolarPower": 4,
+                    "spaceshipStatistics": {
+                        "healthPoints": 50,
+                        "attack": 0,
+                        "radars": 4,
+                        "speed": 6
+                    },
+                    "MaxActionPoints": 6
+                }
+            },
+            {
+                "model": "Scout",
+                "owner": 2,
+                "position": [
+                    549.4,
+                    0,
+                    464.9
+                ],
+                "spaceshipMain": {
+                    "RadarRange": 25.0,
+                    "neededMinerals": 5,
+                    "neededPopulation": 2,
+                    "neededSolarPower": 4,
+                    "spaceshipStatistics": {
+                        "healthPoints": 50,
+                        "attack": 0,
+                        "radars": 4,
+                        "speed": 6
+                    },
+                    "MaxActionPoints": 6
+                }
+            },
+            {
+                "model": "Scout",
+                "owner": 3,
+                "position": [
+                    359.4,
+                    0,
+                    316
+                ],
+                "spaceshipMain": {
+                    "RadarRange": 25.0,
+                    "neededMinerals": 5,
+                    "neededPopulation": 2,
+                    "neededSolarPower": 4,
+                    "spaceshipStatistics": {
+                        "healthPoints": 50,
+                        "attack": 0,
+                        "radars": 4,
+                        "speed": 6
+                    },
+                    "MaxActionPoints": 6
+                }
+            }
+        ]
+    }
 }

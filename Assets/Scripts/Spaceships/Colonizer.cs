@@ -19,7 +19,7 @@ public class Colonizer : Spaceship
         base.Awake();
 
         model = "Colonizer";
-        MaxActionPoints = 4;
+        MaxActionPoints = 3;
         RadarRange = 2;
         neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededMinerals;
         neededPopulation = gameController.GetCurrentPlayer().spaceshipsCosts.colonizerNeededPopulation;
@@ -29,7 +29,7 @@ public class Colonizer : Spaceship
 
         spaceshipStatistics.attack = 0;
         spaceshipStatistics.radars = 2;
-        spaceshipStatistics.speed = 4;
+        spaceshipStatistics.speed = 3;
     }
 
     /**

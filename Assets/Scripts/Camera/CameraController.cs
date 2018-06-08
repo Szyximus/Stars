@@ -3,7 +3,7 @@
 public class CameraController : MonoBehaviour {
 
     /// <summary>
-    /// Controls the camera
+    /// Controls the camera, uses keyboard and mouse input
     /// </summary>
 
     public static CameraController main;

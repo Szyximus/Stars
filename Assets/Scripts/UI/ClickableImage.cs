@@ -5,6 +5,8 @@ using Assets.Scripts;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
+
+//used to give a player feedback that the image is clickable
 public class ClickableImage : MonoBehaviour 
     , IPointerEnterHandler
     , IPointerExitHandler

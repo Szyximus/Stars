@@ -27,7 +27,7 @@ public class TargetGizmoController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //This should only be called at an event, not every frame. fix later after EventManager is proper.
+        //This should only be called at an event, not every frame. But our eventmanager sux
         if (EventManager.selectionManager.TargetObject != null)
         {
             transform.position = EventManager.selectionManager.TargetObject.transform.position + offset;

@@ -17,7 +17,7 @@ public class Scout : Spaceship
         base.Awake();
 
         model = "Scout";
-        MaxActionPoints = 7;
+        MaxActionPoints = 6;
         RadarRange = 3;
 
         neededMinerals = gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededMinerals;
@@ -27,7 +27,7 @@ public class Scout : Spaceship
         spaceshipStatistics.healthPoints = 50;
         spaceshipStatistics.attack = 0;
         spaceshipStatistics.radars = 4;
-        spaceshipStatistics.speed = 7;
+        spaceshipStatistics.speed = 6;
     }
 
 

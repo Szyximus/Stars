@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+
+//class representing a player
 [System.Serializable]
 public class Player : NetworkBehaviour
 {

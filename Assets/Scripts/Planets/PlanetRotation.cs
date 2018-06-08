@@ -2,6 +2,7 @@
 
 namespace Enviroment.Border
 {
+    //rotates the planet every frame
     public class PlanetRotation : MonoBehaviour {
         public float Speed = 5;
         void Update()
