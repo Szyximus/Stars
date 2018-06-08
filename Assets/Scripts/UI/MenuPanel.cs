@@ -16,6 +16,13 @@ public class MenuPanel : MonoBehaviour
 
     void Show()
     {
+        // setup objectives
+        if(GameObject.Find("GameController") != null)
+        {
+            GameController gameController = GameObject.Find("GameController").GetComponent<GameController>();
+            transform.Find("Objectives").GetComponent<Text>().text = gameController.GetTurnStatusInfo();
+        }
+        
         gameObject.SetActive(true);
         Shown = true;
     }

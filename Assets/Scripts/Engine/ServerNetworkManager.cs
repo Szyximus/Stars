@@ -19,8 +19,9 @@ public class ServerNetworkManager : NetworkManager
     private GameController gameController;
     private GameApp gameApp;
     private LevelLoader levelLoader;
+    private ErrorInfoPanel errorInfoPanel;
 
-    private bool created = false;
+    private static ServerNetworkManager instance;
 
     // these vars are used at scene change, which may be after game creation, game loading or next turn from remote client
     private bool isNewGame;
@@ -36,17 +37,21 @@ public class ServerNetworkManager : NetworkManager
 
     void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             connections = new Dictionary<string, NetworkConnection>();
             connectionsIsNew = new HashSet<NetworkConnection>();
 
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+            errorInfoPanel = GameObject.Find("ErrorInfoCanvas").GetComponent<ErrorInfoPanel>();
 
             DontDestroyOnLoad(this.gameObject);
-            created = true;
+            instance = this;
             Debug.Log("Awake: " + this.gameObject);
+        } else if(instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -75,6 +80,7 @@ public class ServerNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupNewGame error: " + e.Message);
+            errorInfoPanel.Show("SetupNewGame error: " + e.Message);
             return;
         }
     }
@@ -104,6 +110,7 @@ public class ServerNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupLoadGame error: " + e.Message);
+            errorInfoPanel.Show("SetupLoadGame error: " + e.Message);
             return;
         }
     }
@@ -153,6 +160,7 @@ public class ServerNetworkManager : NetworkManager
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
                 Debug.Log(e.StackTrace);
+                errorInfoPanel.Show("OnServerSceneChanged gameController.ServerStartNewGame error: " + e.Message);
                 this.StopServer();
             }
         }
@@ -167,6 +175,7 @@ public class ServerNetworkManager : NetworkManager
             catch (Exception e)
             {
                 Debug.Log("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
+                errorInfoPanel.Show("OnServerSceneChanged gameController.ServerNextTurnGame error: " + e.Message);
             }
         }
     }
@@ -354,9 +363,16 @@ public class ServerNetworkManager : NetworkManager
         Debug.Log("Client is set to the ready state (ready to receive state updates): " + conn);
 
         string playerName = FindPlayerByConnection(conn);
-        if(playerName == null)
+        if (playerName == null)
         {
             Debug.Log("OnServerReady: conn " + conn + " without player, disconnecting");
+            conn.Disconnect();
+            return;
+        }
+
+        if (gameController == null && gameController.GetCurrentPlayer() == null)
+        {
+            Debug.Log("OnServerReady: conn " + conn + " gameController == null");
             conn.Disconnect();
             return;
         }
@@ -364,7 +380,7 @@ public class ServerNetworkManager : NetworkManager
         if (!connectionsIsNew.Contains(conn))
         {
             connectionsIsNew.Add(conn);
-            if (gameController != null && gameController.GetCurrentPlayer() != null && gameController.GetCurrentPlayer().name.Equals(playerName))
+            if (gameController.GetCurrentPlayer().name.Equals(playerName))
             {
                 // now is turn of this player
                 Debug.Log("OnServerReady: connClientLoadGameId");
@@ -373,18 +389,18 @@ public class ServerNetworkManager : NetworkManager
                     status = 1,
                     msg = "Play"
                 });
-                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
                 conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
-            
+                conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
             else
             {
                 // all other players should wait
                 Debug.Log("OnServerReady: connSetupTurnId");
+
                 string turnStatusJson = JsonUtility.ToJson(new GameApp.TurnStatus
                 {
                     status = 0,
-                    msg = "Waiting four our turn...\n" + gameController.GetTurnStatusInfo()
+                    msg = "Connected, waiting for turn...\n"
                 });
                 conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
@@ -426,8 +442,9 @@ public class ServerNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         Debug.Log("Server has stopped");
-        if(levelLoader != null)
-            levelLoader.Back("MainMenuScene");
+        if(levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.Back("MainMenuScene");
     }
 
     public override void OnStopHost()

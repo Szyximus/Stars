@@ -16,22 +16,27 @@ public class ClientNetworkManager : NetworkManager
     private GameController gameController;
     private GameApp gameApp;
     private LevelLoader levelLoader;
+    private ErrorInfoPanel errorInfoPanel;
 
     public NetworkClient networkClient;
     public NetworkConnection connection;
 
-    private bool created = false;
+    private static ClientNetworkManager instance;
 
     void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+            errorInfoPanel = GameObject.Find("ErrorInfoCanvas").GetComponent<ErrorInfoPanel>();
 
             DontDestroyOnLoad(this.gameObject);
-            created = true;
+            instance = this;
             Debug.Log("Awake: " + this.gameObject);
+        } else if (instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -58,6 +63,7 @@ public class ClientNetworkManager : NetworkManager
         } catch(Exception e)
         {
             Debug.Log("SetupClient error: " + e.Message);
+            errorInfoPanel.Show("SetupClient error: " + e.Message);
             return;
         }
     }
@@ -124,6 +130,9 @@ public class ClientNetworkManager : NetworkManager
     {
         string msg = netMsg.ReadMessage<StringMessage>().value;
         Debug.Log("OnClientEndGame: " + msg);
+
+        if(gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.GameEnded(msg);
     }
 
@@ -158,7 +167,8 @@ public class ClientNetworkManager : NetworkManager
     {
         Debug.Log("OnClientSetupTurn");
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         string turnStatusJson = netMsg.ReadMessage<StringMessage>().value;
         GameApp.TurnStatus turnStatus  = JsonUtility.FromJson<GameApp.TurnStatus>(turnStatusJson);
 
@@ -190,7 +200,8 @@ public class ClientNetworkManager : NetworkManager
 
         Debug.Log(savedGame);
 
-        gameController = GameObject.Find("GameController").GetComponent<GameController>();
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.ClientNextTurnGame(savedGame);
     }
 
@@ -201,6 +212,8 @@ public class ClientNetworkManager : NetworkManager
     public override void OnClientNotReady(NetworkConnection conn)
     {
         Debug.Log("Server has set client to be not-ready (stop getting state updates): " + conn);
+        if (gameController == null)
+            gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameController.WaitForTurn("Wait...");
     }
 
@@ -214,6 +227,8 @@ public class ClientNetworkManager : NetworkManager
         }
         Debug.Log("Client disconnected from server: " + conn);
 
+        if (levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         levelLoader.Back("MainMenuScene");
     }
 
@@ -231,6 +246,9 @@ public class ClientNetworkManager : NetworkManager
     public override void OnStopClient()
     {
         Debug.Log("Client has stopped");
+        if(levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.Back("MainMenuScene");
     }
 
 }
