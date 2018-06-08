@@ -20,18 +20,21 @@ public class ClientNetworkManager : NetworkManager
     public NetworkClient networkClient;
     public NetworkConnection connection;
 
-    private bool created = false;
+    private static ClientNetworkManager instance;
 
     void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
             levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
               
             DontDestroyOnLoad(this.gameObject);
-            created = true;
+            instance = this;
             Debug.Log("Awake: " + this.gameObject);
+        } else if (instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -221,6 +224,8 @@ public class ClientNetworkManager : NetworkManager
         }
         Debug.Log("Client disconnected from server: " + conn);
 
+        if (levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         levelLoader.Back("MainMenuScene");
     }
 
@@ -238,6 +243,9 @@ public class ClientNetworkManager : NetworkManager
     public override void OnStopClient()
     {
         Debug.Log("Client has stopped");
+        if(levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.Back("MainMenuScene");
     }
 
 }

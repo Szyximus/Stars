@@ -153,13 +153,20 @@ public class GameController : NetworkBehaviour
         Debug.Log("Exit");
 
         if (isServer)
-            Destroy(serverNetworkManager);
+        {
+            serverNetworkManager.StopServer();
+        }
         else if (isClient)
-            Destroy(clientNetworkManager);
+        {
+            if (clientNetworkManager == null)
+                clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
+            clientNetworkManager.StopClient();
+        }
         else
+        {
             Debug.Log("wtf we are?");
-
-        levelLoader.Back("MainMenuScene");
+            levelLoader.Back("MainMenuScene");
+        }
     }
 
 

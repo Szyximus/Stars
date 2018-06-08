@@ -20,7 +20,7 @@ public class ServerNetworkManager : NetworkManager
     private GameApp gameApp;
     private LevelLoader levelLoader;
 
-    private bool created = false;
+    private static ServerNetworkManager instance;
 
     // these vars are used at scene change, which may be after game creation, game loading or next turn from remote client
     private bool isNewGame;
@@ -36,7 +36,7 @@ public class ServerNetworkManager : NetworkManager
 
     void Awake()
     {
-        if (!created)
+        if (instance == null)
         {
             connections = new Dictionary<string, NetworkConnection>();
             connectionsIsNew = new HashSet<NetworkConnection>();
@@ -45,8 +45,11 @@ public class ServerNetworkManager : NetworkManager
             gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
             DontDestroyOnLoad(this.gameObject);
-            created = true;
+            instance = this;
             Debug.Log("Awake: " + this.gameObject);
+        } else if(instance != this)
+        {
+            Destroy(gameObject);
         }
     }
 
@@ -426,8 +429,9 @@ public class ServerNetworkManager : NetworkManager
     public override void OnStopServer()
     {
         Debug.Log("Server has stopped");
-        if(levelLoader != null)
-            levelLoader.Back("MainMenuScene");
+        if(levelLoader == null)
+            levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.Back("MainMenuScene");
     }
 
     public override void OnStopHost()
