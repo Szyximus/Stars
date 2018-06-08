@@ -137,7 +137,7 @@ public class TestLoadScene
         gameApp.SavePlayersFromMenu(playerMenuList);
         ServerNetworkManager serverNetworkManager = GameObject.Find("ServerNetworkManager").GetComponent<ServerNetworkManager>();
         serverNetworkManager.SetupNewGame();
-        yield return new WaitForSeconds(10);
+        yield return new WaitForSeconds(3);
 
         yield return null;
     }

@@ -156,7 +156,7 @@ public class HexGrid : MonoBehaviour
             return null;
     }
 
-    void TouchCell(Vector3 position)
+    public void TouchCell(Vector3 position)
 
     {
         if (HexCoordinates.FromPosition(position) != null)
