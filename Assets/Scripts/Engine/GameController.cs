@@ -226,7 +226,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("players");
@@ -249,7 +249,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("currentPlayer");
@@ -288,7 +288,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("planets");
@@ -311,7 +311,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject playerGameObject in players)
@@ -339,7 +339,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject planetGameObject in planets)
@@ -383,7 +383,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject starGameObject in stars)
@@ -422,7 +422,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject spaceshipGameObject in spaceships)
