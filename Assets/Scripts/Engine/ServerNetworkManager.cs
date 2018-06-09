@@ -8,6 +8,8 @@ using System;
 using UnityEngine.Networking.NetworkSystem;
 using Newtonsoft.Json.Linq;
 using System.Linq;
+using System.IO.Compression;
+using System.Text;
 
 /*
  *  This is singleton object
@@ -287,7 +289,8 @@ public class ServerNetworkManager : NetworkManager
             return;
         }
 
-        string clientGameJson = clientGameJsonMsg.value;
+        string clientGameJson = gameController.Decompress(clientGameJsonMsg.value);
+
         Debug.Log("OnServerClientNextTurnDone, game: " + clientGameJson);
 
 
@@ -389,7 +392,10 @@ public class ServerNetworkManager : NetworkManager
                     status = 1,
                     msg = "Play"
                 });
-                conn.Send(gameApp.connClientLoadGameId, new StringMessage(gameController.GameToJson()));
+
+                StringMessage mapJsonMessage = new StringMessage(gameController.Compress(gameController.GameToJson()));
+
+                conn.Send(gameApp.connClientLoadGameId, mapJsonMessage);
                 conn.Send(gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
             else

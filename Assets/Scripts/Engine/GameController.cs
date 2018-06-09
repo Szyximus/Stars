@@ -13,6 +13,7 @@ using System.Text;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Threading;
+using System.IO.Compression;
 //using System.Linq;
 
 /*
@@ -796,10 +797,11 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        StringMessage clientMapJson = new StringMessage(GameToJson());
+        StringMessage mapJsonMessage = new StringMessage(Compress(GameToJson()));
+
         if (clientNetworkManager == null)
             clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
-        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
+        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, mapJsonMessage);
     }
 
     /*
@@ -905,7 +907,9 @@ public class GameController : NetworkBehaviour
                     status = 1,
                     msg = "Play"
                 });
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
+
+                StringMessage mapJsonMessage = new StringMessage(Compress(GameToJson()));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, mapJsonMessage);
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
 
@@ -1081,6 +1085,29 @@ public class GameController : NetworkBehaviour
     public void UnlockInput()
     {
         turnScreen.gameObject.SetActive(false);
+    }
+
+    public string Compress(string input)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        var outputStream = new MemoryStream();
+        using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
+            gZipStream.Write(inputBytes, 0, inputBytes.Length);
+
+        var outputBytes = outputStream.ToArray();
+        Debug.Log("Compressed from " + input.Length + " to " + outputBytes.Length);
+        return System.Text.Encoding.UTF8.GetString(outputBytes);
+    }
+
+    public string Decompress(string input)
+    {
+        using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+        using (var gZipStream = new GZipStream(inputStream, CompressionMode.Decompress))
+        using (var streamReader = new StreamReader(gZipStream))
+        {
+            var decompressed = streamReader.ReadToEnd();
+            return decompressed;
+        }
     }
 
 

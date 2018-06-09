@@ -37,8 +37,6 @@ public class Planet : Ownable
     public PlanetCharacteristics characteristics;
     [SyncVar]
     public PlanetResources resources;
-    [SyncVar]
-    public bool mayBeHome;
 
     [SyncVar]
     public int maxHealthPoints;

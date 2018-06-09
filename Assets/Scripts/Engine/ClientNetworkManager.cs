@@ -196,12 +196,12 @@ public class ClientNetworkManager : NetworkManager
     {
         Debug.Log("OnClientLoadGame");
 
-        string savedGame = netMsg.ReadMessage<StringMessage>().value;
-
-        Debug.Log(savedGame);
-
         if (gameController == null)
             gameController = GameObject.Find("GameController").GetComponent<GameController>();
+
+        string savedGameCompressed = netMsg.ReadMessage<StringMessage>().value;
+        string savedGame = gameController.Decompress(savedGameCompressed);
+
         gameController.ClientNextTurnGame(savedGame);
     }
 
