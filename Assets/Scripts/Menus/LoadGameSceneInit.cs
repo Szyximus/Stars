@@ -37,6 +37,7 @@ public class LoadGameSceneInit : MonoBehaviour
         catch(Exception e)
         {
             Debug.Log("LoadGameSceneInit error: " + e.Message);
+            Debug.Log(e.StackTrace);
             Back();
         }
 

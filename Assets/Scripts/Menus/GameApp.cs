@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using Newtonsoft.Json.Linq;
+using UnityEngine.Networking.NetworkSystem;
 
 /*
  *  Class for global configuration and persistance data between scenes
@@ -134,6 +135,8 @@ public class GameApp : MonoBehaviour
         if (instance == null)
         {
             Debug.Log("Awake GameApp");
+
+            var x = new StringMessage(new string('A', 500000));
 
             Parameters = new Dictionary<string, string>();
             playerMenuList = new List<PlayerMenu>();

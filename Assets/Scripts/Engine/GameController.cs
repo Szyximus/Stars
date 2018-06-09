@@ -345,7 +345,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(planetGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(planetGameObject.transform.position.ToString().Replace("(","").Replace(")",""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -385,7 +385,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(starGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(starGameObject.transform.position.ToString().Replace("(", "").Replace(")", ""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -424,7 +424,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Replace("(", "").Replace(")", ""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -1087,25 +1087,29 @@ public class GameController : NetworkBehaviour
         turnScreen.gameObject.SetActive(false);
     }
 
-    public string Compress(string input)
+    public string Compress(string inputStr)
     {
-        byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+        byte[] inputBytes = Encoding.UTF8.GetBytes(inputStr);
         var outputStream = new MemoryStream();
         using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
             gZipStream.Write(inputBytes, 0, inputBytes.Length);
 
         var outputBytes = outputStream.ToArray();
-        Debug.Log("Compressed from " + input.Length + " to " + outputBytes.Length);
-        return System.Text.Encoding.UTF8.GetString(outputBytes);
+        Debug.Log("Compressed from " + inputStr.Length + " to " + outputBytes.Length);
+        var outputbase64 = Convert.ToBase64String(outputBytes);
+        return outputbase64;
     }
 
-    public string Decompress(string input)
+    public string Decompress(string inputStr)
     {
-        using (var inputStream = new MemoryStream(Encoding.UTF8.GetBytes(input)))
+        byte[] inputBytes = Convert.FromBase64String(inputStr);
+
+        using (var inputStream = new MemoryStream(inputBytes))
         using (var gZipStream = new GZipStream(inputStream, CompressionMode.Decompress))
         using (var streamReader = new StreamReader(gZipStream))
         {
             var decompressed = streamReader.ReadToEnd();
+            Debug.Log("Decompressed from " + inputStr.Length + " to " + decompressed.Length);
             return decompressed;
         }
     }
