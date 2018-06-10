@@ -934,6 +934,16 @@ Prefab:
       propertyPath: Loop
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114686310727002966, guid: af4c81403a26c7644925290ad58a8d89,
+        type: 2}
+      propertyPath: panSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 114686310727002966, guid: af4c81403a26c7644925290ad58a8d89,
+        type: 2}
+      propertyPath: panBorderThickness
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: af4c81403a26c7644925290ad58a8d89, type: 2}
   m_IsPrefabParent: 0
