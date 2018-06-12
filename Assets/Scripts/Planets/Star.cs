@@ -39,6 +39,7 @@ public class Star : MonoBehaviour
     public HexCoordinates Coordinates { get; set; }
     private UIHoverListener uiListener;
     public GameObject mesh;
+    int clickLock = 100;
 
     void Awake()
     {
@@ -61,26 +62,30 @@ public class Star : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    public void Update()
     {
-
+        if (clickLock >= 0) clickLock--;
     }
 
     private void OnMouseDown()
     {
-        if (!uiListener.IsUIOverride) EventManager.selectionManager.SelectedObject = this.gameObject;
+        if (!uiListener.IsUIOverride && clickLock <= 0) {
+            EventManager.selectionManager.SelectedObject = this.gameObject;
+            clickLock = 100;
+        }
     }
     private void OnMouseOver()
     {
-        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
+        if (Input.GetButtonUp("MouseRight") && isActiveAndEnabled && clickLock <= 0 &&
             EventManager.selectionManager.SelectedObject != null &&
             EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null)
         {
             Debug.Log("cel");
             EventManager.selectionManager.TargetObject = this.gameObject;
-            Thread.Sleep(150);
+            Thread.Sleep(100);
+            clickLock = 100;
         }
-        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
+        else if (Input.GetButtonUp("MouseRight") && EventManager.selectionManager.TargetObject == this.gameObject)
         {
             Debug.Log("tu nie");
             EventManager.selectionManager.TargetObject = null;
