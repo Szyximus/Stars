@@ -53,6 +53,7 @@ public class SelectionGizmoController : MonoBehaviour
             if (Vector3.Distance(transform.position , EventManager.selectionManager.SelectedObject.transform.position + offset) > 1f) 
             {
                 sound.Play();
+                EventManager.selectionManager.TargetObject = null;
             }
 
             if (transform.position != EventManager.selectionManager.SelectedObject.transform.position + offset)
@@ -67,6 +68,8 @@ public class SelectionGizmoController : MonoBehaviour
             {
                 transform.position = new Vector3(-1000, -1000, -1000);
                 sound.Play();
+                EventManager.selectionManager.TargetObject = null;
+
             }
             EventManager.selectionManager.TargetObject = null;
 

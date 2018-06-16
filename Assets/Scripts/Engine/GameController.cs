@@ -33,6 +33,7 @@ using System.Text;
 using UnityEngine.Networking;
 using UnityEngine.Networking.NetworkSystem;
 using System.Threading;
+using System.IO.Compression;
 //using System.Linq;
 
 /*
@@ -225,7 +226,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("players");
@@ -248,7 +249,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("currentPlayer");
@@ -287,7 +288,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartObject();
 
             writer.WritePropertyName("planets");
@@ -310,7 +311,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject playerGameObject in players)
@@ -338,7 +339,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject planetGameObject in planets)
@@ -364,7 +365,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(planetGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(planetGameObject.transform.position.ToString().Replace("(","").Replace(")",""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -382,7 +383,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject starGameObject in stars)
@@ -404,7 +405,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(starGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(starGameObject.transform.position.ToString().Replace("(", "").Replace(")", ""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -421,7 +422,7 @@ public class GameController : NetworkBehaviour
         StringWriter sw = new StringWriter(sb);
         using (JsonWriter writer = new JsonTextWriter(sw))
         {
-            writer.Formatting = Formatting.Indented;
+            writer.Formatting = Formatting.None;
             writer.WriteStartArray();
 
             foreach (GameObject spaceshipGameObject in spaceships)
@@ -443,7 +444,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Substring(1, this.transform.position.ToString().Length - 2));
+                writer.WriteRawValue(spaceshipGameObject.transform.position.ToString().Replace("(", "").Replace(")", ""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -816,10 +817,11 @@ public class GameController : NetworkBehaviour
             return;
         }
 
-        StringMessage clientMapJson = new StringMessage(GameToJson());
+        StringMessage mapJsonMessage = new StringMessage(Compress(GameToJson()));
+
         if (clientNetworkManager == null)
             clientNetworkManager = GameObject.Find("ClientNetworkManager").GetComponent<ClientNetworkManager>();
-        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, clientMapJson);
+        clientNetworkManager.networkClient.Send(gameApp.connMapJsonId, mapJsonMessage);
     }
 
     /*
@@ -925,7 +927,9 @@ public class GameController : NetworkBehaviour
                     status = 1,
                     msg = "Play"
                 });
-                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, new StringMessage(GameToJson()));
+
+                StringMessage mapJsonMessage = new StringMessage(Compress(GameToJson()));
+                NetworkServer.SendToClient(connection.connectionId, gameApp.connClientLoadGameId, mapJsonMessage);
                 NetworkServer.SendToClient(connection.connectionId, gameApp.connSetupTurnId, new StringMessage(turnStatusJson));
             }
 
@@ -1101,6 +1105,33 @@ public class GameController : NetworkBehaviour
     public void UnlockInput()
     {
         turnScreen.gameObject.SetActive(false);
+    }
+
+    public string Compress(string inputStr)
+    {
+        byte[] inputBytes = Encoding.UTF8.GetBytes(inputStr);
+        var outputStream = new MemoryStream();
+        using (var gZipStream = new GZipStream(outputStream, CompressionMode.Compress))
+            gZipStream.Write(inputBytes, 0, inputBytes.Length);
+
+        var outputBytes = outputStream.ToArray();
+        Debug.Log("Compressed from " + inputStr.Length + " to " + outputBytes.Length);
+        var outputbase64 = Convert.ToBase64String(outputBytes);
+        return outputbase64;
+    }
+
+    public string Decompress(string inputStr)
+    {
+        byte[] inputBytes = Convert.FromBase64String(inputStr);
+
+        using (var inputStream = new MemoryStream(inputBytes))
+        using (var gZipStream = new GZipStream(inputStream, CompressionMode.Decompress))
+        using (var streamReader = new StreamReader(gZipStream))
+        {
+            var decompressed = streamReader.ReadToEnd();
+            Debug.Log("Decompressed from " + inputStr.Length + " to " + decompressed.Length);
+            return decompressed;
+        }
     }
 
 
