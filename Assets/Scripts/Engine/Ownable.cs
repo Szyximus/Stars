@@ -25,6 +25,7 @@ using UnityEngine.Networking;
 // Base class for every object that can be owned by a player, like spaceship or planet
 public abstract class Ownable : NetworkBehaviour
 {
+    public int clickLock = 100;
     [SyncVar]
     public new string name;
 
@@ -39,6 +40,11 @@ public abstract class Ownable : NetworkBehaviour
     {
         gameController = GameObject.Find("GameController").GetComponent<GameController>();
         gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+    }
+
+    public void Update()
+    {
+        if (clickLock > 0) clickLock--;
     }
 
     protected bool CanMakeAction()

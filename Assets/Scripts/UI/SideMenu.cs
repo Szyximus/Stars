@@ -338,6 +338,7 @@ public class SideMenu : MonoBehaviour
             PlanetResourcesPanel.SetActive(false);
             BuildPanel.SetActive(false);
             ShipPanel.SetActive(false);
+            ShipCharacteristicsPanel.SetActive(false);
 
             NoSelectionFill.SetActive(true);
             FreePlanetFill.SetActive(false);
