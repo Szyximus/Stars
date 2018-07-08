@@ -109,27 +109,29 @@ public class Spaceship : Ownable
         grid.UpdateInRadarRange(this, oldPosition);
     }
 
+    // Update is called once per frame
+    void Update()
+    {
+
+
+    }
 
     private void OnMouseUpAsButton()
     {
-        if (!uiListener.IsUIOverride && isActiveAndEnabled && clickLock <= 0) {
-            EventManager.selectionManager.SelectedObject = this.gameObject;
-            clickLock = 100;
-        }
+        if (!uiListener.IsUIOverride && isActiveAndEnabled) EventManager.selectionManager.SelectedObject = this.gameObject;
     }
     private void OnMouseOver()
     {
-        if (Input.GetButtonUp("MouseRight") && isActiveAndEnabled && clickLock <= 0 &&
+        if (Input.GetMouseButtonDown(1) && isActiveAndEnabled &&
             EventManager.selectionManager.SelectedObject != null &&
             EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship != null &&
             EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().GetOwner() != this.GetOwner())
         {
             Debug.Log("cel");
             EventManager.selectionManager.TargetObject = this.gameObject;
-            Thread.Sleep(100);
-            clickLock = 100;
+            Thread.Sleep(150);
         }
-        else if (Input.GetButtonUp("MouseRight") && EventManager.selectionManager.TargetObject == this.gameObject)
+        else if (Input.GetMouseButtonDown(1) && EventManager.selectionManager.TargetObject == this.gameObject)
         {
             Debug.Log("tu nie");
             EventManager.selectionManager.TargetObject = null;

@@ -22,7 +22,6 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using System.Linq;
 using System;
-using UnityEngine.UI;
 
 
 //controls the minimap
@@ -52,9 +51,6 @@ public class MiniMapController : MonoBehaviour
 
     RectTransform rectTransform; //Transform data of the minimap, it scales with the resolution
 
-    private CanvasScaler canvasScaler;
-    private Vector2 ScreenScale;
-
     void Awake()
     {
         Main = this;
@@ -63,8 +59,6 @@ public class MiniMapController : MonoBehaviour
 
     void Start()
     {
-        canvasScaler = GetComponentInParent<CanvasScaler>();
-        ScreenScale = new Vector2(canvasScaler.referenceResolution.x / Screen.width, canvasScaler.referenceResolution.y / Screen.height);
         grid = (GameObject.Find("HexGrid").GetComponent<HexGrid>());
         mainCamera = (GameObject.Find("CameraRig").GetComponentInChildren<Camera>());
         miniMapCamera = (GameObject.Find("MiniMapCamera").GetComponent<Camera>());
@@ -98,7 +92,7 @@ public class MiniMapController : MonoBehaviour
     {
         RectTransform rectTransform = gameObject.GetComponent<RectTransform>();
 
-        if (Input.GetButton("MouseLeft") && Input.mousePosition.x > 8 && Input.mousePosition.x < rectTransform.rect.width / ScreenScale.x + 8 && Input.mousePosition.y > 8 && Input.mousePosition.y < rectTransform.rect.height / ScreenScale.y + 8)
+        if (Input.GetButton("MouseLeft") && Input.mousePosition.x > 8 && Input.mousePosition.x < rectTransform.rect.width + 8 && Input.mousePosition.y > 8 && Input.mousePosition.y < rectTransform.rect.height + 8)
         {
             controller.LookAt(lastClicked);
         }
@@ -152,8 +146,8 @@ public class MiniMapController : MonoBehaviour
         Target.y = eventData.position.y - 8;
 
         // calculate camera position from minimap click:
-        Target.x = miniMapCamera.transform.position.x + (Target.x - rectTransform.rect.width / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize * ScreenScale.x /2f;
-        Target.y = miniMapCamera.transform.position.z + (Target.y - rectTransform.rect.height / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize * ScreenScale.y /2f;
+        Target.x = miniMapCamera.transform.position.x + (Target.x - rectTransform.rect.width / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize;
+        Target.y = miniMapCamera.transform.position.z + (Target.y - rectTransform.rect.height / 2f) / (rectTransform.rect.height / 2) * miniMapCamera.orthographicSize;
         lastClicked = Target;
     }
 

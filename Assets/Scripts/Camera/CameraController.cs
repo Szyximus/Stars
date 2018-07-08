@@ -134,9 +134,9 @@ public class CameraController : MonoBehaviour {
         }
 
 
-        scale.x = Mathf.Clamp(scale.x, 0.2f, 0.5f);
-        scale.y = Mathf.Clamp(scale.y, 0.2f, 0.5f);
-        scale.z = Mathf.Clamp(scale.z, 0.2f, 0.5f);
+        scale.x = Mathf.Clamp(scale.x, 0.2f, 1f);
+        scale.y = Mathf.Clamp(scale.y, 0.2f, 1f);
+        scale.z = Mathf.Clamp(scale.z, 0.2f, 1f);
 
         pos.x = Mathf.Clamp(pos.x, boundMin.x, boundMax.x);
         pos.y = Mathf.Clamp(pos.y, boundMin.y, boundMax.y);
