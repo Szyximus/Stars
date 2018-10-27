@@ -55,6 +55,7 @@ public class Player : NetworkBehaviour
 
     private ArrayList spaceships;
     private ArrayList planets;
+    private ArrayList allies;
 
     [System.Serializable]
     public struct SpaceshipsCosts
@@ -110,6 +111,7 @@ public class Player : NetworkBehaviour
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();
+        allies = new ArrayList();
         minerals = 5;
         population = 5;
         solarPower = 5;
@@ -119,7 +121,7 @@ public class Player : NetworkBehaviour
         radars = 0;
         looser = false;
 
-        
+
 
         spaceshipsCosts.scoutNeededMinerals = 5;
         spaceshipsCosts.scoutNeededPopulation = 2;
@@ -195,6 +197,14 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public IEnumerable GetAllies()
+    {
+        foreach (Player player in allies)
+        {
+            yield return player;
+        }
+    }
+
     public void Own(Ownable thing)
     {
         if (thing is Planet)
@@ -209,5 +219,10 @@ public class Player : NetworkBehaviour
             planets.Remove(thing);
         if (thing is Spaceship)
             spaceships.Remove(thing);
+    }
+
+    public void MakeAlliance(Player player)
+    {
+        allies.Add(player);
     }
 }
