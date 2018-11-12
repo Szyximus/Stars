@@ -38,7 +38,7 @@ public class SideMenu : MonoBehaviour
     GameObject PlanetResourcesPanel;
     GameObject BuildPanel;
     GameObject ShipPanel;
-
+    GameObject EnemyPlanetFill;
     GameObject FreePlanetFill;
     GameObject NoSelectionFill;
     GameObject StarFill;
@@ -57,9 +57,11 @@ public class SideMenu : MonoBehaviour
     Text warshipCosts;
     Text colonizerCosts;
 
+    Button allianceButton;
     Button colonizeButton;
     Button mineButton;
     Button attackButton;
+   
 
     Image icon;
 
@@ -77,6 +79,7 @@ public class SideMenu : MonoBehaviour
         BuildPanel = GameObject.Find("BuildPanel");
         ShipPanel = GameObject.Find("ShipPanel");
 
+        EnemyPlanetFill = GameObject.Find("EnemyPlanetFill");
         FreePlanetFill = GameObject.Find("FreePlanetFill");
         NoSelectionFill = GameObject.Find("NoSelectionFill");
         StarFill = GameObject.Find("StarFill");
@@ -92,6 +95,7 @@ public class SideMenu : MonoBehaviour
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
         attackButton = ShipPanel.GetComponentsInChildren<Button>()[2];
+        allianceButton = EnemyPlanetFill.GetComponentsInChildren<Button>().First();
 
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
 
@@ -147,6 +151,7 @@ public class SideMenu : MonoBehaviour
         PlanetResourcesPanel.SetActive(false);
         BuildPanel.SetActive(false);
         FreePlanetFill.SetActive(false);
+        EnemyPlanetFill.SetActive(false);
         NoSelectionFill.SetActive(false);
         StarFill.SetActive(true);
 
@@ -161,6 +166,7 @@ public class SideMenu : MonoBehaviour
         PlanetResourcesPanel.SetActive(false);
         BuildPanel.SetActive(false);
         FreePlanetFill.SetActive(false);
+        EnemyPlanetFill.SetActive(false);
         NoSelectionFill.SetActive(false);
         StarFill.SetActive(false);
 
@@ -242,6 +248,7 @@ public class SideMenu : MonoBehaviour
                                  "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).GetOwner().attack).ToString() + "\n" +
                                  "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
         FreePlanetFill.SetActive(true);
+        EnemyPlanetFill.SetActive(false);
     }
 
     void ShowOwnedPlanetPanels()
@@ -252,6 +259,7 @@ public class SideMenu : MonoBehaviour
         BuildPanel.SetActive(true);
         ShipPanel.SetActive(false);
 
+        EnemyPlanetFill.SetActive(false);
         FreePlanetFill.SetActive(false);
         NoSelectionFill.SetActive(false);
         StarFill.SetActive(false);
@@ -325,6 +333,48 @@ public class SideMenu : MonoBehaviour
 
     }
 
+    void ShowEnemyPlanetPanels()
+    {
+
+        PlanetCharacteristicsPanel.SetActive(true);
+        PlanetResourcesPanel.SetActive(true);
+        ShipCharacteristicsPanel.SetActive(false);
+        BuildPanel.SetActive(false);
+        ShipPanel.SetActive(false);
+
+        EnemyPlanetFill.SetActive(true);
+        FreePlanetFill.SetActive(false);
+        NoSelectionFill.SetActive(false);
+        StarFill.SetActive(false);
+
+        Planet planet = EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet;
+        planetCharacteristics.text = ("Temperature: " + planet.characteristics.temperature.ToString() + "\n" +
+                                     "Oxygen: " + planet.characteristics.oxygen.ToString() + "\n" +
+                                     "Radiation: " + planet.characteristics.radiation.ToString() + "\n" +
+                                     "Habitability: " + planet.characteristics.habitability.ToString() + "\n" +
+                                     "HP: " + planet.characteristics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine);
+        planetResources.text = "Minerals: " + planet.resources.minerals.ToString();
+
+        yeilds.text = ("+" + planet.GetPopulationGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetMineralsnGrowth().ToString() + "\n" + "\n" +
+                       "+" + planet.GetSolarPowerGrowth().ToString());
+          if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != gameController.GetCurrentPlayer() &&
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != null)
+        {
+            allianceButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            allianceButton.gameObject.SetActive(false);
+            Debug.Log((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner());
+           Debug.Log( (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet));
+
+
+        }
+
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -385,10 +435,19 @@ public class SideMenu : MonoBehaviour
 
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer()) //Free Planet
+           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() == null) //Free Planet
         {
             ShowNamePanel();
             ShowFreePlanetPanels();
+        }
+
+
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+          (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer() && 
+          (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != null) //Enemy Planet
+        {
+            ShowNamePanel();
+            ShowEnemyPlanetPanels();
         }
     }
 

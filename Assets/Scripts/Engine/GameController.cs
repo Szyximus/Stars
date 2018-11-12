@@ -365,7 +365,7 @@ public class GameController : NetworkBehaviour
 
                 writer.WritePropertyName("position");
                 writer.WriteStartArray();
-                writer.WriteRawValue(planetGameObject.transform.position.ToString().Replace("(","").Replace(")",""));
+                writer.WriteRawValue(planetGameObject.transform.position.ToString().Replace("(", "").Replace(")", ""));
                 writer.WriteEndArray();
 
                 writer.WriteEndObject();
@@ -497,12 +497,13 @@ public class GameController : NetworkBehaviour
         }
 
         JObject tooRichTreshold = (JObject)infoJson["tooRichTreshold"];
-        if(tooRichTreshold == null)
+        if (tooRichTreshold == null)
         {
             tooRichTresholdMinerals = 1000;
             tooRichTresholdPopulation = 1000;
             tooRichTresholdSolarPower = 1000;
-        } else
+        }
+        else
         {
             tooRichTresholdMinerals = (int)tooRichTreshold["tooRichTresholdMinerals"];
             tooRichTresholdPopulation = (int)tooRichTreshold["tooRichTresholdPopulation"];
@@ -536,7 +537,7 @@ public class GameController : NetworkBehaviour
             }
 
             // check if players names are unique
-            List<string>  PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
+            List<string> PlayerMenuListNames = playersJson.Select(s => (string)s["name"]).ToList();
             if (PlayerMenuListNames.Count != (new HashSet<string>(PlayerMenuListNames)).Count)
             {
                 throw new Exception("Players names must be unique!");
@@ -561,7 +562,7 @@ public class GameController : NetworkBehaviour
             }
         }
 
-        
+
 
         int i = 0;
         foreach (GameApp.PlayerMenu playerMenu in PlayerMenuList)
@@ -705,7 +706,7 @@ public class GameController : NetworkBehaviour
             GameObject planet = Instantiate(original: gameApp.PlanetPrefab, position: new Vector3(
                 (float)planetJson["position"][0], (float)planetJson["position"][1], (float)planetJson["position"][2]), rotation: Quaternion.identity
             );
-            
+
             JsonUtility.FromJsonOverwrite(planetJson["planetMain"].ToString(), planet.GetComponent<Planet>());
             // NetworkServer.Spawn(planet);
 
@@ -1009,7 +1010,7 @@ public class GameController : NetworkBehaviour
     public void GameEnded(string msg)
     {
         Debug.Log("GameEnded");
-        if(turnScreen == null)
+        if (turnScreen == null)
             turnScreen = GameObject.Find("Canvas").GetComponentInChildren<TurnScreen>();
         turnScreen.Show("END\n" + msg);
     }
@@ -1151,6 +1152,17 @@ public class GameController : NetworkBehaviour
 
             }
         Thread.Sleep(100);
+    }
+
+    public void MakeAllience()
+    {
+        Planet planetToAllience = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
+        if (planetToAllience != null)
+        {
+            Player playerToAllience = planetToAllience.GetOwner();
+            GetCurrentPlayer().MakeAlliance(playerToAllience);
+            playerToAllience.MakeAlliance(GetCurrentPlayer());
+        }
     }
 
     public void Mine()
