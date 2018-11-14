@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.1461987, g: 0.17622292, b: 0.2312494, a: 1}
+  m_IndirectSpecularColor: {r: 0.14546016, g: 0.1752545, b: 0.23002556, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -2170,7 +2170,7 @@ Prefab:
         type: 2}
     - target: {fileID: 1825237604728144, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224658770183581760, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2254,7 +2254,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1998978765230958, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114898816363089966, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -2278,7 +2278,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1433657084854834, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 224131106654689124, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -3019,19 +3019,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1389334418324758, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1073860063865036, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1778708128548436, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1511877249574282, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114898816363089966, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -4104,7 +4104,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1825576898
 RectTransform:
   m_ObjectHideFlags: 0

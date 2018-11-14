@@ -42,17 +42,20 @@ public class ShipIcon : MonoBehaviour
         transform.LookAt(2 * transform.position - target);
         var distanceToCamera = Vector3.Distance(transform.position, target) / 60f;
         transform.localScale = new Vector3(distanceToCamera, distanceToCamera, distanceToCamera);
-        if (GetComponentInParent<Ownable>().GetOwner() == gameController.GetCurrentPlayer())
-        {
-            sprite.color = Color.white;
+        //if (GetComponentInParent<Ownable>().GetOwner() == gameController.GetCurrentPlayer())
+        //{
+        //    sprite.color = Color.white;
 
-        } else sprite.color = new Color(0.66f, 0, 0);
+
+        //} else sprite.color = new Color(0.66f, 0, 0);
 
         if (GetComponentInParent<Ownable>().GetOwner() == null)
         {
             sprite.color = new Color(0.50f, 0.50f, 0.50f);
 
         }
+
+        else sprite.color = GetComponentInParent<Ownable>().GetOwner().color;
 
 
     }

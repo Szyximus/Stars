@@ -34,16 +34,12 @@ public class ShipMinimapIcon : MonoBehaviour
 
     void LateUpdate()
     {
-        if (GetComponentInParent<Ownable>().GetOwner() == gameController.GetCurrentPlayer())
-        {
-            sprite.color = Color.white;
-
-        } else sprite.color = new Color(0.75f, 0, 0);
-
         if (GetComponentInParent<Ownable>().GetOwner() == null)
         {
-            sprite.color = new Color(0.66f, 0.66f, 0.66f);
+            sprite.color = new Color(0.50f, 0.50f, 0.50f);
 
         }
+
+        else sprite.color = GetComponentInParent<Ownable>().GetOwner().color;
     }
 }

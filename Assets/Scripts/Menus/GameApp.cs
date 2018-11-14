@@ -70,6 +70,8 @@ public class GameApp : MonoBehaviour
     public Dictionary<string, string> Parameters;
     List<PlayerMenu> playerMenuList;
 
+    //public Stack<Color> colorStack = [new Color(1,0.1f,0.1f),new Color(0.1f,0.1f,1), new Color(1f, 1f, 0.1f)];
+
     // data that will be saved, based on scene name
     // Dictionary<scene name, List<{saved value name, path to input filed in editor}>>
     private Dictionary<string, List<ParameterMapping>> parametersToPersist = new Dictionary<string, List<ParameterMapping>>

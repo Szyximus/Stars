@@ -102,7 +102,7 @@ public class NewGameSceneInit : MonoBehaviour
                 name = player.transform.Find("PlayerNameInput").GetComponent<InputField>().text,
                 password = player.transform.Find("PlayerPassInput").GetComponent<InputField>().text,
                 race = "human",
-                playerType = tempType
+                playerType = tempType,
             });
         }
 

@@ -30,6 +30,7 @@ public class Player : NetworkBehaviour
     public string password;
     public bool local;
     public bool clientConnected;
+    public Color color;
 
 
     [SyncVar]
@@ -52,6 +53,7 @@ public class Player : NetworkBehaviour
     public int radars;
     [SyncVar]
     public bool looser;
+
 
     private ArrayList spaceships;
     private ArrayList planets;
@@ -108,6 +110,7 @@ public class Player : NetworkBehaviour
     // Use this for initialization
     void Awake()
     {
+        color = new Color(0.5f, 0.5f, 0.5f);
         System.Random random = new System.Random();
         spaceships = new ArrayList();
         planets = new ArrayList();

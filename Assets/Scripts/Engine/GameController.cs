@@ -67,12 +67,24 @@ public class GameController : NetworkBehaviour
 
     public InputField SaveGameFileInput;
 
+    public Stack<String> colorStack;
+
     // end game objectives
     public int tooRichTresholdMinerals, tooRichTresholdPopulation, tooRichTresholdSolarPower;
 
     void Awake()
     {
         Debug.Log("GameContoller Awake");
+        colorStack = new Stack<string>();
+
+        colorStack.Push("maroon");
+        colorStack.Push("lime");
+        colorStack.Push("magenta");
+        colorStack.Push("orange");
+        colorStack.Push("blue");
+        colorStack.Push("yellow");
+        colorStack.Push("cyan");
+        colorStack.Push("red");
 
         grid = GameObject.Find("HexGrid").GetComponent<HexGrid>();
         gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
@@ -322,6 +334,9 @@ public class GameController : NetworkBehaviour
                 writer.WritePropertyName("name");
                 writer.WriteValue(playerGameObject.name);
 
+                writer.WritePropertyName("color");
+                writer.WriteValue(playerGameObject.GetComponent<Player>().color.ToString());
+
                 writer.WritePropertyName("playerMain");
                 writer.WriteRawValue(JsonUtility.ToJson(player));
 
@@ -520,6 +535,7 @@ public class GameController : NetworkBehaviour
 
     void PlayersFromJsonAndMenu(JObject gameJson, List<GameApp.PlayerMenu> PlayerMenuList, bool isNewGame)
     {
+        Debug.Log(this.colorStack.Peek());
         JArray playersJson = null;
 
         if (!isNewGame)
@@ -574,11 +590,15 @@ public class GameController : NetworkBehaviour
             {
                 JsonUtility.FromJsonOverwrite(playersJson[i]["playerMain"].ToString(), player.GetComponent<Player>());
                 player.name = (string)playersJson[i]["name"];
+                ColorUtility.TryParseHtmlString((string)playersJson[i]["color"],out player.color);
             }
             else
             {
                 player.name = playerMenu.name;
                 player.race = playerMenu.race;
+
+                var colorstring = this.colorStack.Pop();
+                ColorUtility.TryParseHtmlString(colorstring, out player.color);
             }
 
             player.password = playerMenu.password;
@@ -614,6 +634,7 @@ public class GameController : NetworkBehaviour
 
             // general
             player.name = (string)playerJson["name"];
+            ColorUtility.TryParseHtmlString((string)playerJson["color"], out player.GetComponent<Player>().color);
 
             players.Add(player);
             // NetworkServer.Spawn(player);
