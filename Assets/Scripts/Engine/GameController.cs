@@ -69,6 +69,7 @@ public class GameController : NetworkBehaviour
 
     public Stack<String> colorStack;
 
+    AlliancePanel alliancePanel;
     // end game objectives
     public int tooRichTresholdMinerals, tooRichTresholdPopulation, tooRichTresholdSolarPower;
 
@@ -94,6 +95,9 @@ public class GameController : NetworkBehaviour
         // init it here, because they depends on GameController, which is started after MonoBehaviour scripts
         GameObject.Find("UpperPanel").GetComponent<UpperPanel>().Init();
         GameObject.Find("SidePanel").GetComponent<SideMenu>().Init();
+        alliancePanel = GameObject.Find("AlliancePanel").GetComponent<AlliancePanel>();
+        alliancePanel.Init();
+
 
         players = new List<GameObject>();
         planets = new List<GameObject>();
@@ -824,6 +828,23 @@ public class GameController : NetworkBehaviour
             NextTurnServer();
         else
             NextTurnClient();
+
+        foreach (Player player in GetCurrentPlayer().playersAskingAboutAlliance)
+        {
+            alliancePanel.gameObject.SetActive(true);
+            alliancePanel.SetPlayerNameToAlliance(player.name);
+            while (alliancePanel.buttonClicked == false)
+            {
+                if (alliancePanel.makeAlliance == true)
+                {
+                    Debug.Log("rob sojusz");
+                    GetCurrentPlayer().AddToAllies(player);
+                    player.AddToAllies(GetCurrentPlayer());
+                    GetCurrentPlayer().playersAskingAboutAlliance.Remove(player);
+                }
+            }
+        }
+
     }
 
     /*
@@ -1181,8 +1202,8 @@ public class GameController : NetworkBehaviour
         if (planetToAllience != null)
         {
             Player playerToAllience = planetToAllience.GetOwner();
-            GetCurrentPlayer().MakeAlliance(playerToAllience);
-            playerToAllience.MakeAlliance(GetCurrentPlayer());
+            GetCurrentPlayer().AskAboutAlliance(playerToAllience);
+            Debug.Log("maeAlliance");
         }
     }
 

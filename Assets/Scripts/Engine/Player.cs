@@ -32,6 +32,8 @@ public class Player : NetworkBehaviour
     public bool clientConnected;
     public Color color;
 
+    public ArrayList playersAskingAboutAlliance = new ArrayList();
+    
 
     [SyncVar]
     public bool human;
@@ -208,6 +210,11 @@ public class Player : NetworkBehaviour
         }
     }
 
+    public void AddToAllies(Player player)
+    {
+        allies.Add(player);
+    }
+
     public void Own(Ownable thing)
     {
         if (thing is Planet)
@@ -227,5 +234,15 @@ public class Player : NetworkBehaviour
     public void MakeAlliance(Player player)
     {
         allies.Add(player);
+    }
+    /*
+     * The current player asks for an alliance, so the player given as an argument gets
+     * the new player to the list asking for an alliance
+     * 
+     * */
+    public void AskAboutAlliance(Player player)
+    {
+        player.playersAskingAboutAlliance.Add(this);
+        Debug.Log(this.name);
     }
 }
