@@ -277,6 +277,20 @@ public class Spaceship : Ownable
         this.actionPoints += actionPoints;
     }
 
+    IEnumerator placeExplosion(Ownable target)
+    {
+        var heading = target.transform.position - transform.position;
+        var distance = heading.magnitude;
+        var direction = heading / distance; // This is now the normalized direction.
+        direction += new Vector3(0, 0.1f, 0);
+        yield return new WaitForSeconds(1.4f);
+
+
+        GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction, target.transform.rotation);
+        Destroy(TargetFire, 1.5f);
+
+    }
+
     public bool Attack(Ownable target)
     {
         if (EventManager.selectionManager.TargetObject != null)
@@ -295,23 +309,20 @@ public class Spaceship : Ownable
                     var distance = heading.magnitude;
                     var direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.1f, 0);
-                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
-                    GameObject SourceFire1 = Instantiate(gameApp.AttackPrefab, transform.position + direction*2, transform.rotation);
-                    GameObject SourceFire2 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 4, transform.rotation);
-                    GameObject SourceFire3 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 6, transform.rotation);
-                    GameObject SourceFire4 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 8, transform.rotation);
+                    
                     heading = transform.position - target.transform.position;
                     distance = heading.magnitude;
                     direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.1f, 0);
-                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction, target.transform.rotation);
+                    Quaternion rotation = Quaternion.LookRotation(heading, Vector3.up);
+                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, rotation * Quaternion.Euler(new Vector3(0,180,0)));
+                    Ownable newtarget = target;
+                    StartCoroutine(placeExplosion(newtarget));
+
                     target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
-                    Destroy(SourceFire, 1f);
-                    Destroy(SourceFire1, 1.1f);
-                    Destroy(SourceFire2, 1.2f);
-                    Destroy(SourceFire3, 1.3f);
-                    Destroy(SourceFire4, 1.4f);
-                    Destroy(TargetFire, 1.5f);
+                    Destroy(SourceFire, 1.5f);
+                    
+                    
                     return true;
                 }
                 Debug.Log("You dont have enough movement points");
@@ -325,23 +336,20 @@ public class Spaceship : Ownable
                     var distance = heading.magnitude;
                     var direction = heading / distance; // This is now the normalized direction.
                     direction += new Vector3(0, 0.1f, 0);
-                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position + direction, transform.rotation);
-                    GameObject SourceFire1 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 2, transform.rotation);
-                    GameObject SourceFire2 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 4, transform.rotation);
-                    GameObject SourceFire3 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 6, transform.rotation);
-                    GameObject SourceFire4 = Instantiate(gameApp.AttackPrefab, transform.position + direction * 8, transform.rotation);
+
                     heading = transform.position - target.transform.position;
                     distance = heading.magnitude;
                     direction = heading / distance; // This is now the normalized direction.
-                    direction += new Vector3(0, 0.5f, 0);
-                    GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction * 2.5f, target.transform.rotation);
-                    Destroy(SourceFire, 1f);
-                    Destroy(SourceFire1, 1.1f);
-                    Destroy(SourceFire2, 1.2f);
-                    Destroy(SourceFire3, 1.3f);
-                    Destroy(SourceFire4, 1.4f);
-                    Destroy(TargetFire, 1.5f);
-                    target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                    direction += new Vector3(0, 0.1f, 0);
+                    Quaternion rotation = Quaternion.LookRotation(heading, Vector3.up);
+                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
+                    Ownable newtarget = target;
+                    StartCoroutine(placeExplosion(newtarget));
+
+                    target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                    Destroy(SourceFire, 1.5f);
+
+
                     return true;
                 }
             Debug.Log("You dont have enough movement points");

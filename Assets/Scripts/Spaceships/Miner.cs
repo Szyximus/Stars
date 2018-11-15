@@ -75,7 +75,7 @@ public class Miner : Spaceship
                 EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)
                 if (miner.CheckCanBeMined(planetToMine))
                 {
-                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, transform.rotation);
+                    GameObject SourceFire = Instantiate(gameApp.HitPrefab, transform.position, transform.rotation);
                     Destroy(SourceFire, 1f);
                     planetToMine.GiveMineralsTo(GetOwner(), 1);
                 }
@@ -93,7 +93,7 @@ public class Miner : Spaceship
                 EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)
                 if (miner.CheckCanBeMined(startToMine))
                 {
-                    GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, transform.rotation);
+                    GameObject SourceFire = Instantiate(gameApp.HitPrefab, transform.position, transform.rotation);
                     Destroy(SourceFire, 1f);
                     startToMine.GiveSolarPower(GetOwner(), 1);
                 }
