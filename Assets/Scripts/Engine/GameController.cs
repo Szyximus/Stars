@@ -833,8 +833,8 @@ public class GameController : NetworkBehaviour
         {
             alliancePanel.gameObject.SetActive(true);
             alliancePanel.SetPlayerNameToAlliance(player.name);
-            while (alliancePanel.buttonClicked == false)
-            {
+          //  while (alliancePanel.buttonClicked == false)
+          //  {
                 if (alliancePanel.makeAlliance == true)
                 {
                     Debug.Log("rob sojusz");
@@ -842,7 +842,7 @@ public class GameController : NetworkBehaviour
                     player.AddToAllies(GetCurrentPlayer());
                     GetCurrentPlayer().playersAskingAboutAlliance.Remove(player);
                 }
-            }
+          //  }
         }
 
     }

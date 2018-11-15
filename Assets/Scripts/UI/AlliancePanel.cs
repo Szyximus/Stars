@@ -22,9 +22,9 @@ public class AlliancePanel : MonoBehaviour
     {
         gameObject.SetActive(false);
 
-        allianceText = GameObject.Find("AllianceText");
+      //  allianceText = GameObject.Find("AllianceText");
        // label = allianceText.GetComponent<Text>();
-        Debug.Log(allianceText + "fdsfsd");
+     //   Debug.Log(allianceText + "fdsfsd");
         //  yesButton = GameObject.Find("YesButton").GetComponent<Button>();
         //  noButton = GameObject.Find("NoButton").GetComponent<Button>();
 
@@ -40,7 +40,7 @@ public class AlliancePanel : MonoBehaviour
         makeAlliance = true;
         gameObject.SetActive(false);
         Debug.Log("yes");
-        Debug.Log(allianceText + "fdsfsd");
+ 
         buttonClicked = true;
     }
 
