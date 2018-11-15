@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.06521177, g: 0.07860668, b: 0.10250123, a: 1}
+  m_IndirectSpecularColor: {r: 0.10146916, g: 0.12166988, b: 0.16018201, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -453,6 +453,7 @@ MonoBehaviour:
   AttackPrefab: {fileID: 1479304368373590, guid: 9cd8cbd8cf1427045b0a978507a978c0,
     type: 2}
   HitPrefab: {fileID: 1000013462590818, guid: ecdd96beb7f93494880c052dfccf9dc1, type: 2}
+  MinePrefab: {fileID: 1208074420609426, guid: 96730f8640590934eacb6f860058e7f9, type: 2}
   PlayerMenuPrefab: {fileID: 1509905191523534, guid: 5b8e61df14e834c40abe5701ddc3be22,
     type: 2}
 --- !u!4 &199018551

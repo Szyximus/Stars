@@ -427,8 +427,8 @@ public class Planet : Ownable
     {
         if ((this.characteristics.healthPoints + healthPoints) <= 0)
         {
-            GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position + new Vector3(0, 0.5f, 0), transform.rotation);
-            Destroy(Explosion, 2f);
+
+            StartCoroutine(placeBigExplosion(transform.position + new Vector3(0, 0.5f, 0), transform.rotation));
             this.characteristics.healthPoints = maxHealthPoints;
             if (this.GetOwner() != null) Lose();
         }
@@ -436,5 +436,15 @@ public class Planet : Ownable
         {
             this.characteristics.healthPoints += healthPoints;
         }
+    }
+
+    IEnumerator placeBigExplosion(Vector3 position, Quaternion rotation)
+    {
+        yield return new WaitForSeconds(1.4f);
+
+
+        GameObject TargetFire = Instantiate(gameController.gameApp.ExplosionPrefab, position, rotation);
+        Destroy(TargetFire, 3f);
+
     }
 }

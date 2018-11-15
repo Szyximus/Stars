@@ -31,14 +31,20 @@ public class TargetGizmoController : MonoBehaviour
     Vector3 offset = new Vector3(0, 0.01f, 0);
     private AudioSource sound;
 
+    private Renderer renderer;
+
+    public GameController gameController;
+
     void Awake()
     {
+
         main = this;
     }
 
     // Use this for initialization
     void Start()
     {
+        renderer = GetComponent<Renderer>();
         transform.position = new Vector3(-1000, -1000, -1000);
         sound = gameObject.GetComponent<AudioSource>();
 
@@ -51,6 +57,7 @@ public class TargetGizmoController : MonoBehaviour
         if (EventManager.selectionManager.TargetObject != null)
         {
             transform.position = EventManager.selectionManager.TargetObject.transform.position + offset;
+            renderer.material.color = gameController.GetCurrentPlayer().color;
         }
         else transform.position = new Vector3(-1000, -1000, -1000);
 

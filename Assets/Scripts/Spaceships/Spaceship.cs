@@ -277,16 +277,16 @@ public class Spaceship : Ownable
         this.actionPoints += actionPoints;
     }
 
-    IEnumerator placeExplosion(Ownable target)
+    IEnumerator placeExplosion(Vector3 target, Quaternion rotation)
     {
-        var heading = target.transform.position - transform.position;
+        var heading = target - transform.position;
         var distance = heading.magnitude;
         var direction = heading / distance; // This is now the normalized direction.
         direction += new Vector3(0, 0.1f, 0);
         yield return new WaitForSeconds(1.4f);
 
 
-        GameObject TargetFire = Instantiate(gameApp.HitPrefab, target.transform.position + direction, target.transform.rotation);
+        GameObject TargetFire = Instantiate(gameApp.HitPrefab, target, rotation);
         Destroy(TargetFire, 1.5f);
 
     }
@@ -317,7 +317,7 @@ public class Spaceship : Ownable
                     Quaternion rotation = Quaternion.LookRotation(heading, Vector3.up);
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, rotation * Quaternion.Euler(new Vector3(0,180,0)));
                     Ownable newtarget = target;
-                    StartCoroutine(placeExplosion(newtarget));
+                    StartCoroutine(placeExplosion(newtarget.transform.position + direction, rotation));
 
                     target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
                     Destroy(SourceFire, 1.5f);
@@ -344,9 +344,9 @@ public class Spaceship : Ownable
                     Quaternion rotation = Quaternion.LookRotation(heading, Vector3.up);
                     GameObject SourceFire = Instantiate(gameApp.AttackPrefab, transform.position, rotation * Quaternion.Euler(new Vector3(0, 180, 0)));
                     Ownable newtarget = target;
-                    StartCoroutine(placeExplosion(newtarget));
+                    StartCoroutine(placeExplosion(newtarget.transform.position + direction, rotation));
 
-                    target.GetComponent<Spaceship>().AddHealthPoints(-this.spaceshipStatistics.attack);
+                    target.GetComponent<Planet>().AddHealthPoints(-this.spaceshipStatistics.attack);
                     Destroy(SourceFire, 1.5f);
 
 
@@ -365,11 +365,12 @@ public class Spaceship : Ownable
     {
         if ((this.spaceshipStatistics.healthPoints + healthPoints) <= 0)
         {
-            GameObject Explosion = Instantiate(gameController.gameApp.ExplosionPrefab, transform.position, transform.rotation);
+            Vector3 explosionPosition = transform.position + new Vector3(0, 0.5f, 0);
+            Quaternion explosionRotation = transform.rotation;
+            placeBigExplosion(explosionPosition, explosionRotation);
             this.GetOwner().Lose(this);
             grid.FromCoordinates(this.Coordinates).ClearObject();
             gameController.GetCurrentPlayer().Lose(this);
-            Destroy(Explosion, 2f);
             Destroy(this.gameObject);
             gameController.spaceships.Remove(this.gameObject);
             if (this.GetOwner() != null) Lose();
@@ -379,6 +380,16 @@ public class Spaceship : Ownable
             this.spaceshipStatistics.healthPoints += healthPoints;
 
         }
+    }
+
+    IEnumerator placeBigExplosion(Vector3 position, Quaternion rotation)
+    {
+        yield return new WaitForSeconds(1.4f);
+
+
+        GameObject TargetFire = Instantiate(gameController.gameApp.ExplosionPrefab, position, rotation);
+        Destroy(TargetFire, 3f);
+
     }
 
     public bool CheckDistance(Ownable target)

@@ -63,6 +63,7 @@ public class GameApp : MonoBehaviour
     public GameObject ExplosionPrefab;
     public GameObject AttackPrefab;
     public GameObject HitPrefab;
+    public GameObject MinePrefab;
 
     public GameObject PlayerMenuPrefab;
 
