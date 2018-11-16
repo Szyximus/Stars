@@ -45,6 +45,10 @@ public class HexGrid : MonoBehaviour
 
     private UIHoverListener uiListener;
 
+    private List<HexCell> path;
+
+    private bool isPath = false;
+
 
     void Awake()
     {
@@ -56,6 +60,8 @@ public class HexGrid : MonoBehaviour
         CreateCells();
 
         uiListener = GameObject.Find("Canvas").GetComponent<UIHoverListener>();
+        path = new List<HexCell>();
+        isPath = false;
     }
 
     void CreateCells()
@@ -192,8 +198,10 @@ public class HexGrid : MonoBehaviour
                     if (coordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(coordinates) != null && FromCoordinates(coordinates).IsEmpty())
                     {
                         spaceship.Destination = coordinates;
-                        //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path" 
-                        StartCoroutine(spaceship.MoveTo(spaceship.Destination));
+                        //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path"
+                        //path = Pathfinder.CalculatePath(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination));
+                        StartCoroutine(PathInBackground(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination)));
+                        if (isPath) StartCoroutine(spaceship.MoveTo(spaceship.Destination, path));
                     }
                 }
             if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
@@ -202,6 +210,15 @@ public class HexGrid : MonoBehaviour
         }
 
 
+    }
+
+    public IEnumerator PathInBackground(HexCell dest, HexCell start)
+    {
+        path.Clear();
+        isPath = false;
+        path = Pathfinder.CalculatePath(dest, start);
+        isPath = true;
+        yield return 1;
     }
 
     public void SetupNewTurn(Player currentPlayer)

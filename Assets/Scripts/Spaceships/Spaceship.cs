@@ -29,7 +29,6 @@ using System.Linq;
 [System.Serializable]
 public class Spaceship : Ownable
 {
-    private List<HexCell> path;
     private HexGrid grid;
     private ParticleSystem burster;
     private Light bursterLight;
@@ -218,7 +217,7 @@ public class Spaceship : Ownable
     /*
      * TODO: Probably this function will be called from some round update 
      */
-    public IEnumerator MoveTo(HexCoordinates dest)
+    public IEnumerator MoveTo(HexCoordinates dest, List<HexCell> path)
     {
         if (CanMakeAction())
         {
@@ -244,7 +243,6 @@ public class Spaceship : Ownable
 
             //}
 
-            path = Pathfinder.CalculatePath(grid.FromCoordinates(Coordinates), grid.FromCoordinates(dest));
             while (Coordinates != dest && actionPoints > 0)
             {
                 Move(path.First());
