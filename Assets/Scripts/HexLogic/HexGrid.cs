@@ -166,7 +166,7 @@ public class HexGrid : MonoBehaviour
     /* Contains HexCells on calculated path to draw */
     private List<HexCell> PathToDraw;
 
-    /* Created to not calculate paths when during spaceship flight */
+    /* Created (for optimization) to not calculate paths during spaceship flight */
     public static bool FlyingSpaceshipLock = false;
 
     /* Calculates path on change of hovered cell in coroutine, places it in 
@@ -174,7 +174,11 @@ public class HexGrid : MonoBehaviour
     private void PathToDrawOnMouseHover( System.Action action )
     {
         if ((EventManager.selectionManager.SelectedObject) == null || (EventManager.selectionManager.SelectedObject.tag) != "Unit")
+        {
+            if (PathToDraw != null)
+                PathToDraw = null;
             return;
+        }
 
         Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
@@ -185,6 +189,7 @@ public class HexGrid : MonoBehaviour
 
             if (lastCoordinates != MouseHooverCoordinates)
             {
+                PathToDraw = null;
                 StartCoroutine( GetPathToDraw() );
 
                 action();
