@@ -222,6 +222,7 @@ public class Spaceship : Ownable
         if (CanMakeAction())
         {
             gameController.LockInput();
+            HexGrid.FlyingSpaceshipLock = true;
             TurnEnginesOn();
             //while (Coordinates != dest && actionPoints > 0)
             //{
@@ -252,6 +253,7 @@ public class Spaceship : Ownable
             }
             Flying = false;
             TurnEnginesOff();
+            HexGrid.FlyingSpaceshipLock = false;
             Debug.Log("Flying done, ActionPoints: " + actionPoints);
             gameController.UnlockInput();
         }
