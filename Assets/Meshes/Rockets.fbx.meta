@@ -39,7 +39,17 @@ ModelImporter:
     7400000: Armature|ArmatureAction
     9500000: //RootNode
     13700000: Cube.025
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rocket
+    second: {fileID: 2100000, guid: d6759fc9265625248a87522949b673de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rocketsmoke
+    second: {fileID: 2100000, guid: d8cc5d6475aa12941bfbed617d1b4812, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
