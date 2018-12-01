@@ -19,6 +19,7 @@
 */
 
 using Assets.Scripts;
+using Assets.Scripts.HexLogic;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -155,6 +156,77 @@ public class HexGrid : MonoBehaviour
 
         }
 
+        if( !FlyingSpaceshipLock )
+            PathToDrawOnMouseHover( DebugOutputDrawingPath );
+    }
+
+    /* Captures hovered by mouse hex coordinates, optimization trick to calculate path only when hovered hex changes */
+    private HexCoordinates MouseHooverCoordinates;
+
+    /* Contains HexCells on calculated path to draw */
+    private List<HexCell> PathToDraw;
+
+    /* Created (for optimization) to not calculate paths during spaceship flight */
+    public static bool FlyingSpaceshipLock = false;
+
+    /* Calculates path on change of hovered cell in coroutine, places it in 
+     * PathToDraw field and after that executes action given as argument  */
+    private void PathToDrawOnMouseHover( System.Action action )
+    {
+        if ((EventManager.selectionManager.SelectedObject) == null || (EventManager.selectionManager.SelectedObject.tag) != "Unit")
+        {
+            if (PathToDraw != null)
+                PathToDraw = null;
+            return;
+        }
+
+        Ray inputRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (Physics.Raycast(inputRay, out hit))
+        {
+            HexCoordinates lastCoordinates = MouseHooverCoordinates;
+            MouseHooverCoordinates = HexCoordinates.FromPosition(hit.point);
+
+            if (lastCoordinates != MouseHooverCoordinates)
+            {
+                PathToDraw = null;
+                StartCoroutine( GetPathToDraw() );
+
+                action();
+            }
+        }
+    }
+
+    /* Calculates path from selected spaceship to hovered cell */
+    private IEnumerator<int> GetPathToDraw()
+    {
+        GameObject selectedObject;
+        if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
+            if (selectedObject.tag == "Unit")
+            {
+                var spaceship = selectedObject.GetComponent<Spaceship>();
+                if (MouseHooverCoordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(MouseHooverCoordinates) != null && FromCoordinates(MouseHooverCoordinates).IsEmpty())
+                {
+                    PathToDraw = Pathfinder.CalculatePath( this.FromCoordinates(spaceship.Coordinates) , this.FromCoordinates(MouseHooverCoordinates) );
+                }
+            }
+
+        yield return 1;
+    }
+
+    /* Example debug action, to be replaced by drawing action or sth */
+    private void DebugOutputDrawingPath()
+    {
+        if ( PathToDraw == null )
+            return;
+
+        string pathString = " Trasa: ";
+        foreach (var x in PathToDraw )
+        {
+            pathString += x.Coordinates.ToString();
+            pathString += ",";
+        }
+        Debug.Log(pathString);
     }
 
     void HandleInput()
