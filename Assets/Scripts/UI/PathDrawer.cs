@@ -59,8 +59,8 @@ public class PathDrawer : MonoBehaviour
         // Add a Line Renderer to the GameObject
 
         // Set the width of the Line Renderer
-        line.startWidth = 0.5f;
-        line.endWidth = 0.0f;
+        //line.startWidth = 0.5f;
+       // line.endWidth = 0.0f;
         // Set the number of vertex fo the Line Renderer
         line.positionCount = 0;
         //line.material = LineMat;
@@ -79,12 +79,16 @@ public class PathDrawer : MonoBehaviour
             transform.position = grid.PathToDraw.Last().transform.position + offset;
             renderer.material.color = gameController.GetCurrentPlayer().color;
             line.material.color = gameController.GetCurrentPlayer().color;
-            line.SetPosition(0, EventManager.selectionManager.SelectedObject.transform.position + offset);
+            Vector3 start = Vector3.Lerp(EventManager.selectionManager.SelectedObject.transform.position + offset, grid.PathToDraw.First().transform.position + offset, 0.5f);
+            line.SetPosition(0, start); 
 
             foreach (HexCell cell in grid.PathToDraw){
                 line.SetPosition(i, cell.transform.position + offset);
                 i++;
             }
+
+            Vector3 end = Vector3.Lerp(line.GetPosition(i-2), grid.PathToDraw.Last().transform.position + offset, 0.5f);
+            line.SetPosition(i-1, end);
 
 
         }
