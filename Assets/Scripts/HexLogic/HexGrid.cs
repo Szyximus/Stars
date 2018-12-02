@@ -164,7 +164,7 @@ public class HexGrid : MonoBehaviour
     private HexCoordinates MouseHooverCoordinates;
 
     /* Contains HexCells on calculated path to draw */
-    private List<HexCell> PathToDraw;
+    public List<HexCell> PathToDraw;
 
     /* Created (for optimization) to not calculate paths during spaceship flight */
     public static bool FlyingSpaceshipLock = false;
@@ -274,6 +274,7 @@ public class HexGrid : MonoBehaviour
                         //path = Pathfinder.CalculatePath(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination));
                         StartCoroutine(PathInBackground(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination)));
                         if (isPath) StartCoroutine(spaceship.MoveTo(spaceship.Destination, path));
+                        PathToDraw = null;
                     }
                 }
             if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
