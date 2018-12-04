@@ -69,7 +69,9 @@ public class GameController : NetworkBehaviour
 
     public Stack<String> colorStack;
 
-    AlliancePanel alliancePanel;
+    public bool showAllianceButton = true;
+    public bool showResolveAllianceButton = false;
+    private AlliancePanel alliancePanel;
     // end game objectives
     public int tooRichTresholdMinerals, tooRichTresholdPopulation, tooRichTresholdSolarPower;
 
@@ -594,7 +596,7 @@ public class GameController : NetworkBehaviour
             {
                 JsonUtility.FromJsonOverwrite(playersJson[i]["playerMain"].ToString(), player.GetComponent<Player>());
                 player.name = (string)playersJson[i]["name"];
-                ColorUtility.TryParseHtmlString((string)playersJson[i]["color"],out player.color);
+                ColorUtility.TryParseHtmlString((string)playersJson[i]["color"], out player.color);
             }
             else
             {
@@ -829,21 +831,13 @@ public class GameController : NetworkBehaviour
         else
             NextTurnClient();
 
-        foreach (Player player in GetCurrentPlayer().playersAskingAboutAlliance)
-        {
-            alliancePanel.gameObject.SetActive(true);
-            alliancePanel.SetPlayerNameToAlliance(player.name);
-          //  while (alliancePanel.buttonClicked == false)
-          //  {
-                if (alliancePanel.makeAlliance == true)
-                {
-                    Debug.Log("rob sojusz");
-                    GetCurrentPlayer().AddToAllies(player);
-                    player.AddToAllies(GetCurrentPlayer());
-                    GetCurrentPlayer().playersAskingAboutAlliance.Remove(player);
-                }
-          //  }
-        }
+        //its called when player starts round. Players who want to make an alliance with current player are set in list 
+        //playersAskingAboutAlliance
+        if (GetCurrentPlayer().playersAskingAboutAlliance.Count != 0)
+            alliancePanel.ManageAliance(GetCurrentPlayer().playersAskingAboutAlliance);
+
+
+
 
     }
 
@@ -1203,9 +1197,25 @@ public class GameController : NetworkBehaviour
         {
             Player playerToAllience = planetToAllience.GetOwner();
             GetCurrentPlayer().AskAboutAlliance(playerToAllience);
-            Debug.Log("maeAlliance");
+            showAllianceButton = false;
+            showResolveAllianceButton = true;
         }
     }
+
+    public void ResolveAlliance()
+    {
+        Planet planetToResolveAllience = EventManager.selectionManager.SelectedObject.GetComponent<Planet>();
+        if (planetToResolveAllience != null)
+        {
+            Player playerToResolveAllience = planetToResolveAllience.GetOwner();
+            GetCurrentPlayer().RemoveFromAllies(playerToResolveAllience);
+            playerToResolveAllience.RemoveFromAllies(GetCurrentPlayer());
+            showAllianceButton = true;
+            showResolveAllianceButton = false;
+        }
+    }
+
+
 
     public void Mine()
     {
