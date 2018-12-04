@@ -33,7 +33,7 @@ public class Player : NetworkBehaviour
     public Color color;
 
     public ArrayList playersAskingAboutAlliance = new ArrayList();
-    
+
 
     [SyncVar]
     public bool human;
@@ -202,17 +202,18 @@ public class Player : NetworkBehaviour
         }
     }
 
-    public IEnumerable GetAllies()
+    public ArrayList GetAllies()
     {
-        foreach (Player player in allies)
-        {
-            yield return player;
-        }
+        return allies;
     }
 
     public void AddToAllies(Player player)
     {
         allies.Add(player);
+    }
+    public void RemoveFromAllies(Player player)
+    {
+        allies.Remove(player);
     }
 
     public void Own(Ownable thing)
