@@ -285,6 +285,27 @@ public class HexGrid : MonoBehaviour
 
     }
 
+    public void TouchCell(HexCoordinates coordinates)
+    {
+            GameObject selectedObject;
+            if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
+                if (selectedObject.tag == "Unit")
+                {
+                    var spaceship = selectedObject.GetComponent<Spaceship>();
+                    if (coordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(coordinates) != null && FromCoordinates(coordinates).IsEmpty())
+                    {
+                        spaceship.Destination = coordinates;
+                        //DEBUG - after mouse clik unit goes {speed} fields in destination direction, hold mouse down to "see path"
+                        //path = Pathfinder.CalculatePath(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination));
+                        StartCoroutine(PathInBackground(this.FromCoordinates(EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>().Coordinates), this.FromCoordinates(spaceship.Destination)));
+                        if (isPath) StartCoroutine(spaceship.MoveTo(spaceship.Destination, path));
+                        PathToDraw = null;
+                    }
+                }
+            if (FromCoordinates(coordinates) != null) EventManager.selectionManager.GridCellSelection =
+                FromCoordinates(coordinates);
+    }
+
     public IEnumerator PathInBackground(HexCell dest, HexCell start)
     {
         path.Clear();

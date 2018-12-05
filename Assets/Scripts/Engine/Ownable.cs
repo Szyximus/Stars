@@ -28,7 +28,7 @@ public abstract class Ownable : NetworkBehaviour
     [SyncVar]
     public new string name;
 
-    protected Player owner;
+    public Player owner;
     protected GameController gameController;
     protected GameApp gameApp;
 
