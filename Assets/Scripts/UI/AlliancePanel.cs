@@ -46,7 +46,7 @@ public class AlliancePanel : MonoBehaviour
     {
         playerText.color = player.color;
         playerText.text = player.name;
-        allianceText.text = " wants to make an alliance. Are you agree ? ";
+        allianceText.text = " wants to forge an alliance. What's your answer?";
     }
     // Update is called once per frame
     void Update()

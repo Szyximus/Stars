@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.14377274, g: 0.17335142, b: 0.22739929, a: 1}
+  m_IndirectSpecularColor: {r: 0.14264068, g: 0.17192864, b: 0.22558537, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -3105,7 +3105,7 @@ Prefab:
     - target: {fileID: 224211571376830352, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: -648
+      value: -652
       objectReference: {fileID: 0}
     - target: {fileID: 114273900419368278, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -3116,7 +3116,7 @@ Prefab:
     - target: {fileID: 224211571376830352, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 380
+      value: 384
       objectReference: {fileID: 0}
     - target: {fileID: 114972059184786586, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
         type: 2}
@@ -3608,6 +3608,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 82393342743442348, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
+        type: 2}
+      propertyPath: spreadCustomCurve.m_RotationOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 224917115464209156, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8,
+        type: 2}
+      propertyPath: m_SizeDelta.y
+      value: -313
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: e0bd089d08dab5e49bba7c2c5c6c2cf8, type: 2}
   m_IsPrefabParent: 0
@@ -3851,8 +3861,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -600, y: -700}
-  m_SizeDelta: {x: 1653, y: 512}
+  m_AnchoredPosition: {x: 0, y: -640}
+  m_SizeDelta: {x: 1024, y: 512}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!114 &1040676770
 MonoBehaviour:
@@ -3899,7 +3909,7 @@ MonoBehaviour:
     m_Alignment: 1
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 1
+    m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 
@@ -4099,7 +4109,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -0.00018310547, y: -75.00003}
+  m_AnchoredPosition: {x: 0, y: -64}
   m_SizeDelta: {x: 138, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1184923062
@@ -5761,7 +5771,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -75}
+  m_AnchoredPosition: {x: 0, y: -64}
   m_SizeDelta: {x: 138, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1883327824

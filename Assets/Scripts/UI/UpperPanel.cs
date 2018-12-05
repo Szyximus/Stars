@@ -66,6 +66,7 @@ public class UpperPanel : MonoBehaviour
             return;
 
         playerLabel.text = currentPlayer.ToString().Replace("(Player)", "");
+        playerLabel.color = currentPlayer.color;
         if (currentPlayer != null)
         {
             powerLabel.text = currentPlayer.solarPower.ToString();
