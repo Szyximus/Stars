@@ -48,42 +48,56 @@ using System.Collections.Generic;
 public class TestLoadScene
 {
     [UnityTest]
-    public IEnumerator TestLoadSceneMainMenu() {
+    public IEnumerator TestLoadScene_MainMenuScene_MainMenuSceneExpected() {
         SceneManager.LoadScene("MainMenuScene");
         yield return new WaitForSeconds(3);
+
         Assert.AreEqual(SceneManager.GetActiveScene().name, "MainMenuScene");
     }
 
     [UnityTest]
-    public IEnumerator TestLoadSceneMainMap()
+    public IEnumerator TestLoadScene_Initializer_NonNullObjectExpected()
     {
         SceneManager.LoadScene("MainMenuScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "MainMenuScene");
-
-
         MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
-        Assert.IsNotNull(initializer);
 
+        Assert.IsNotNull(initializer);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_MainMapScene_NewGameMapSceneExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
         initializer.ChangeScene("NewGameMapScene");
         yield return new WaitForSeconds(3);
+
         Assert.AreEqual(SceneManager.GetActiveScene().name, "NewGameMapScene");
     }
 
     [UnityTest]
-    public IEnumerator TestLoadSceneNewGameScene()
+    public IEnumerator TestLoadScene_GameApp_NonNullObjectExpected()
     {
         SceneManager.LoadScene("MainMenuScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "MainMenuScene");
-
         MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
-        Assert.IsNotNull(initializer);
-
         initializer.ChangeScene("NewGameMapScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "NewGameMapScene");
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
 
+        Assert.IsNotNull(gameApp);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_GameAppFillterLocalWithPort9994_LocalHostWithPort9995Expected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
         GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
         gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
         gameApp.Parameters.Remove("ServerAddress");
@@ -91,47 +105,145 @@ public class TestLoadScene
         gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
         gameApp.Parameters.Add("ServerPort", "9994");
 
+        var expectedDictionary = new Dictionary<string, string>() {
+            { "ServerAddress", "127.0.0.1"},
+            { "ServerPort","9994" }};
+
+        CollectionAssert.IsSubsetOf((ICollection)expectedDictionary, (ICollection)gameApp.Parameters);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_LevelLoader_NonNullObjectExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
+        gameApp.Parameters.Remove("ServerAddress");
+        gameApp.Parameters.Remove("ServerPort");
+        gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
+        gameApp.Parameters.Add("ServerPort", "9995");
         LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+
         Assert.IsNotNull(levelLoader);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_NewGameScene_NewGameSceneExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
+        gameApp.Parameters.Remove("ServerAddress");
+        gameApp.Parameters.Remove("ServerPort");
+        gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
+        gameApp.Parameters.Add("ServerPort", "9994");
+        LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
         levelLoader.LoadLevel("NewGameScene");
         yield return new WaitForSeconds(3);
+
         Assert.AreEqual(SceneManager.GetActiveScene().name, "NewGameScene");
     }
 
     [UnityTest]
-    public IEnumerator TestLoadGameInterface()
+    public IEnumerator TestLoadScene_NewGameSceneInitializer_NonNullObjectExpected()
     {
         SceneManager.LoadScene("MainMenuScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "MainMenuScene");
-
         MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
-        Assert.IsNotNull(initializer);
-
-
         initializer.ChangeScene("NewGameMapScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "NewGameMapScene");
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
+        gameApp.Parameters.Remove("ServerAddress");
+        gameApp.Parameters.Remove("ServerPort");
+        gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
+        gameApp.Parameters.Add("ServerPort", "9994");
+        LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.LoadLevel("NewGameScene");
+        yield return new WaitForSeconds(3);
+        NewGameSceneInit newGameSceneInit = GameObject.Find("Initializer").GetComponent<NewGameSceneInit>();
 
+        Assert.IsNotNull(initializer);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_Add2Players_2PlayersExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
+        gameApp.Parameters.Remove("ServerAddress");
+        gameApp.Parameters.Remove("ServerPort");
+        gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
+        gameApp.Parameters.Add("ServerPort", "9994");
+        LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.LoadLevel("NewGameScene");
+        yield return new WaitForSeconds(3);
+        NewGameSceneInit newGameSceneInit = GameObject.Find("Initializer").GetComponent<NewGameSceneInit>();
+        newGameSceneInit.AddPlayer();
+        newGameSceneInit.AddPlayer();
+
+        var expectedNumber = 2;
+        Assert.AreEqual(newGameSceneInit.getNumberOfPlayer(), expectedNumber);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_NetworkManager_NonNullObjectExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
+        GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
+        gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
+        gameApp.Parameters.Remove("ServerAddress");
+        gameApp.Parameters.Remove("ServerPort");
+        gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
+        gameApp.Parameters.Add("ServerPort", "9994");
+        LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
+        levelLoader.LoadLevel("NewGameScene");
+        yield return new WaitForSeconds(3);
+        NewGameSceneInit newGameSceneInit = GameObject.Find("Initializer").GetComponent<NewGameSceneInit>();
+        newGameSceneInit.AddPlayer();
+        newGameSceneInit.AddPlayer();
+        ServerNetworkManager serverNetworkManager = GameObject.Find("ServerNetworkManager").GetComponent<ServerNetworkManager>();
+
+        Assert.IsNotNull(serverNetworkManager);
+    }
+
+    [UnityTest]
+    public IEnumerator TestLoadScene_NewGame_GameSceneExpected()
+    {
+        SceneManager.LoadScene("MainMenuScene");
+        yield return new WaitForSeconds(3);
+        MainMenuSceneInit initializer = GameObject.Find("Initializer").GetComponent<MainMenuSceneInit>();
+        initializer.ChangeScene("NewGameMapScene");
+        yield return new WaitForSeconds(3);
         GameApp gameApp = GameObject.Find("GameApp").GetComponent<GameApp>();
         gameApp.PersistAllParameters(SceneManager.GetActiveScene().name);
         gameApp.Parameters.Remove("ServerAddress");
         gameApp.Parameters.Remove("ServerPort");
         gameApp.Parameters.Add("ServerAddress", "127.0.0.1");
         gameApp.Parameters.Add("ServerPort", "9993");
-
         LevelLoader levelLoader = GameObject.Find("LevelLoader").GetComponent<LevelLoader>();
-        Assert.IsNotNull(levelLoader);
         levelLoader.LoadLevel("NewGameScene");
         yield return new WaitForSeconds(3);
-        Assert.AreEqual(SceneManager.GetActiveScene().name, "NewGameScene");
-
         NewGameSceneInit newGameSceneInit = GameObject.Find("Initializer").GetComponent<NewGameSceneInit>();
-        Assert.IsNotNull(initializer);
-
         newGameSceneInit.AddPlayer();
         newGameSceneInit.AddPlayer();
-
         List<GameApp.PlayerMenu> playerMenuList = new List<GameApp.PlayerMenu>();
         GameApp.PlayerMenu player1 = new GameApp.PlayerMenu {
             name = "player1",
@@ -149,12 +261,11 @@ public class TestLoadScene
         playerMenuList.Add(player1);
         playerMenuList.Add(player2);
         gameApp.SavePlayersFromMenu(playerMenuList);
-
         ServerNetworkManager serverNetworkManager = GameObject.Find("ServerNetworkManager").GetComponent<ServerNetworkManager>();
-        Assert.IsNotNull(serverNetworkManager);
-
         serverNetworkManager.SetupNewGame();
         yield return new WaitForSeconds(3);
+
+        Assert.AreEqual(SceneManager.GetActiveScene().name, "GameScene");
     }
 
 }

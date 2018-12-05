@@ -148,4 +148,9 @@ public class NewGameSceneInit : MonoBehaviour
         Destroy(playersToAddToGame[playersToAddToGame.Count - 1]);
         playersToAddToGame.RemoveAt(playersToAddToGame.Count - 1);
     }
+
+    public int getNumberOfPlayer()
+    {
+        return playersToAddToGame.Count;
+    }
 }
