@@ -173,7 +173,7 @@ public class HexGrid : MonoBehaviour
      * PathToDraw field and after that executes action given as argument  */
     private void PathToDrawOnMouseHover( System.Action action )
     {
-        if ((EventManager.selectionManager.SelectedObject) == null || (EventManager.selectionManager.SelectedObject.tag) != "Unit")
+        if ((EventManager.selectionManager.SelectedObject) == null || (EventManager.selectionManager.SelectedObject.tag) != "Unit" || FlyingSpaceshipLock || uiListener.IsUIOverride)
         {
             if (PathToDraw != null)
                 PathToDraw = null;

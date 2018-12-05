@@ -58,10 +58,11 @@ public class SideMenu : MonoBehaviour
     Text colonizerCosts;
 
     Button allianceButton;
+    Button resolveAllianceButton;
     Button colonizeButton;
     Button mineButton;
     Button attackButton;
-   
+
 
     Image icon;
 
@@ -95,8 +96,8 @@ public class SideMenu : MonoBehaviour
         colonizeButton = ShipPanel.GetComponentsInChildren<Button>()[1];
         mineButton = ShipPanel.GetComponentsInChildren<Button>().First();
         attackButton = ShipPanel.GetComponentsInChildren<Button>()[2];
-        allianceButton = EnemyPlanetFill.GetComponentsInChildren<Button>().First();
-
+        allianceButton = EnemyPlanetFill.GetComponentsInChildren<Button>()[0];
+        resolveAllianceButton = EnemyPlanetFill.GetComponentsInChildren<Button>()[1];
         ownerName = NamePanel.GetComponentsInChildren<Text>().Last();
 
         scoutCosts = BuildPanel.GetComponentsInChildren<Text>()[1];
@@ -181,7 +182,7 @@ public class SideMenu : MonoBehaviour
         }
         else
         {
-            shipCharacteristics.text = ( "Radars: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.radars.ToString() + "\n" +
+            shipCharacteristics.text = ("Radars: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.radars.ToString() + "\n" +
                                          "Speed: " + ((EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.speed + "\n" +
                                          "HP: " + (EventManager.selectionManager.SelectedObject.GetComponent<Spaceship>() as Spaceship).spaceshipStatistics.healthPoints.ToString()).Replace("\n", System.Environment.NewLine));
 
@@ -205,8 +206,8 @@ public class SideMenu : MonoBehaviour
            (EventManager.selectionManager.TargetObject.GetComponent<Star>() != null)))
         {
             if (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Planet>()) ||
-              (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Star>())))
-                mineButton.gameObject.SetActive(true);
+              (EventManager.selectionManager.SelectedObject.GetComponent<Miner>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Star>()))
+              && !gameController.GetCurrentPlayer().GetAllies().Contains(EventManager.selectionManager.TargetObject.GetComponent<Ownable>().GetOwner())) mineButton.gameObject.SetActive(true);
             else
                 mineButton.gameObject.SetActive(false);
         }
@@ -219,8 +220,11 @@ public class SideMenu : MonoBehaviour
             EventManager.selectionManager.TargetObject != null && ((EventManager.selectionManager.TargetObject.GetComponent<Spaceship>() != null) ||
             (EventManager.selectionManager.TargetObject.GetComponent<Planet>() != null)))
         {
-            if (EventManager.selectionManager.SelectedObject.GetComponent<Warship>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Ownable>()))
+            if (EventManager.selectionManager.SelectedObject.GetComponent<Warship>().CheckDistance(EventManager.selectionManager.TargetObject.GetComponent<Ownable>())
+                && !gameController.GetCurrentPlayer().GetAllies().Contains(EventManager.selectionManager.TargetObject.GetComponent<Ownable>().GetOwner()))
+            {
                 attackButton.gameObject.SetActive(true);
+            }
             else
                 attackButton.gameObject.SetActive(false);
         }
@@ -274,7 +278,7 @@ public class SideMenu : MonoBehaviour
 
         yeilds.text = ("+" + planet.GetPopulationGrowth().ToString() + "\n" + "\n" +
                        "+" + planet.GetMineralsnGrowth().ToString() + "\n" + "\n" +
-                       "+" + planet.GetSolarPowerGrowth().ToString() );
+                       "+" + planet.GetSolarPowerGrowth().ToString());
 
         scoutCosts.text = '-' + gameController.GetCurrentPlayer().spaceshipsCosts.scoutNeededSolarPower.ToString() +
             "     " +
@@ -358,22 +362,37 @@ public class SideMenu : MonoBehaviour
         yeilds.text = ("+" + planet.GetPopulationGrowth().ToString() + "\n" + "\n" +
                        "+" + planet.GetMineralsnGrowth().ToString() + "\n" + "\n" +
                        "+" + planet.GetSolarPowerGrowth().ToString());
-          if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != gameController.GetCurrentPlayer() &&
-           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != null)
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+         (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != gameController.GetCurrentPlayer() &&
+         (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != null
+          && !gameController.GetCurrentPlayer().GetAllies().Contains((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner())
+          && gameController.showAllianceButton == true)
         {
+            Debug.Log(gameController.showAllianceButton);
             allianceButton.gameObject.SetActive(true);
         }
         else
         {
             allianceButton.gameObject.SetActive(false);
-            Debug.Log((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner());
-           Debug.Log( (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet));
-
-
         }
 
+        if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
+       (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != gameController.GetCurrentPlayer() &&
+       (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner() != null
+        && gameController.GetCurrentPlayer().GetAllies().Contains((EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet).GetOwner())
+        && gameController.showResolveAllianceButton == true)
+        {
+
+            resolveAllianceButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            resolveAllianceButton.gameObject.SetActive(false);
+        }
     }
+
+
+
 
     // Update is called once per frame
     void Update()
@@ -443,7 +462,7 @@ public class SideMenu : MonoBehaviour
 
 
         if (EventManager.selectionManager.SelectedObject != null && (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Planet) != null &&
-          (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer() && 
+          (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != gameController.GetCurrentPlayer() &&
           (EventManager.selectionManager.SelectedObject.GetComponent<Planet>() as Ownable).GetOwner() != null) //Enemy Planet
         {
             ShowNamePanel();
