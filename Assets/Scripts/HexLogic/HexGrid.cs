@@ -192,14 +192,16 @@ public class HexGrid : MonoBehaviour
                 PathToDraw = null;
                 StartCoroutine( GetPathToDraw() );
 
-                action();
+                //action();
             }
         }
     }
 
     /* Calculates path from selected spaceship to hovered cell */
-    private IEnumerator<int> GetPathToDraw()
+    private IEnumerator GetPathToDraw()
     {
+        //yield return new WaitForSeconds( 0.25f );
+        //PathToDraw = null;
         GameObject selectedObject;
         if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
             if (selectedObject.tag == "Unit")
@@ -207,11 +209,12 @@ public class HexGrid : MonoBehaviour
                 var spaceship = selectedObject.GetComponent<Spaceship>();
                 if (MouseHooverCoordinates != spaceship.Coordinates && !spaceship.Flying && FromCoordinates(MouseHooverCoordinates) != null && FromCoordinates(MouseHooverCoordinates).IsEmpty())
                 {
-                    PathToDraw = Pathfinder.CalculatePath( this.FromCoordinates(spaceship.Coordinates) , this.FromCoordinates(MouseHooverCoordinates) );
+                    PathToDraw = Pathfinder.CalculatePath( this.FromCoordinates(spaceship.Coordinates) , this.FromCoordinates(MouseHooverCoordinates), spaceship.actionPoints );
                 }
             }
 
         yield return 1;
+        //yield return new WaitForSeconds( 0.25f );
     }
 
     /* Example debug action, to be replaced by drawing action or sth */

@@ -32,8 +32,12 @@ public static class Pathfinder
     static Dictionary<HexCell, KeyValuePair<int, int>> cellsToVisit = new Dictionary<HexCell, KeyValuePair<int, int>>();
     static HexCell dest;
 
-    public static List<HexCell> CalculatePath( HexCell source, HexCell destination )
+    public static List<HexCell> CalculatePath( HexCell source, HexCell destination, int spaceshipRange = -1 )
     {
+        if ( spaceshipRange != -1 )
+            if ( ManhattanDistance(source, destination) > spaceshipRange )
+                return null;
+
         dest = destination;
         cellsVisited.Add( source, new KeyValuePair<int, int>( CalculateHeuristic( source ), 0 ) );
         AddNeighbours( source, 0 );
@@ -136,7 +140,7 @@ public static class Pathfinder
         path.Insert( 0, dest );
         var cost = cellsVisited[dest].Value - 1;
 
-        while( cost > 0 )
+        while ( cost > 0 )
         {
             var nextNode = cellsVisited
                 .Where( cell => cell.Value.Value == cost )
