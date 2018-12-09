@@ -189,7 +189,6 @@ public class HexGrid : MonoBehaviour
 
             if (lastCoordinates != MouseHooverCoordinates)
             {
-                PathToDraw = null;
                 StartCoroutine( GetPathToDraw() );
 
                 //action();
@@ -200,8 +199,8 @@ public class HexGrid : MonoBehaviour
     /* Calculates path from selected spaceship to hovered cell */
     private IEnumerator GetPathToDraw()
     {
-        //yield return new WaitForSeconds( 0.25f );
-        //PathToDraw = null;
+        yield return new WaitForSeconds( 0.25f );
+        PathToDraw = null;
         GameObject selectedObject;
         if ((selectedObject = EventManager.selectionManager.SelectedObject) != null)
             if (selectedObject.tag == "Unit")
@@ -213,8 +212,7 @@ public class HexGrid : MonoBehaviour
                 }
             }
 
-        yield return 1;
-        //yield return new WaitForSeconds( 0.25f );
+        yield return new WaitForSeconds( 0.25f );
     }
 
     /* Example debug action, to be replaced by drawing action or sth */
