@@ -6,7 +6,6 @@ The game allows for local (hot-seat) and remote multiplayer play.
 
 ## How to Play
 
-An up-to-date (though still buggy) build of the game can be found here: https://drive.google.com/open?id=1pZ1cOz0xuFr9IlPLa4Zgrk65K80hzBZL .
 To start a new game click new game in the main menu. Type in your address (localhost if you want to play locally), port (1024 – 65536), choose the map size and add the players.
 
 * Press [W A S D] or [middle mouse button] to move the camera,
